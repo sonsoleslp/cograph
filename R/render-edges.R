@@ -158,34 +158,14 @@ render_edges_grid <- function(network) {
 draw_straight_edge <- function(x1, y1, x2, y2, color, width, lty,
                                 show_arrow, arrow_size, bidirectional = FALSE) {
   grobs <- list()
-
-  # Calculate line endpoints - pull back if arrows are shown
-  line_x1 <- x1
-  line_y1 <- y1
-  line_x2 <- x2
-  line_y2 <- y2
   angle <- point_angle(x1, y1, x2, y2)
 
-  if (show_arrow && arrow_size > 0) {
-    # Pull back line end so arrow tip touches target
-    pullback <- arrow_size * 0.7  # Pull back by arrow length
-    line_x2 <- x2 - pullback * cos(angle)
-    line_y2 <- y2 - pullback * sin(angle)
-  }
-
-  if (bidirectional && arrow_size > 0) {
-    # Pull back line start for bidirectional arrow
-    pullback <- arrow_size * 0.7
-    line_x1 <- x1 + pullback * cos(angle)
-    line_y1 <- y1 + pullback * sin(angle)
-  }
-
-  # Draw line
+  # Draw line (no pullback - arrow will overlay the end)
   grobs[[1]] <- grid::segmentsGrob(
-    x0 = grid::unit(line_x1, "npc"),
-    y0 = grid::unit(line_y1, "npc"),
-    x1 = grid::unit(line_x2, "npc"),
-    y1 = grid::unit(line_y2, "npc"),
+    x0 = grid::unit(x1, "npc"),
+    y0 = grid::unit(y1, "npc"),
+    x1 = grid::unit(x2, "npc"),
+    y1 = grid::unit(y2, "npc"),
     gp = grid::gpar(col = color, lwd = width, lty = lty)
   )
 
@@ -230,50 +210,16 @@ draw_curved_edge <- function(x1, y1, x2, y2, curvature, color, width, lty,
   pts <- bezier_points(x1, y1, ctrl$x, ctrl$y, x2, y2, n = 50)
   n <- nrow(pts)
 
-  # Determine truncation indices for arrows
-  start_idx <- 1
-  end_idx <- n
-
-  # Truncate curve at end if arrow is shown (so line doesn't overlap arrow)
-  if (show_arrow && arrow_size > 0) {
-    pullback <- arrow_size * 0.7
-    total_len <- 0
-    for (i in (n-1):1) {
-      seg_len <- sqrt((pts$x[i+1] - pts$x[i])^2 + (pts$y[i+1] - pts$y[i])^2)
-      total_len <- total_len + seg_len
-      if (total_len >= pullback) {
-        end_idx <- i + 1
-        break
-      }
-    }
-  }
-
-  # Truncate curve at start if bidirectional
-  if (bidirectional && arrow_size > 0) {
-    pullback <- arrow_size * 0.7
-    total_len <- 0
-    for (i in 1:(n-1)) {
-      seg_len <- sqrt((pts$x[i+1] - pts$x[i])^2 + (pts$y[i+1] - pts$y[i])^2)
-      total_len <- total_len + seg_len
-      if (total_len >= pullback) {
-        start_idx <- i
-        break
-      }
-    }
-  }
-
-  curve_pts <- pts[start_idx:end_idx, ]
-
-  # Draw curve as line segments
+  # Draw curve as line segments (no truncation - arrows overlay ends)
   grobs[[1]] <- grid::linesGrob(
-    x = grid::unit(curve_pts$x, "npc"),
-    y = grid::unit(curve_pts$y, "npc"),
+    x = grid::unit(pts$x, "npc"),
+    y = grid::unit(pts$y, "npc"),
     gp = grid::gpar(col = color, lwd = width, lty = lty)
   )
 
   # Draw arrow at target if needed
   if (show_arrow) {
-    # Arrow angle based on last segment of full curve (not truncated)
+    # Arrow angle based on last segment of curve
     angle <- point_angle(pts$x[n-1], pts$y[n-1], pts$x[n], pts$y[n])
     arrow_pts <- arrow_points(x2, y2, angle, arrow_size)
 
@@ -404,10 +350,28 @@ render_edge_labels_grid <- function(network) {
   # Label offset perpendicular to edge (positive = left side, negative = right side)
   label_offset <- if (!is.null(aes$label_offset)) aes$label_offset else 0
 
+  # Get curvature for automatic offset
+  curvatures <- recycle_to_length(
+    if (!is.null(aes$curvature)) aes$curvature else 0,
+    m
+  )
+
+  # Get curve pivot for label positioning on curves
+  curve_pivots <- recycle_to_length(
+    if (!is.null(aes$curve_pivot)) aes$curve_pivot else 0.5,
+    m
+  )
+
   grobs <- vector("list", m)
   for (i in seq_len(m)) {
     from_idx <- edges$from[i]
     to_idx <- edges$to[i]
+
+    # Skip self-loops for labels (would need special handling)
+    if (from_idx == to_idx) {
+      grobs[[i]] <- grid::nullGrob()
+      next
+    }
 
     x1 <- nodes$x[from_idx]
     y1 <- nodes$y[from_idx]
@@ -416,23 +380,50 @@ render_edge_labels_grid <- function(network) {
 
     # Position along edge
     pos <- if (length(label_position) > 1) label_position[i] else label_position
-    x <- x1 + pos * (x2 - x1)
-    y <- y1 + pos * (y2 - y1)
 
-    # Apply perpendicular offset if specified
+    # Calculate perpendicular direction
+    dx <- x2 - x1
+    dy <- y2 - y1
+    len <- sqrt(dx^2 + dy^2)
+
+    if (len == 0) {
+      grobs[[i]] <- grid::nullGrob()
+      next
+    }
+
+    # Perpendicular unit vector (rotated 90 degrees)
+    perp_x <- -dy / len
+    perp_y <- dx / len
+
+    # If edge is curved, position label along the curve
+    curv <- curvatures[i]
+    if (curv != 0) {
+      # Get control point
+      pivot <- curve_pivots[i]
+      ctrl <- curve_control_point(x1, y1, x2, y2, curv, pivot = pivot, shape = 0)
+
+      # Position along bezier curve at 'pos'
+      t <- pos
+      # Quadratic bezier formula
+      x <- (1 - t)^2 * x1 + 2 * (1 - t) * t * ctrl$x + t^2 * x2
+      y <- (1 - t)^2 * y1 + 2 * (1 - t) * t * ctrl$y + t^2 * y2
+
+      # Auto-offset in direction of curve (away from straight line)
+      auto_offset <- sign(curv) * 0.02  # Small offset in curve direction
+    } else {
+      # Straight edge
+      x <- x1 + pos * (x2 - x1)
+      y <- y1 + pos * (y2 - y1)
+      auto_offset <- 0
+    }
+
+    # Apply user-specified offset plus auto-offset
     offset <- if (length(label_offset) > 1) label_offset[i] else label_offset
-    if (offset != 0) {
-      # Calculate perpendicular direction
-      dx <- x2 - x1
-      dy <- y2 - y1
-      len <- sqrt(dx^2 + dy^2)
-      if (len > 0) {
-        # Perpendicular unit vector (rotated 90 degrees)
-        perp_x <- -dy / len
-        perp_y <- dx / len
-        x <- x + offset * perp_x
-        y <- y + offset * perp_y
-      }
+    total_offset <- offset + auto_offset
+
+    if (total_offset != 0) {
+      x <- x + total_offset * perp_x
+      y <- y + total_offset * perp_y
     }
 
     grobs[[i]] <- grid::textGrob(

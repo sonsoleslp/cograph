@@ -63,12 +63,17 @@ bezier_points <- function(x0, y0, x1, y1, x2, y2, n = 50) {
 #' @param x1,y1 Start point.
 #' @param x2,y2 End point.
 #' @param curvature Curvature amount (0 = straight line).
+#' @param pivot Position along edge (0-1) where control point sits. 0 = near source,
+#'   0.5 = middle (default), 1 = near target.
+#' @param shape Spline tension affecting curvature intensity (-1 to 1).
+#'   Negative = sharper curve, Positive = gentler curve. Default 0.
 #' @return List with x, y coordinates of control point.
 #' @keywords internal
-curve_control_point <- function(x1, y1, x2, y2, curvature) {
-  # Midpoint
-  mx <- (x1 + x2) / 2
-  my <- (y1 + y2) / 2
+curve_control_point <- function(x1, y1, x2, y2, curvature, pivot = 0.5, shape = 0) {
+  # Point along the edge based on pivot (0 = source, 0.5 = midpoint, 1 = target)
+  pivot <- max(0, min(1, pivot))  # Clamp to [0, 1]
+  mx <- x1 + pivot * (x2 - x1)
+  my <- y1 + pivot * (y2 - y1)
 
   # Perpendicular offset
   dx <- x2 - x1
@@ -83,10 +88,17 @@ curve_control_point <- function(x1, y1, x2, y2, curvature) {
   px <- -dy / len
   py <- dx / len
 
+  # Adjust curvature based on shape parameter
+  # shape = 0: no adjustment
+  # shape < 0: sharper curve (increase curvature magnitude)
+  # shape > 0: gentler curve (decrease curvature magnitude)
+  shape <- max(-1, min(1, shape))  # Clamp to [-1, 1]
+  adjusted_curvature <- curvature * (1 - shape * 0.5)
+
   # Control point
   list(
-    x = mx + curvature * len * px,
-    y = my + curvature * len * py
+    x = mx + adjusted_curvature * len * px,
+    y = my + adjusted_curvature * len * py
   )
 }
 

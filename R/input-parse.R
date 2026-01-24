@@ -44,16 +44,22 @@ is_symmetric_matrix <- function(m, tol = .Machine$double.eps^0.5) {
 #'
 #' @param n Number of nodes.
 #' @param labels Optional node labels.
+#' @param names Optional node names for legend (defaults to labels).
 #' @return Data frame with node information.
 #' @keywords internal
-create_nodes_df <- function(n, labels = NULL) {
+create_nodes_df <- function(n, labels = NULL, names = NULL) {
   if (is.null(labels)) {
     labels <- as.character(seq_len(n))
+  }
+
+  if (is.null(names)) {
+    names <- labels
   }
 
   data.frame(
     id = seq_len(n),
     label = labels,
+    name = names,
     x = NA_real_,
     y = NA_real_,
     stringsAsFactors = FALSE

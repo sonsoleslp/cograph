@@ -18,12 +18,15 @@ sn_nodes(
   show_labels = NULL,
   pie_values = NULL,
   pie_colors = NULL,
+  pie_border_width = NULL,
   donut_values = NULL,
+  donut_border_width = NULL,
   donut_inner_ratio = NULL,
   donut_bg_color = NULL,
   donut_show_value = NULL,
   donut_value_size = NULL,
-  donut_value_color = NULL
+  donut_value_color = NULL,
+  node_names = NULL
 )
 }
 \arguments{
@@ -56,7 +59,11 @@ For donut with single value (0-1), shows that proportion filled.}
 
 \item{pie_colors}{For pie/donut/donut_pie shape: colors for pie segments.}
 
+\item{pie_border_width}{Border width for pie chart nodes.}
+
 \item{donut_values}{For donut_pie shape: vector of values (0-1) for the outer ring proportion.}
+
+\item{donut_border_width}{Border width for donut chart nodes.}
 
 \item{donut_inner_ratio}{For donut shape: inner radius ratio (0-1). Default 0.5.}
 
@@ -67,6 +74,8 @@ For donut with single value (0-1), shows that proportion filled.}
 \item{donut_value_size}{For donut shape: font size for center value.}
 
 \item{donut_value_color}{For donut shape: color for center value text.}
+
+\item{node_names}{Alternative names for legend (separate from display labels).}
 }
 \value{
 Modified sonnet_network object.

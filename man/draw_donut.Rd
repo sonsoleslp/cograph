@@ -19,8 +19,12 @@ draw_donut(
   show_value = TRUE,
   value_size = 8,
   value_color = "black",
+  donut_border_width = NULL,
   ...
 )
+}
+\arguments{
+\item{donut_border_width}{Border width for the donut ring (optional, defaults to border_width).}
 }
 \description{
 Draw a donut chart node. If given a single value (0-1), shows that proportion

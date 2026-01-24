@@ -17,8 +17,15 @@ draw_donut_pie(
   pie_colors = NULL,
   inner_ratio = 0.5,
   bg_color = "gray90",
+  pie_border_width = NULL,
+  donut_border_width = NULL,
   ...
 )
+}
+\arguments{
+\item{pie_border_width}{Border width for pie segments (optional).}
+
+\item{donut_border_width}{Border width for donut ring (optional).}
 }
 \description{
 Draw a node with an outer donut ring showing a proportion and an inner

@@ -16,11 +16,16 @@ sn_edges(
   arrow_size = NULL,
   show_arrows = NULL,
   maximum = NULL,
+  width_scale = NULL,
   labels = NULL,
   label_size = NULL,
   label_color = NULL,
   label_position = NULL,
-  label_offset = NULL
+  label_offset = NULL,
+  bidirectional = NULL,
+  loop_rotation = NULL,
+  curve_shape = NULL,
+  curve_pivot = NULL
 )
 }
 \arguments{
@@ -49,6 +54,9 @@ automatic coloring based on edge weights.}
 \item{maximum}{Maximum edge weight for scaling width. Weights above this are
 capped. Similar to qgraph's maximum parameter.}
 
+\item{width_scale}{Scale factor for edge widths. Values > 1 make edges thicker,
+values < 1 make them thinner. Applied after all other width calculations.}
+
 \item{labels}{Edge labels. Can be TRUE (show weights), a vector, or column name.}
 
 \item{label_size}{Edge label text size.}
@@ -58,6 +66,14 @@ capped. Similar to qgraph's maximum parameter.}
 \item{label_position}{Position along edge (0 = source, 0.5 = middle, 1 = target).}
 
 \item{label_offset}{Perpendicular offset from edge line.}
+
+\item{bidirectional}{Logical. Show arrows at both ends of edges?}
+
+\item{loop_rotation}{Angle in radians for self-loop direction (default: pi/2 = top).}
+
+\item{curve_shape}{Spline tension for curved edges (-1 to 1, default: 0).}
+
+\item{curve_pivot}{Pivot position along edge for curve control point (0-1, default: 0.5).}
 }
 \value{
 Modified sonnet_network object.

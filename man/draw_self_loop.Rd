@@ -4,7 +4,20 @@
 \alias{draw_self_loop}
 \title{Draw Self-Loop}
 \usage{
-draw_self_loop(x, y, node_size, color, width, lty)
+draw_self_loop(x, y, node_size, color, width, lty, rotation = pi/2)
+}
+\arguments{
+\item{x, y}{Node center coordinates.}
+
+\item{node_size}{Node radius.}
+
+\item{color}{Loop color.}
+
+\item{width}{Loop line width.}
+
+\item{lty}{Loop line type.}
+
+\item{rotation}{Angle in radians for loop direction (default: pi/2 = top).}
 }
 \description{
 Draw Self-Loop

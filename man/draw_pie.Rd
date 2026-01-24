@@ -14,8 +14,12 @@ draw_pie(
   alpha = 1,
   values = NULL,
   colors = NULL,
+  pie_border_width = NULL,
   ...
 )
+}
+\arguments{
+\item{pie_border_width}{Border width for pie segments (optional, defaults to border_width * 0.5).}
 }
 \description{
 Draw a pie chart node with multiple segments.

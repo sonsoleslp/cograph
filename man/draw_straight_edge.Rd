@@ -4,7 +4,18 @@
 \alias{draw_straight_edge}
 \title{Draw Straight Edge}
 \usage{
-draw_straight_edge(x1, y1, x2, y2, color, width, lty, show_arrow, arrow_size)
+draw_straight_edge(
+  x1,
+  y1,
+  x2,
+  y2,
+  color,
+  width,
+  lty,
+  show_arrow,
+  arrow_size,
+  bidirectional = FALSE
+)
 }
 \description{
 Draw Straight Edge

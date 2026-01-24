@@ -4,7 +4,7 @@
 \alias{curve_control_point}
 \title{Calculate Control Point for Curved Edge}
 \usage{
-curve_control_point(x1, y1, x2, y2, curvature)
+curve_control_point(x1, y1, x2, y2, curvature, pivot = 0.5, shape = 0)
 }
 \arguments{
 \item{x1, y1}{Start point.}
@@ -12,6 +12,12 @@ curve_control_point(x1, y1, x2, y2, curvature)
 \item{x2, y2}{End point.}
 
 \item{curvature}{Curvature amount (0 = straight line).}
+
+\item{pivot}{Position along edge (0-1) where control point sits. 0 = near source,
+0.5 = middle (default), 1 = near target.}
+
+\item{shape}{Spline tension affecting curvature intensity (-1 to 1).
+Negative = sharper curve, Positive = gentler curve. Default 0.}
 }
 \value{
 List with x, y coordinates of control point.

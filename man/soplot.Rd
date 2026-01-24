@@ -29,13 +29,16 @@ soplot(
   show_labels = NULL,
   pie_values = NULL,
   pie_colors = NULL,
+  pie_border_width = NULL,
   donut_values = NULL,
+  donut_border_width = NULL,
   donut_inner_ratio = NULL,
   donut_bg_color = NULL,
   donut_show_value = NULL,
   donut_value_size = NULL,
   donut_value_color = NULL,
   edge_width = NULL,
+  edge_width_scale = NULL,
   edge_color = NULL,
   edge_alpha = NULL,
   edge_style = NULL,
@@ -48,7 +51,14 @@ soplot(
   edge_label_size = NULL,
   edge_label_color = NULL,
   edge_label_position = NULL,
-  edge_label_offset = NULL
+  edge_label_offset = NULL,
+  bidirectional = NULL,
+  loop_rotation = NULL,
+  curve_shape = NULL,
+  curve_pivot = NULL,
+  node_names = NULL,
+  legend = FALSE,
+  legend_position = "topright"
 )
 
 sn_render(
@@ -75,13 +85,16 @@ sn_render(
   show_labels = NULL,
   pie_values = NULL,
   pie_colors = NULL,
+  pie_border_width = NULL,
   donut_values = NULL,
+  donut_border_width = NULL,
   donut_inner_ratio = NULL,
   donut_bg_color = NULL,
   donut_show_value = NULL,
   donut_value_size = NULL,
   donut_value_color = NULL,
   edge_width = NULL,
+  edge_width_scale = NULL,
   edge_color = NULL,
   edge_alpha = NULL,
   edge_style = NULL,
@@ -94,7 +107,14 @@ sn_render(
   edge_label_size = NULL,
   edge_label_color = NULL,
   edge_label_position = NULL,
-  edge_label_offset = NULL
+  edge_label_offset = NULL,
+  bidirectional = NULL,
+  loop_rotation = NULL,
+  curve_shape = NULL,
+  curve_pivot = NULL,
+  node_names = NULL,
+  legend = FALSE,
+  legend_position = "topright"
 )
 }
 \arguments{
@@ -152,7 +172,11 @@ For donut with single value (0-1), shows that proportion filled.}
 
 \item{pie_colors}{For pie/donut/donut_pie nodes: colors for pie segments.}
 
+\item{pie_border_width}{Border width for pie chart segments.}
+
 \item{donut_values}{For donut_pie nodes: vector of values (0-1) for outer ring proportion.}
+
+\item{donut_border_width}{Border width for donut ring.}
 
 \item{donut_inner_ratio}{For donut nodes: inner radius ratio (0-1). Default 0.5.}
 
@@ -165,6 +189,8 @@ For donut with single value (0-1), shows that proportion filled.}
 \item{donut_value_color}{For donut nodes: color for center value text.}
 
 \item{edge_width}{Edge width.}
+
+\item{edge_width_scale}{Scale factor for edge widths. Values > 1 make edges thicker.}
 
 \item{edge_color}{Edge color.}
 
@@ -191,6 +217,20 @@ For donut with single value (0-1), shows that proportion filled.}
 \item{edge_label_position}{Position along edge (0 = source, 0.5 = middle, 1 = target).}
 
 \item{edge_label_offset}{Perpendicular offset from edge line.}
+
+\item{bidirectional}{Logical. Show arrows at both ends of edges?}
+
+\item{loop_rotation}{Angle in radians for self-loop direction (default: pi/2 = top).}
+
+\item{curve_shape}{Spline tension for curved edges (-1 to 1, default: 0).}
+
+\item{curve_pivot}{Pivot position along edge for curve control point (0-1, default: 0.5).}
+
+\item{node_names}{Alternative names for legend (separate from display labels).}
+
+\item{legend}{Logical. Show legend?}
+
+\item{legend_position}{Legend position: "topright", "topleft", "bottomright", "bottomleft".}
 }
 \value{
 Invisible NULL. Called for side effect of drawing.

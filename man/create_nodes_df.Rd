@@ -4,12 +4,14 @@
 \alias{create_nodes_df}
 \title{Create Node Data Frame}
 \usage{
-create_nodes_df(n, labels = NULL)
+create_nodes_df(n, labels = NULL, names = NULL)
 }
 \arguments{
 \item{n}{Number of nodes.}
 
 \item{labels}{Optional node labels.}
+
+\item{names}{Optional node names for legend (defaults to labels).}
 }
 \value{
 Data frame with node information.

@@ -28,6 +28,10 @@ NULL
 #' @param label_color Edge label text color.
 #' @param label_position Position along edge (0 = source, 0.5 = middle, 1 = target).
 #' @param label_offset Perpendicular offset from edge line.
+#' @param bidirectional Logical. Show arrows at both ends of edges?
+#' @param loop_rotation Angle in radians for self-loop direction (default: pi/2 = top).
+#' @param curve_shape Spline tension for curved edges (-1 to 1, default: 0).
+#' @param curve_pivot Pivot position along edge for curve control point (0-1, default: 0.5).
 #' @return Modified sonnet_network object.
 #' @export
 #'
@@ -55,7 +59,11 @@ sn_edges <- function(network,
                      label_size = NULL,
                      label_color = NULL,
                      label_position = NULL,
-                     label_offset = NULL) {
+                     label_offset = NULL,
+                     bidirectional = NULL,
+                     loop_rotation = NULL,
+                     curve_shape = NULL,
+                     curve_pivot = NULL) {
 
   # Auto-convert matrix/data.frame/igraph to sonnet_network
   network <- ensure_sonnet_network(network)
@@ -161,6 +169,22 @@ sn_edges <- function(network,
 
   if (!is.null(label_offset)) {
     aes$label_offset <- label_offset
+  }
+
+  if (!is.null(bidirectional)) {
+    aes$bidirectional <- resolve_aesthetic(bidirectional, edges_df, m)
+  }
+
+  if (!is.null(loop_rotation)) {
+    aes$loop_rotation <- resolve_aesthetic(loop_rotation, edges_df, m)
+  }
+
+  if (!is.null(curve_shape)) {
+    aes$curve_shape <- resolve_aesthetic(curve_shape, edges_df, m)
+  }
+
+  if (!is.null(curve_pivot)) {
+    aes$curve_pivot <- resolve_aesthetic(curve_pivot, edges_df, m)
   }
 
   # Apply aesthetics

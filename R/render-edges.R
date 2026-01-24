@@ -65,6 +65,28 @@ render_edges_grid <- function(network) {
   show_arrows <- if (!is.null(aes$show_arrows)) aes$show_arrows else network$is_directed
   arrow_size <- if (!is.null(aes$arrow_size)) aes$arrow_size else 0.015
 
+  # Bidirectional arrow settings
+  bidirectionals <- recycle_to_length(
+    if (!is.null(aes$bidirectional)) aes$bidirectional else FALSE,
+    m
+  )
+
+  # Loop rotation settings
+  loop_rotations <- recycle_to_length(
+    if (!is.null(aes$loop_rotation)) aes$loop_rotation else pi/2,
+    m
+  )
+
+  # Curve shape and pivot settings
+  curve_shapes <- recycle_to_length(
+    if (!is.null(aes$curve_shape)) aes$curve_shape else 0,
+    m
+  )
+  curve_pivots <- recycle_to_length(
+    if (!is.null(aes$curve_pivot)) aes$curve_pivot else 0.5,
+    m
+  )
+
   # Node sizes for endpoint calculation
   node_sizes <- recycle_to_length(
     if (!is.null(node_aes$size)) node_aes$size else 0.05,
@@ -100,7 +122,8 @@ render_edges_grid <- function(network) {
     if (from_idx == to_idx) {
       # Draw a small loop
       grobs[[length(grobs) + 1]] <- draw_self_loop(
-        x1, y1, node_sizes[from_idx], edge_col, widths[i], lty
+        x1, y1, node_sizes[from_idx], edge_col, widths[i], lty,
+        rotation = loop_rotations[i]
       )
       next
     }
@@ -114,13 +137,15 @@ render_edges_grid <- function(network) {
       grobs[[length(grobs) + 1]] <- draw_curved_edge(
         start_pt$x, start_pt$y, end_pt$x, end_pt$y,
         curvatures[i], edge_col, widths[i], lty,
-        show_arrows, arrow_size
+        show_arrows, arrow_size, bidirectionals[i],
+        curve_shapes[i], curve_pivots[i]
       )
     } else {
       # Straight edge
       grobs[[length(grobs) + 1]] <- draw_straight_edge(
         start_pt$x, start_pt$y, end_pt$x, end_pt$y,
-        edge_col, widths[i], lty, show_arrows, arrow_size
+        edge_col, widths[i], lty, show_arrows, arrow_size,
+        bidirectionals[i]
       )
     }
   }
@@ -131,37 +156,58 @@ render_edges_grid <- function(network) {
 #' Draw Straight Edge
 #' @keywords internal
 draw_straight_edge <- function(x1, y1, x2, y2, color, width, lty,
-                                show_arrow, arrow_size) {
+                                show_arrow, arrow_size, bidirectional = FALSE) {
   grobs <- list()
 
-  # Calculate line endpoint - pull back if arrow is shown
+  # Calculate line endpoints - pull back if arrows are shown
+  line_x1 <- x1
+  line_y1 <- y1
   line_x2 <- x2
   line_y2 <- y2
+  angle <- point_angle(x1, y1, x2, y2)
+
   if (show_arrow && arrow_size > 0) {
     # Pull back line end so arrow tip touches target
-    angle <- point_angle(x1, y1, x2, y2)
     pullback <- arrow_size * 0.7  # Pull back by arrow length
     line_x2 <- x2 - pullback * cos(angle)
     line_y2 <- y2 - pullback * sin(angle)
   }
 
+  if (bidirectional && arrow_size > 0) {
+    # Pull back line start for bidirectional arrow
+    pullback <- arrow_size * 0.7
+    line_x1 <- x1 + pullback * cos(angle)
+    line_y1 <- y1 + pullback * sin(angle)
+  }
+
   # Draw line
   grobs[[1]] <- grid::segmentsGrob(
-    x0 = grid::unit(x1, "npc"),
-    y0 = grid::unit(y1, "npc"),
+    x0 = grid::unit(line_x1, "npc"),
+    y0 = grid::unit(line_y1, "npc"),
     x1 = grid::unit(line_x2, "npc"),
     y1 = grid::unit(line_y2, "npc"),
     gp = grid::gpar(col = color, lwd = width, lty = lty)
   )
 
-  # Draw arrow if needed
+  # Draw arrow at target if needed
   if (show_arrow) {
-    angle <- point_angle(x1, y1, x2, y2)
     arrow_pts <- arrow_points(x2, y2, angle, arrow_size)
 
     grobs[[2]] <- grid::polygonGrob(
       x = grid::unit(arrow_pts$x, "npc"),
       y = grid::unit(arrow_pts$y, "npc"),
+      gp = grid::gpar(fill = color, col = color)
+    )
+  }
+
+  # Draw arrow at source if bidirectional
+  if (bidirectional) {
+    angle_back <- point_angle(x2, y2, x1, y1)
+    arrow_pts_back <- arrow_points(x1, y1, angle_back, arrow_size)
+
+    grobs[[length(grobs) + 1]] <- grid::polygonGrob(
+      x = grid::unit(arrow_pts_back$x, "npc"),
+      y = grid::unit(arrow_pts_back$y, "npc"),
       gp = grid::gpar(fill = color, col = color)
     )
   }
@@ -172,35 +218,51 @@ draw_straight_edge <- function(x1, y1, x2, y2, color, width, lty,
 #' Draw Curved Edge
 #' @keywords internal
 draw_curved_edge <- function(x1, y1, x2, y2, curvature, color, width, lty,
-                              show_arrow, arrow_size) {
+                              show_arrow, arrow_size, bidirectional = FALSE,
+                              curve_shape = 0, curve_pivot = 0.5) {
   grobs <- list()
 
-  # Calculate control point
-  ctrl <- curve_control_point(x1, y1, x2, y2, curvature)
+  # Calculate control point with shape and pivot adjustments
+  ctrl <- curve_control_point(x1, y1, x2, y2, curvature,
+                               pivot = curve_pivot, shape = curve_shape)
 
   # Generate bezier points
   pts <- bezier_points(x1, y1, ctrl$x, ctrl$y, x2, y2, n = 50)
   n <- nrow(pts)
 
-  # Truncate curve if arrow is shown (so line doesn't overlap arrow)
+  # Determine truncation indices for arrows
+  start_idx <- 1
+  end_idx <- n
+
+  # Truncate curve at end if arrow is shown (so line doesn't overlap arrow)
   if (show_arrow && arrow_size > 0) {
-    # Find how many points to remove from end
-    # Pull back by approximately arrow_size * 0.7
     pullback <- arrow_size * 0.7
     total_len <- 0
-    cut_idx <- n
     for (i in (n-1):1) {
       seg_len <- sqrt((pts$x[i+1] - pts$x[i])^2 + (pts$y[i+1] - pts$y[i])^2)
       total_len <- total_len + seg_len
       if (total_len >= pullback) {
-        cut_idx <- i + 1
+        end_idx <- i + 1
         break
       }
     }
-    curve_pts <- pts[1:cut_idx, ]
-  } else {
-    curve_pts <- pts
   }
+
+  # Truncate curve at start if bidirectional
+  if (bidirectional && arrow_size > 0) {
+    pullback <- arrow_size * 0.7
+    total_len <- 0
+    for (i in 1:(n-1)) {
+      seg_len <- sqrt((pts$x[i+1] - pts$x[i])^2 + (pts$y[i+1] - pts$y[i])^2)
+      total_len <- total_len + seg_len
+      if (total_len >= pullback) {
+        start_idx <- i
+        break
+      }
+    }
+  }
+
+  curve_pts <- pts[start_idx:end_idx, ]
 
   # Draw curve as line segments
   grobs[[1]] <- grid::linesGrob(
@@ -209,7 +271,7 @@ draw_curved_edge <- function(x1, y1, x2, y2, curvature, color, width, lty,
     gp = grid::gpar(col = color, lwd = width, lty = lty)
   )
 
-  # Draw arrow if needed
+  # Draw arrow at target if needed
   if (show_arrow) {
     # Arrow angle based on last segment of full curve (not truncated)
     angle <- point_angle(pts$x[n-1], pts$y[n-1], pts$x[n], pts$y[n])
@@ -222,12 +284,31 @@ draw_curved_edge <- function(x1, y1, x2, y2, curvature, color, width, lty,
     )
   }
 
+  # Draw arrow at source if bidirectional
+  if (bidirectional) {
+    # Arrow angle based on first segment of curve (pointing back)
+    angle_back <- point_angle(pts$x[2], pts$y[2], pts$x[1], pts$y[1])
+    arrow_pts_back <- arrow_points(x1, y1, angle_back, arrow_size)
+
+    grobs[[length(grobs) + 1]] <- grid::polygonGrob(
+      x = grid::unit(arrow_pts_back$x, "npc"),
+      y = grid::unit(arrow_pts_back$y, "npc"),
+      gp = grid::gpar(fill = color, col = color)
+    )
+  }
+
   do.call(grid::gList, grobs)
 }
 
 #' Draw Self-Loop
+#' @param x,y Node center coordinates.
+#' @param node_size Node radius.
+#' @param color Loop color.
+#' @param width Loop line width.
+#' @param lty Loop line type.
+#' @param rotation Angle in radians for loop direction (default: pi/2 = top).
 #' @keywords internal
-draw_self_loop <- function(x, y, node_size, color, width, lty) {
+draw_self_loop <- function(x, y, node_size, color, width, lty, rotation = pi/2) {
   # Get aspect ratio correction
   vp_width <- grid::convertWidth(grid::unit(1, "npc"), "inches", valueOnly = TRUE)
   vp_height <- grid::convertHeight(grid::unit(1, "npc"), "inches", valueOnly = TRUE)
@@ -237,7 +318,7 @@ draw_self_loop <- function(x, y, node_size, color, width, lty) {
 
   # Loop parameters
   loop_angle <- pi/8  # Angle spread for loop attachment points
-  rotation <- pi/2    # Direction of loop (top of node)
+  # rotation is now a parameter (default: pi/2 = top of node)
 
   # Points where loop attaches to node edge
   left_angle <- rotation + loop_angle

@@ -31,6 +31,7 @@ NULL
 #' @param donut_show_value For donut shape: show value in center? Default TRUE.
 #' @param donut_value_size For donut shape: font size for center value.
 #' @param donut_value_color For donut shape: color for center value text.
+#' @param node_names Alternative names for legend (separate from display labels).
 #' @return Modified sonnet_network object.
 #' @export
 #'
@@ -62,7 +63,8 @@ sn_nodes <- function(network,
                      donut_bg_color = NULL,
                      donut_show_value = NULL,
                      donut_value_size = NULL,
-                     donut_value_color = NULL) {
+                     donut_value_color = NULL,
+                     node_names = NULL) {
 
   # Auto-convert matrix/data.frame/igraph to sonnet_network
   network <- ensure_sonnet_network(network)
@@ -161,6 +163,10 @@ sn_nodes <- function(network,
 
   if (!is.null(donut_value_color)) {
     aes$donut_value_color <- donut_value_color
+  }
+
+  if (!is.null(node_names)) {
+    aes$node_names <- resolve_aesthetic(node_names, nodes_df, n)
   }
 
   # Apply aesthetics

@@ -64,6 +64,13 @@ NULL
 #' @param edge_label_color Edge label text color.
 #' @param edge_label_position Position along edge (0 = source, 0.5 = middle, 1 = target).
 #' @param edge_label_offset Perpendicular offset from edge line.
+#' @param bidirectional Logical. Show arrows at both ends of edges?
+#' @param loop_rotation Angle in radians for self-loop direction (default: pi/2 = top).
+#' @param curve_shape Spline tension for curved edges (-1 to 1, default: 0).
+#' @param curve_pivot Pivot position along edge for curve control point (0-1, default: 0.5).
+#' @param node_names Alternative names for legend (separate from display labels).
+#' @param legend Logical. Show legend?
+#' @param legend_position Legend position: "topright", "topleft", "bottomright", "bottomleft".
 #'
 #' @return Invisible NULL. Called for side effect of drawing.
 #' @export
@@ -131,7 +138,16 @@ soplot <- function(network, title = NULL, title_size = 14,
                       edge_label_size = NULL,
                       edge_label_color = NULL,
                       edge_label_position = NULL,
-                      edge_label_offset = NULL) {
+                      edge_label_offset = NULL,
+                      # Advanced edge options
+                      bidirectional = NULL,
+                      loop_rotation = NULL,
+                      curve_shape = NULL,
+                      curve_pivot = NULL,
+                      # Legend options
+                      node_names = NULL,
+                      legend = FALSE,
+                      legend_position = "topright") {
 
 
   # Set seed for deterministic layouts
@@ -202,7 +218,8 @@ soplot <- function(network, title = NULL, title_size = 14,
     donut_bg_color = donut_bg_color,
     donut_show_value = donut_show_value,
     donut_value_size = donut_value_size,
-    donut_value_color = donut_value_color
+    donut_value_color = donut_value_color,
+    node_names = node_names
   )
   node_aes <- node_aes[!sapply(node_aes, is.null)]
   if (length(node_aes) > 0) {
@@ -226,7 +243,11 @@ soplot <- function(network, title = NULL, title_size = 14,
     label_size = edge_label_size,
     label_color = edge_label_color,
     label_position = edge_label_position,
-    label_offset = edge_label_offset
+    label_offset = edge_label_offset,
+    bidirectional = bidirectional,
+    loop_rotation = loop_rotation,
+    curve_shape = curve_shape,
+    curve_pivot = curve_pivot
   )
   edge_aes <- edge_aes[!sapply(edge_aes, is.null)]
   if (length(edge_aes) > 0) {
@@ -269,6 +290,12 @@ soplot <- function(network, title = NULL, title_size = 14,
   label_grobs <- render_node_labels_grid(net)
   grid::grid.draw(label_grobs)
 
+  # Render legend if requested
+  if (isTRUE(legend)) {
+    legend_grobs <- render_legend_grid(net, position = legend_position)
+    grid::grid.draw(legend_grobs)
+  }
+
   grid::popViewport()
 
   # Draw title if provided
@@ -302,7 +329,10 @@ soplot <- function(network, title = NULL, title_size = 14,
     positive_color = positive_color, negative_color = negative_color,
     edge_labels = edge_labels, edge_label_size = edge_label_size,
     edge_label_color = edge_label_color, edge_label_position = edge_label_position,
-    edge_label_offset = edge_label_offset
+    edge_label_offset = edge_label_offset,
+    bidirectional = bidirectional, loop_rotation = loop_rotation,
+    curve_shape = curve_shape, curve_pivot = curve_pivot,
+    node_names = node_names, legend = legend, legend_position = legend_position
   )
   # Remove NULL values
   plot_params <- plot_params[!sapply(plot_params, is.null)]
@@ -368,6 +398,121 @@ create_grid_grob <- function(network, title = NULL) {
   }
 
   grid::gTree(children = children, name = "sonnet_plot")
+}
+
+#' Render Legend
+#'
+#' Create grid grobs for the network legend.
+#'
+#' @param network A SonnetNetwork object.
+#' @param position Legend position: "topright", "topleft", "bottomright", "bottomleft".
+#' @return A grid gList of legend grobs.
+#' @keywords internal
+render_legend_grid <- function(network, position = "topright") {
+  nodes <- network$get_nodes()
+  aes <- network$get_node_aes()
+  theme <- network$get_theme()
+
+  if (is.null(nodes) || nrow(nodes) == 0) return(grid::gList())
+
+  n <- nrow(nodes)
+
+  # Get names for legend (use node_names aesthetic if provided, otherwise node name/label)
+  if (!is.null(aes$node_names)) {
+    legend_names <- recycle_to_length(aes$node_names, n)
+  } else if (!is.null(nodes$name)) {
+    legend_names <- nodes$name
+  } else {
+    legend_names <- nodes$label
+  }
+
+  # Get fill colors
+  fills <- recycle_to_length(
+    if (!is.null(aes$fill)) aes$fill else "#4A90D9",
+    n
+  )
+
+  # Get unique name-color pairs (to avoid duplicate legend entries)
+  legend_data <- data.frame(
+    name = legend_names,
+    fill = fills,
+    stringsAsFactors = FALSE
+  )
+  legend_data <- unique(legend_data)
+
+  n_items <- nrow(legend_data)
+  if (n_items == 0) return(grid::gList())
+
+  # Legend styling
+  swatch_size <- 0.02  # Size of color swatch
+  text_size <- 8       # Text size
+  item_height <- 0.04  # Height per item
+  padding <- 0.02      # Padding from edge
+  spacing <- 0.01      # Space between swatch and text
+
+  # Calculate legend dimensions
+  legend_height <- n_items * item_height + padding
+  legend_width <- 0.15  # Fixed width
+
+  # Calculate position based on legend_position parameter
+  if (position == "topright") {
+    x_start <- 1 - padding - legend_width
+    y_start <- 1 - padding
+  } else if (position == "topleft") {
+    x_start <- padding
+    y_start <- 1 - padding
+  } else if (position == "bottomright") {
+    x_start <- 1 - padding - legend_width
+    y_start <- padding + legend_height
+  } else if (position == "bottomleft") {
+    x_start <- padding
+    y_start <- padding + legend_height
+  } else {
+    # Default to topright
+    x_start <- 1 - padding - legend_width
+    y_start <- 1 - padding
+  }
+
+  grobs <- list()
+
+  # Optional: Add legend background
+  bg_color <- if (!is.null(theme)) theme$get("background") else "white"
+  grobs[[1]] <- grid::rectGrob(
+    x = grid::unit(x_start - padding/2, "npc"),
+    y = grid::unit(y_start - legend_height/2 + padding/2, "npc"),
+    width = grid::unit(legend_width + padding, "npc"),
+    height = grid::unit(legend_height + padding, "npc"),
+    just = c("left", "center"),
+    gp = grid::gpar(fill = adjustcolor(bg_color, alpha.f = 0.9),
+                    col = "gray70", lwd = 0.5)
+  )
+
+  # Draw each legend item
+  for (i in seq_len(n_items)) {
+    y_pos <- y_start - (i - 0.5) * item_height
+
+    # Color swatch
+    grobs[[length(grobs) + 1]] <- grid::rectGrob(
+      x = grid::unit(x_start, "npc"),
+      y = grid::unit(y_pos, "npc"),
+      width = grid::unit(swatch_size, "npc"),
+      height = grid::unit(swatch_size, "npc"),
+      just = c("left", "center"),
+      gp = grid::gpar(fill = legend_data$fill[i], col = "gray50", lwd = 0.5)
+    )
+
+    # Text label
+    text_color <- if (!is.null(theme)) theme$get("label_color") else "black"
+    grobs[[length(grobs) + 1]] <- grid::textGrob(
+      label = legend_data$name[i],
+      x = grid::unit(x_start + swatch_size + spacing, "npc"),
+      y = grid::unit(y_pos, "npc"),
+      just = c("left", "center"),
+      gp = grid::gpar(fontsize = text_size, col = text_color)
+    )
+  }
+
+  do.call(grid::gList, grobs)
 }
 
 #' @rdname soplot

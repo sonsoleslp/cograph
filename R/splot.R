@@ -26,7 +26,10 @@ NULL
 #' @param node_size Node size(s). Single value or vector. Default 3.
 #' @param node_size2 Secondary node size for ellipse/rectangle height.
 #' @param node_shape Node shape(s): "circle", "square", "triangle", "diamond",
-#'   "pentagon", "hexagon", "star", "heart", "ellipse", "cross".
+#'   "pentagon", "hexagon", "star", "heart", "ellipse", "cross", or any custom
+#'   SVG shape registered with register_svg_shape().
+#' @param node_svg Custom SVG for nodes: path to SVG file OR inline SVG string.
+#' @param svg_preserve_aspect Logical: maintain SVG aspect ratio? Default TRUE.
 #' @param node_fill Node fill color(s).
 #' @param node_border_color Node border color(s).
 #' @param node_border_width Node border width(s).
@@ -36,6 +39,11 @@ NULL
 #' @param label_size Label character expansion factor.
 #' @param label_color Label text color.
 #' @param label_position Label position: "center", "above", "below", "left", "right".
+#' @param label_fontface Font face for labels: "plain", "bold", "italic", "bold.italic". Default "plain".
+#' @param label_fontfamily Font family for labels: "sans", "serif", "mono". Default "sans".
+#' @param label_hjust Horizontal justification (0=left, 0.5=center, 1=right). Default 0.5.
+#' @param label_vjust Vertical justification (0=bottom, 0.5=center, 1=top). Default 0.5.
+#' @param label_angle Text rotation angle in degrees. Default 0.
 #'
 #' @section Pie/Donut Nodes:
 #' @param pie_values List of numeric vectors for pie chart nodes. Each element
@@ -48,9 +56,15 @@ NULL
 #' @param donut_border_width Border width for donut rings. NULL uses node_border_width.
 #' @param donut_inner_ratio Inner radius ratio for donut (0-1). Default 0.5.
 #' @param donut_bg_color Background color for unfilled donut portion.
+#' @param donut_shape Base shape for donut: "circle", "square", "hexagon", "triangle", "diamond", "pentagon". Default "circle".
 #' @param donut_show_value Logical: show value in donut center? Default TRUE.
 #' @param donut_value_size Font size for donut center value.
 #' @param donut_value_color Color for donut center value.
+#' @param donut_value_fontface Font face for donut center value: "plain", "bold", "italic", "bold.italic". Default "bold".
+#' @param donut_value_fontfamily Font family for donut center value: "sans", "serif", "mono". Default "sans".
+#' @param donut_value_digits Decimal places for donut center value. Default 2.
+#' @param donut_value_prefix Text before donut center value (e.g., "$"). Default "".
+#' @param donut_value_suffix Text after donut center value (e.g., "%"). Default "".
 #' @param donut2_values List of values for inner donut ring (for double donut).
 #' @param donut2_colors List of color vectors for inner donut ring segments.
 #' @param donut2_inner_ratio Inner radius ratio for inner donut ring. Default 0.4.
@@ -66,6 +80,10 @@ NULL
 #' @param edge_label_bg Edge label background color.
 #' @param edge_label_position Position along edge (0-1).
 #' @param edge_label_fontface Font face: 1=plain, 2=bold, 3=italic.
+#' @param edge_label_shadow Logical: enable drop shadow for edge labels? Default FALSE.
+#' @param edge_label_shadow_color Color for edge label shadow. Default "gray40".
+#' @param edge_label_shadow_offset Offset distance for shadow in points. Default 0.5.
+#' @param edge_label_shadow_alpha Transparency for shadow (0-1). Default 0.5.
 #' @param edge_style Line type(s): 1=solid, 2=dashed, 3=dotted, etc.
 #' @param curvature Edge curvature. 0 for straight, positive/negative for curves.
 #' @param curve_scale Logical: auto-curve reciprocal edges?
@@ -172,6 +190,8 @@ splot <- function(
     node_size = NULL,
     node_size2 = NULL,
     node_shape = "circle",
+    node_svg = NULL,
+    svg_preserve_aspect = TRUE,
     node_fill = NULL,
     node_border_color = NULL,
     node_border_width = 1,
@@ -180,6 +200,11 @@ splot <- function(
     label_size = NULL,
     label_color = "black",
     label_position = "center",
+    label_fontface = "plain",
+    label_fontfamily = "sans",
+    label_hjust = 0.5,
+    label_vjust = 0.5,
+    label_angle = 0,
 
     # Pie/Donut
     pie_values = NULL,
@@ -190,9 +215,15 @@ splot <- function(
     donut_border_width = NULL,
     donut_inner_ratio = 0.5,
     donut_bg_color = "gray90",
+    donut_shape = "circle",
     donut_show_value = TRUE,
     donut_value_size = 0.8,
     donut_value_color = "black",
+    donut_value_fontface = "bold",
+    donut_value_fontfamily = "sans",
+    donut_value_digits = 2,
+    donut_value_prefix = "",
+    donut_value_suffix = "",
     donut2_values = NULL,
     donut2_colors = NULL,
     donut2_inner_ratio = 0.4,
@@ -207,6 +238,10 @@ splot <- function(
     edge_label_bg = "white",
     edge_label_position = 0.5,
     edge_label_fontface = 1,
+    edge_label_shadow = FALSE,
+    edge_label_shadow_color = "gray40",
+    edge_label_shadow_offset = 0.5,
+    edge_label_shadow_alpha = 0.5,
     edge_style = 1,
     curvature = 0,
     curve_scale = TRUE,
@@ -339,6 +374,18 @@ splot <- function(
   }
 
   # Node shapes
+  # Handle custom SVG if provided
+  if (!is.null(node_svg)) {
+    # Register SVG as a temporary shape
+    temp_svg_name <- paste0("_splot_svg_", format(Sys.time(), "%H%M%S"))
+    tryCatch({
+      register_svg_shape(temp_svg_name, node_svg)
+      node_shape <- temp_svg_name
+    }, error = function(e) {
+      warning("Failed to register SVG shape: ", e$message, ". Using default shape.",
+              call. = FALSE)
+    })
+  }
   shapes <- resolve_shapes(node_shape, n_nodes)
 
   # Node colors
@@ -594,6 +641,10 @@ splot <- function(
       edge_label_bg = edge_label_bg,
       edge_label_position = edge_label_position,
       edge_label_fontface = edge_label_fontface,
+      edge_label_shadow = edge_label_shadow,
+      edge_label_shadow_color = edge_label_shadow_color,
+      edge_label_shadow_offset = edge_label_shadow_offset,
+      edge_label_shadow_alpha = edge_label_shadow_alpha,
       # CI underlay parameters
       edge_ci = edge_ci_vec,
       edge_ci_scale = edge_ci_scale,
@@ -624,9 +675,15 @@ splot <- function(
     donut_border_width = donut_border_width,
     donut_inner_ratio = donut_inner_ratio,
     donut_bg_color = donut_bg_color,
+    donut_shape = donut_shape,
     donut_show_value = donut_show_value,
     donut_value_size = donut_value_size,
     donut_value_color = donut_value_color,
+    donut_value_fontface = donut_value_fontface,
+    donut_value_fontfamily = donut_value_fontfamily,
+    donut_value_digits = donut_value_digits,
+    donut_value_prefix = donut_value_prefix,
+    donut_value_suffix = donut_value_suffix,
     donut2_values = donut2_values,
     donut2_colors = donut2_colors,
     donut2_inner_ratio = donut2_inner_ratio,
@@ -634,6 +691,11 @@ splot <- function(
     label_size = label_cex,
     label_color = label_colors,
     label_position = label_position,
+    label_fontface = label_fontface,
+    label_fontfamily = label_fontfamily,
+    label_hjust = label_hjust,
+    label_vjust = label_vjust,
+    label_angle = label_angle,
     usePCH = usePCH
   )
 
@@ -683,6 +745,8 @@ render_edges_splot <- function(edges, layout, node_sizes, shapes,
                                bidirectional, loop_rotation, edge_labels,
                                edge_label_size, edge_label_color, edge_label_bg,
                                edge_label_position, edge_label_fontface,
+                               edge_label_shadow = FALSE, edge_label_shadow_color = "gray40",
+                               edge_label_shadow_offset = 0.5, edge_label_shadow_alpha = 0.5,
                                edge_ci = NULL, edge_ci_scale = 2.0,
                                edge_ci_alpha = 0.15, edge_ci_color = NULL,
                                edge_ci_style = 2, edge_ci_arrows = FALSE) {
@@ -862,7 +926,11 @@ render_edges_splot <- function(edges, layout, node_sizes, shapes,
           cex = edge_label_size,
           col = edge_label_color,
           bg = edge_label_bg,
-          font = edge_label_fontface
+          font = edge_label_fontface,
+          shadow = edge_label_shadow,
+          shadow_color = edge_label_shadow_color,
+          shadow_offset = edge_label_shadow_offset,
+          shadow_alpha = edge_label_shadow_alpha
         )
       }
     }
@@ -875,10 +943,15 @@ render_edges_splot <- function(edges, layout, node_sizes, shapes,
 render_nodes_splot <- function(layout, node_size, node_size2, node_shape, node_fill,
                                node_border_color, node_border_width, pie_values, pie_colors,
                                pie_border_width, donut_values, donut_colors, donut_border_width,
-                               donut_inner_ratio, donut_bg_color,
+                               donut_inner_ratio, donut_bg_color, donut_shape,
                                donut_show_value, donut_value_size, donut_value_color,
+                               donut_value_fontface = "bold", donut_value_fontfamily = "sans",
+                               donut_value_digits = 2, donut_value_prefix = "",
+                               donut_value_suffix = "",
                                donut2_values, donut2_colors, donut2_inner_ratio,
                                labels, label_size, label_color, label_position,
+                               label_fontface = "plain", label_fontfamily = "sans",
+                               label_hjust = 0.5, label_vjust = 0.5, label_angle = 0,
                                usePCH = FALSE) {
 
   n <- nrow(layout)
@@ -953,20 +1026,50 @@ render_nodes_splot <- function(layout, node_size, node_size2, node_shape, node_f
       donut_vals <- donut_values[[i]]
       donut_cols <- if (!is.null(donut_colors) && length(donut_colors) >= i) donut_colors[[i]] else NULL
 
-      draw_donut_node_base(
-        x, y, node_size[i],
-        values = donut_vals,
-        colors = donut_cols,
-        default_color = node_fill[i],
-        inner_ratio = donut_inner_ratio,
-        bg_color = donut_bg_color,
-        border.col = node_border_color[i],
-        border.width = node_border_width[i],
-        donut_border.width = donut_border_width,
-        show_value = donut_show_value,
-        value_cex = donut_value_size,
-        value_col = donut_value_color
-      )
+      if (donut_shape != "circle") {
+        # Use polygon donut for non-circular shapes
+        draw_polygon_donut_node_base(
+          x, y, node_size[i],
+          values = donut_vals,
+          colors = donut_cols,
+          default_color = node_fill[i],
+          inner_ratio = donut_inner_ratio,
+          bg_color = donut_bg_color,
+          donut_shape = donut_shape,
+          border.col = node_border_color[i],
+          border.width = node_border_width[i],
+          donut_border.width = donut_border_width,
+          show_value = donut_show_value,
+          value_cex = donut_value_size,
+          value_col = donut_value_color,
+          value_fontface = donut_value_fontface,
+          value_fontfamily = donut_value_fontfamily,
+          value_digits = donut_value_digits,
+          value_prefix = donut_value_prefix,
+          value_suffix = donut_value_suffix
+        )
+      } else {
+        # Use circular donut (default)
+        draw_donut_node_base(
+          x, y, node_size[i],
+          values = donut_vals,
+          colors = donut_cols,
+          default_color = node_fill[i],
+          inner_ratio = donut_inner_ratio,
+          bg_color = donut_bg_color,
+          border.col = node_border_color[i],
+          border.width = node_border_width[i],
+          donut_border.width = donut_border_width,
+          show_value = donut_show_value,
+          value_cex = donut_value_size,
+          value_col = donut_value_color,
+          value_fontface = donut_value_fontface,
+          value_fontfamily = donut_value_fontfamily,
+          value_digits = donut_value_digits,
+          value_prefix = donut_value_prefix,
+          value_suffix = donut_value_suffix
+        )
+      }
 
     } else if (has_pie) {
       # Pie only
@@ -1023,11 +1126,25 @@ render_nodes_splot <- function(layout, node_size, node_size2, node_shape, node_f
         }
         # "center" - no offset
 
+        # Convert fontface string to numeric
+        fontface_num <- switch(label_fontface,
+          "plain" = 1,
+          "bold" = 2,
+          "italic" = 3,
+          "bold.italic" = 4,
+          1
+        )
+
         draw_node_label_base(
           lx, ly,
           label = labels[i],
           cex = label_size[i],
-          col = label_color[i]
+          col = label_color[i],
+          font = fontface_num,
+          family = label_fontfamily,
+          hjust = label_hjust,
+          vjust = label_vjust,
+          srt = label_angle
         )
       }
     }

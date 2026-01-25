@@ -11,7 +11,11 @@ NULL
 #'   Matrices and other inputs are auto-converted.
 #' @param size Node size. Can be a single value, vector (per-node), or column name.
 #' @param shape Node shape. Options: "circle", "square", "triangle", "diamond",
-#'   "pentagon", "hexagon", "ellipse", "heart", "star", "pie", "donut", "cross", "rectangle".
+#'   "pentagon", "hexagon", "ellipse", "heart", "star", "pie", "donut", "cross", "rectangle",
+#'   or any custom SVG shape registered with register_svg_shape().
+#' @param node_svg Custom SVG for node shape: path to SVG file OR inline SVG string.
+#'   Overrides shape parameter when provided.
+#' @param svg_preserve_aspect Logical: maintain SVG aspect ratio? Default TRUE.
 #' @param fill Node fill color. Can be a single color, vector, or column name.
 #' @param border_color Node border color.
 #' @param border_width Node border width.
@@ -29,12 +33,24 @@ NULL
 #' @param donut_border_width Border width for donut chart nodes.
 #' @param donut_inner_ratio For donut shape: inner radius ratio (0-1). Default 0.5.
 #' @param donut_bg_color For donut shape: background color for unfilled portion.
+#' @param donut_shape For donut: base shape for ring ("circle", "square", "hexagon", "triangle", "diamond", "pentagon"). Default "circle".
 #' @param donut_show_value For donut shape: show value in center? Default TRUE.
 #' @param donut_value_size For donut shape: font size for center value.
 #' @param donut_value_color For donut shape: color for center value text.
+#' @param donut_value_fontface For donut shape: font face for center value ("plain", "bold", "italic", "bold.italic"). Default "bold".
+#' @param donut_value_fontfamily For donut shape: font family for center value ("sans", "serif", "mono"). Default "sans".
+#' @param donut_value_digits For donut shape: decimal places for value display. Default 2.
+#' @param donut_value_prefix For donut shape: text before value (e.g., "$"). Default "".
+#' @param donut_value_suffix For donut shape: text after value (e.g., "%"). Default "".
+#' @param donut_value_format For donut shape: custom format function (overrides digits).
 #' @param donut2_values For double donut: list of values for inner donut ring.
 #' @param donut2_colors For double donut: colors for inner donut ring segments.
 #' @param donut2_inner_ratio For double donut: inner radius ratio for inner donut ring. Default 0.4.
+#' @param label_fontface Font face for node labels: "plain", "bold", "italic", "bold.italic". Default "plain".
+#' @param label_fontfamily Font family for node labels: "sans", "serif", "mono", or system font. Default "sans".
+#' @param label_hjust Horizontal justification for node labels (0=left, 0.5=center, 1=right). Default 0.5.
+#' @param label_vjust Vertical justification for node labels (0=bottom, 0.5=center, 1=top). Default 0.5.
+#' @param label_angle Text rotation angle in degrees for node labels. Default 0.
 #' @param node_names Alternative names for legend (separate from display labels).
 #' @return Modified sonnet_network object.
 #' @export
@@ -50,6 +66,8 @@ NULL
 sn_nodes <- function(network,
                      size = NULL,
                      shape = NULL,
+                     node_svg = NULL,
+                     svg_preserve_aspect = NULL,
                      fill = NULL,
                      border_color = NULL,
                      border_width = NULL,
@@ -66,12 +84,24 @@ sn_nodes <- function(network,
                      donut_border_width = NULL,
                      donut_inner_ratio = NULL,
                      donut_bg_color = NULL,
+                     donut_shape = NULL,
                      donut_show_value = NULL,
                      donut_value_size = NULL,
                      donut_value_color = NULL,
+                     donut_value_fontface = NULL,
+                     donut_value_fontfamily = NULL,
+                     donut_value_digits = NULL,
+                     donut_value_prefix = NULL,
+                     donut_value_suffix = NULL,
+                     donut_value_format = NULL,
                      donut2_values = NULL,
                      donut2_colors = NULL,
                      donut2_inner_ratio = NULL,
+                     label_fontface = NULL,
+                     label_fontfamily = NULL,
+                     label_hjust = NULL,
+                     label_vjust = NULL,
+                     label_angle = NULL,
                      node_names = NULL) {
 
   # Auto-convert matrix/data.frame/igraph to sonnet_network
@@ -93,6 +123,25 @@ sn_nodes <- function(network,
 
   if (!is.null(shape)) {
     aes$shape <- resolve_aesthetic(shape, nodes_df, n)
+  }
+
+  if (!is.null(node_svg)) {
+    aes$node_svg <- node_svg
+    # Register as temporary SVG shape if not already registered
+    if (!is.null(node_svg) && is.character(node_svg)) {
+      temp_name <- paste0("_temp_svg_", substr(digest::digest(node_svg), 1, 8))
+      if (!temp_name %in% list_svg_shapes()) {
+        tryCatch(
+          register_svg_shape(temp_name, node_svg),
+          error = function(e) warning("Failed to register SVG: ", e$message, call. = FALSE)
+        )
+      }
+      aes$shape <- temp_name
+    }
+  }
+
+  if (!is.null(svg_preserve_aspect)) {
+    aes$svg_preserve_aspect <- svg_preserve_aspect
   }
 
   if (!is.null(fill)) {
@@ -165,6 +214,15 @@ sn_nodes <- function(network,
     aes$donut_bg_color <- donut_bg_color
   }
 
+  if (!is.null(donut_shape)) {
+    valid_shapes <- c("circle", "square", "hexagon", "triangle", "diamond", "pentagon")
+    if (!donut_shape %in% valid_shapes) {
+      stop("donut_shape must be one of: ", paste(valid_shapes, collapse = ", "),
+           call. = FALSE)
+    }
+    aes$donut_shape <- donut_shape
+  }
+
   if (!is.null(donut_show_value)) {
     aes$donut_show_value <- donut_show_value
   }
@@ -177,6 +235,38 @@ sn_nodes <- function(network,
     aes$donut_value_color <- donut_value_color
   }
 
+  if (!is.null(donut_value_fontface)) {
+    valid_faces <- c("plain", "bold", "italic", "bold.italic")
+    if (!donut_value_fontface %in% valid_faces) {
+      stop("donut_value_fontface must be one of: ", paste(valid_faces, collapse = ", "),
+           call. = FALSE)
+    }
+    aes$donut_value_fontface <- donut_value_fontface
+  }
+
+  if (!is.null(donut_value_fontfamily)) {
+    aes$donut_value_fontfamily <- donut_value_fontfamily
+  }
+
+  if (!is.null(donut_value_digits)) {
+    aes$donut_value_digits <- donut_value_digits
+  }
+
+  if (!is.null(donut_value_prefix)) {
+    aes$donut_value_prefix <- donut_value_prefix
+  }
+
+  if (!is.null(donut_value_suffix)) {
+    aes$donut_value_suffix <- donut_value_suffix
+  }
+
+  if (!is.null(donut_value_format)) {
+    if (!is.function(donut_value_format)) {
+      stop("donut_value_format must be a function", call. = FALSE)
+    }
+    aes$donut_value_format <- donut_value_format
+  }
+
   if (!is.null(donut2_values)) {
     aes$donut2_values <- donut2_values
   }
@@ -187,6 +277,31 @@ sn_nodes <- function(network,
 
   if (!is.null(donut2_inner_ratio)) {
     aes$donut2_inner_ratio <- donut2_inner_ratio
+  }
+
+  if (!is.null(label_fontface)) {
+    valid_faces <- c("plain", "bold", "italic", "bold.italic")
+    if (!label_fontface %in% valid_faces) {
+      stop("label_fontface must be one of: ", paste(valid_faces, collapse = ", "),
+           call. = FALSE)
+    }
+    aes$label_fontface <- label_fontface
+  }
+
+  if (!is.null(label_fontfamily)) {
+    aes$label_fontfamily <- label_fontfamily
+  }
+
+  if (!is.null(label_hjust)) {
+    aes$label_hjust <- label_hjust
+  }
+
+  if (!is.null(label_vjust)) {
+    aes$label_vjust <- label_vjust
+  }
+
+  if (!is.null(label_angle)) {
+    aes$label_angle <- label_angle
   }
 
   if (!is.null(node_names)) {

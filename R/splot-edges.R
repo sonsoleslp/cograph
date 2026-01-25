@@ -308,9 +308,15 @@ draw_self_loop_base <- function(x, y, node_size, col = "gray50", lwd = 1,
 #' @param col Text color.
 #' @param bg Background color (or NA for none).
 #' @param font Font face.
+#' @param shadow Logical: enable drop shadow?
+#' @param shadow_color Shadow color.
+#' @param shadow_offset Shadow offset distance.
+#' @param shadow_alpha Shadow transparency.
 #' @keywords internal
 draw_edge_label_base <- function(x, y, label, cex = 0.8, col = "gray30",
-                                 bg = "white", font = 1) {
+                                 bg = "white", font = 1,
+                                 shadow = FALSE, shadow_color = "gray40",
+                                 shadow_offset = 0.5, shadow_alpha = 0.5) {
   if (is.null(label) || is.na(label) || label == "") {
     return(invisible())
   }
@@ -332,6 +338,22 @@ draw_edge_label_base <- function(x, y, label, cex = 0.8, col = "gray30",
     )
   }
 
+  # Draw shadow text first (if enabled)
+  if (shadow) {
+    # Convert points to user coordinate offset
+    shadow_off <- shadow_offset * 0.01  # Scale for user coordinates
+    shadow_col <- adjust_alpha(shadow_color, shadow_alpha)
+
+    graphics::text(
+      x = x + shadow_off, y = y - shadow_off,
+      labels = label,
+      cex = cex,
+      col = shadow_col,
+      font = font
+    )
+  }
+
+  # Draw main text
   graphics::text(
     x = x, y = y,
     labels = label,

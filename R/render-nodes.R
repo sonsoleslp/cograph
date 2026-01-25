@@ -73,12 +73,15 @@ render_nodes_grid <- function(network) {
       extra_args$pie_border_width <- aes$pie_border_width
     }
     # Donut-specific parameters
-    if (shapes[i] == "donut") {
+    if (shapes[i] == "donut" || shapes[i] == "polygon_donut") {
       if (!is.null(aes$donut_inner_ratio)) {
         extra_args$inner_ratio <- aes$donut_inner_ratio
       }
       if (!is.null(aes$donut_bg_color)) {
         extra_args$bg_color <- aes$donut_bg_color
+      }
+      if (!is.null(aes$donut_shape)) {
+        extra_args$donut_shape <- aes$donut_shape
       }
       if (!is.null(aes$donut_show_value)) {
         extra_args$show_value <- aes$donut_show_value
@@ -88,6 +91,24 @@ render_nodes_grid <- function(network) {
       }
       if (!is.null(aes$donut_value_color)) {
         extra_args$value_color <- aes$donut_value_color
+      }
+      if (!is.null(aes$donut_value_fontface)) {
+        extra_args$value_fontface <- aes$donut_value_fontface
+      }
+      if (!is.null(aes$donut_value_fontfamily)) {
+        extra_args$value_fontfamily <- aes$donut_value_fontfamily
+      }
+      if (!is.null(aes$donut_value_digits)) {
+        extra_args$value_digits <- aes$donut_value_digits
+      }
+      if (!is.null(aes$donut_value_prefix)) {
+        extra_args$value_prefix <- aes$donut_value_prefix
+      }
+      if (!is.null(aes$donut_value_suffix)) {
+        extra_args$value_suffix <- aes$donut_value_suffix
+      }
+      if (!is.null(aes$donut_value_format)) {
+        extra_args$value_format <- aes$donut_value_format
       }
       if (!is.null(aes$donut_border_width)) {
         extra_args$donut_border_width <- aes$donut_border_width
@@ -239,6 +260,28 @@ render_node_labels_grid <- function(network) {
     n
   )
 
+  # Label font properties
+  label_fontfaces <- recycle_to_length(
+    if (!is.null(aes$label_fontface)) aes$label_fontface else "plain",
+    n
+  )
+  label_fontfamilies <- recycle_to_length(
+    if (!is.null(aes$label_fontfamily)) aes$label_fontfamily else "sans",
+    n
+  )
+  label_hjusts <- recycle_to_length(
+    if (!is.null(aes$label_hjust)) aes$label_hjust else 0.5,
+    n
+  )
+  label_vjusts <- recycle_to_length(
+    if (!is.null(aes$label_vjust)) aes$label_vjust else 0.5,
+    n
+  )
+  label_angles <- recycle_to_length(
+    if (!is.null(aes$label_angle)) aes$label_angle else 0,
+    n
+  )
+
   # Create label grobs
   grobs <- vector("list", n)
   for (i in seq_len(n)) {
@@ -255,13 +298,27 @@ render_node_labels_grid <- function(network) {
       right = { x <- x + offset }
     )
 
+    # Convert fontface string to numeric
+    fontface_num <- switch(label_fontfaces[i],
+      "plain" = 1,
+      "bold" = 2,
+      "italic" = 3,
+      "bold.italic" = 4,
+      1
+    )
+
     grobs[[i]] <- grid::textGrob(
       label = labels[i],
       x = grid::unit(x, "npc"),
       y = grid::unit(y, "npc"),
+      hjust = label_hjusts[i],
+      vjust = label_vjusts[i],
+      rot = label_angles[i],
       gp = grid::gpar(
         fontsize = label_sizes[i],
-        col = label_colors[i]
+        col = label_colors[i],
+        fontface = fontface_num,
+        fontfamily = label_fontfamilies[i]
       )
     )
   }

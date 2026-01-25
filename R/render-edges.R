@@ -507,6 +507,12 @@ render_edge_labels_grid <- function(network) {
   label_border_color <- if (!is.null(aes$label_border_color)) aes$label_border_color else "gray50"
   label_underline <- if (!is.null(aes$label_underline)) aes$label_underline else FALSE
 
+  # Shadow options
+  label_shadow <- if (!is.null(aes$label_shadow)) aes$label_shadow else FALSE
+  label_shadow_color <- if (!is.null(aes$label_shadow_color)) aes$label_shadow_color else "gray40"
+  label_shadow_offset <- if (!is.null(aes$label_shadow_offset)) aes$label_shadow_offset else 0.5
+  label_shadow_alpha <- if (!is.null(aes$label_shadow_alpha)) aes$label_shadow_alpha else 0.5
+
   # Get curvature for positioning
   curvatures <- recycle_to_length(
     if (!is.null(aes$curvature)) aes$curvature else 0,
@@ -698,7 +704,21 @@ render_edge_labels_grid <- function(network) {
       1
     )
 
-    # Draw text
+    # Draw shadow text first (if enabled)
+    if (label_shadow) {
+      # Calculate shadow offset in NPC units (points to NPC conversion)
+      shadow_offset_npc <- label_shadow_offset * 0.002
+      shadow_col <- adjust_alpha(label_shadow_color, label_shadow_alpha)
+
+      label_grobs[[length(label_grobs) + 1]] <- grid::textGrob(
+        label = labels[i],
+        x = grid::unit(x + shadow_offset_npc, "npc"),
+        y = grid::unit(y - shadow_offset_npc, "npc"),
+        gp = grid::gpar(fontsize = label_size, col = shadow_col, fontface = fontface_num)
+      )
+    }
+
+    # Draw main text
     label_grobs[[length(label_grobs) + 1]] <- grid::textGrob(
       label = labels[i],
       x = grid::unit(x, "npc"),

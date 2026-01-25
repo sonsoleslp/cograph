@@ -24,10 +24,21 @@ register_builtin_shapes <- function() {
   register_shape("star", draw_star)
   register_shape("pie", draw_pie)
   register_shape("donut", draw_donut)
+  register_shape("polygon_donut", draw_polygon_donut)
   register_shape("donut_pie", draw_donut_pie)
   register_shape("double_donut_pie", draw_double_donut_pie)
   register_shape("cross", draw_cross)
   register_shape("plus", draw_cross)  # Alias
+
+  # AI-themed shapes
+  register_shape("neural", draw_neural)
+  register_shape("chip", draw_chip)
+  register_shape("robot", draw_robot)
+  register_shape("brain", draw_brain)
+  register_shape("network", draw_network)
+  register_shape("database", draw_database)
+  register_shape("cloud", draw_cloud)
+  register_shape("gear", draw_gear)
 
   # Rectangle (alias for square with different aspect)
   register_shape("rectangle", function(x, y, size, fill, border_color,

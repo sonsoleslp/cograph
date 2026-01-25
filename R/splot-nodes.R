@@ -57,8 +57,28 @@ draw_node_base <- function(x, y, size, size2 = NULL, shape = "circle",
       lwd = border.width
     )
 
+  } else if (shape == "neural") {
+    draw_neural_node_base(x, y, size, col, border.col, border.width, ...)
+
+  } else if (shape == "chip") {
+    draw_chip_node_base(x, y, size, col, border.col, border.width, ...)
+
+  } else if (shape == "robot") {
+    draw_robot_node_base(x, y, size, col, border.col, border.width)
+
+  } else if (shape == "network") {
+    draw_network_node_base(x, y, size, col, border.col, border.width)
+
+  } else if (shape == "database") {
+    draw_database_node_base(x, y, size, col, border.col, border.width)
+
+  } else if (startsWith(shape, "_") && !is.null(get_svg_shape(shape))) {
+    # Custom SVG shape
+    svg_data <- get_svg_shape(shape)
+    draw_svg_shape_base(x, y, size, svg_data, col, border.col, border.width)
+
   } else {
-    # All other shapes via polygon
+    # All other shapes via polygon (including gear, cloud, brain)
     verts <- get_shape_vertices(shape, x, y, size, size2, ...)
     graphics::polygon(
       x = verts$x,
@@ -164,6 +184,115 @@ draw_pie_node_base <- function(x, y, size, values, colors = NULL,
   }
 }
 
+#' Draw Polygon Donut Node (Base R)
+#'
+#' Renders a donut on a polygon shape where segments follow polygon edges.
+#'
+#' @keywords internal
+draw_polygon_donut_node_base <- function(x, y, size, values, colors = NULL,
+                                         default_color = NULL,
+                                         inner_ratio = 0.5, bg_color = "gray90",
+                                         donut_shape = "square",
+                                         border.col = "black", border.width = 1,
+                                         donut_border.width = NULL,
+                                         show_value = TRUE, value_cex = 0.8,
+                                         value_col = "black",
+                                         value_fontface = "bold", value_fontfamily = "sans",
+                                         value_digits = 2, value_prefix = "",
+                                         value_suffix = "") {
+  ring_border_width <- if (!is.null(donut_border.width)) donut_border.width else border.width
+
+  # Get outer polygon vertices
+  outer <- get_donut_base_vertices(donut_shape, x, y, size)
+
+  # Get inner polygon vertices
+  inner <- inset_polygon_vertices(outer, inner_ratio)
+
+  n_verts <- length(outer$x)
+  center_value <- NULL
+
+  # Helper to draw a ring segment
+  draw_ring_segment <- function(idx_start, idx_end, segment_col) {
+    seg_x <- c(outer$x[idx_start], outer$x[idx_end], inner$x[idx_end], inner$x[idx_start])
+    seg_y <- c(outer$y[idx_start], outer$y[idx_end], inner$y[idx_end], inner$y[idx_start])
+    graphics::polygon(seg_x, seg_y, col = segment_col, border = NA)
+  }
+
+  if (is.null(values) || length(values) == 0) {
+    values <- 1
+    if (is.null(colors)) colors <- if (!is.null(default_color)) default_color else "#4A90D9"
+  }
+
+  if (length(values) == 1) {
+    # Progress donut
+    prop <- max(0, min(1, values))
+    center_value <- prop
+
+    # Draw background ring
+    for (i in seq_len(n_verts)) {
+      i_next <- if (i == n_verts) 1 else i + 1
+      draw_ring_segment(i, i_next, bg_color)
+    }
+
+    # Draw filled portion
+    if (prop > 0) {
+      segment_col <- if (!is.null(colors)) colors[1] else "#4A90D9"
+      filled_verts <- max(1, round(prop * n_verts))
+
+      for (i in seq_len(filled_verts)) {
+        i_next <- if (i == n_verts) 1 else i + 1
+        draw_ring_segment(i, i_next, segment_col)
+      }
+    }
+  } else {
+    # Multi-segment donut
+    props <- values / sum(values)
+    n_seg <- length(props)
+
+    if (is.null(colors)) {
+      colors <- grDevices::rainbow(n_seg, s = 0.7, v = 0.9)
+    }
+    colors <- recycle_to_length(colors, n_seg)
+
+    vert_idx <- 1
+    for (seg in seq_len(n_seg)) {
+      seg_verts <- max(1, round(props[seg] * n_verts))
+
+      for (j in seq_len(seg_verts)) {
+        if (vert_idx > n_verts) break
+        i_next <- if (vert_idx == n_verts) 1 else vert_idx + 1
+        draw_ring_segment(vert_idx, i_next, colors[seg])
+        vert_idx <- vert_idx + 1
+      }
+    }
+  }
+
+  # Outer border
+  graphics::polygon(outer$x, outer$y, col = NA, border = border.col, lwd = ring_border_width)
+
+  # Inner border and fill
+  graphics::polygon(inner$x, inner$y, col = "white", border = border.col, lwd = ring_border_width)
+
+  # Show value in center
+  if (show_value && !is.null(center_value)) {
+    formatted_value <- round(center_value, value_digits)
+    label_text <- paste0(value_prefix, formatted_value, value_suffix)
+
+    fontface_num <- switch(value_fontface,
+      "plain" = 1, "bold" = 2, "italic" = 3, "bold.italic" = 4, 2
+    )
+
+    graphics::text(
+      x = x, y = y,
+      labels = label_text,
+      cex = value_cex,
+      col = value_col,
+      font = fontface_num,
+      family = value_fontfamily
+    )
+  }
+}
+
 #' Draw Donut Chart Node
 #'
 #' Renders a node as a donut chart with an inner hole.
@@ -181,6 +310,11 @@ draw_pie_node_base <- function(x, y, size, values, colors = NULL,
 #' @param show_value Logical: show value in center?
 #' @param value_cex Text size for center value.
 #' @param value_col Text color for center value.
+#' @param value_fontface Font face for center value ("plain", "bold", "italic", "bold.italic").
+#' @param value_fontfamily Font family for center value ("sans", "serif", "mono").
+#' @param value_digits Decimal places for value display.
+#' @param value_prefix Text before value (e.g., "$").
+#' @param value_suffix Text after value (e.g., "%").
 #' @keywords internal
 draw_donut_node_base <- function(x, y, size, values, colors = NULL,
                                  default_color = NULL,
@@ -188,7 +322,10 @@ draw_donut_node_base <- function(x, y, size, values, colors = NULL,
                                  border.col = "black", border.width = 1,
                                  donut_border.width = NULL,
                                  show_value = TRUE, value_cex = 0.8,
-                                 value_col = "black") {
+                                 value_col = "black",
+                                 value_fontface = "bold", value_fontfamily = "sans",
+                                 value_digits = 2, value_prefix = "",
+                                 value_suffix = "") {
   # Use separate donut border width if provided
   ring_border_width <- if (!is.null(donut_border.width)) donut_border.width else border.width
 
@@ -297,12 +434,26 @@ draw_donut_node_base <- function(x, y, size, values, colors = NULL,
 
   # Show value in center
   if (show_value && !is.null(center_value)) {
+    # Format the value
+    formatted_value <- round(center_value, value_digits)
+    label_text <- paste0(value_prefix, formatted_value, value_suffix)
+
+    # Convert fontface string to numeric
+    fontface_num <- switch(value_fontface,
+      "plain" = 1,
+      "bold" = 2,
+      "italic" = 3,
+      "bold.italic" = 4,
+      2  # default to bold
+    )
+
     graphics::text(
       x = x, y = y,
-      labels = round(center_value, 2),
+      labels = label_text,
       cex = value_cex,
       col = value_col,
-      font = 2
+      font = fontface_num,
+      family = value_fontfamily
     )
   }
 }
@@ -649,14 +800,23 @@ draw_double_donut_pie_node_base <- function(x, y, size,
 #' @param cex Character expansion factor.
 #' @param col Text color.
 #' @param font Font face (1=plain, 2=bold, 3=italic, 4=bold italic).
+#' @param family Font family ("sans", "serif", "mono").
+#' @param hjust Horizontal justification (0=left, 0.5=center, 1=right).
+#' @param vjust Vertical justification (0=bottom, 0.5=center, 1=top).
+#' @param srt String rotation angle in degrees.
 #' @param pos Position relative to point (NULL=centered, 1=below, 2=left, 3=above, 4=right).
 #' @param offset Offset distance when using pos.
 #' @keywords internal
 draw_node_label_base <- function(x, y, label, cex = 1, col = "black",
-                                 font = 1, pos = NULL, offset = 0.5) {
+                                 font = 1, family = "sans",
+                                 hjust = 0.5, vjust = 0.5, srt = 0,
+                                 pos = NULL, offset = 0.5) {
   if (is.null(label) || is.na(label) || label == "") {
     return(invisible())
   }
+
+  # Convert hjust/vjust to adj parameter
+  adj <- c(hjust, vjust)
 
   graphics::text(
     x = x, y = y,
@@ -664,9 +824,223 @@ draw_node_label_base <- function(x, y, label, cex = 1, col = "black",
     cex = cex,
     col = col,
     font = font,
+    family = family,
+    adj = adj,
+    srt = srt,
     pos = pos,
     offset = offset
   )
+}
+
+#' Draw Neural Node (Base R)
+#'
+#' Circle with small connection circles around perimeter.
+#'
+#' @keywords internal
+draw_neural_node_base <- function(x, y, size, col, border.col, border.width,
+                                  n_connections = 6) {
+  # Main center circle
+  graphics::symbols(
+    x = x, y = y,
+    circles = size * 0.6,
+    inches = FALSE, add = TRUE,
+    fg = border.col, bg = col, lwd = border.width
+  )
+
+  # Connection circles around perimeter
+  conn_radius <- size * 0.15
+  angles <- seq(0, 2 * pi * (1 - 1/n_connections), length.out = n_connections)
+
+  for (i in seq_along(angles)) {
+    cx <- x + size * 0.85 * cos(angles[i])
+    cy <- y + size * 0.85 * sin(angles[i])
+
+    # Line from center to connection
+    graphics::lines(c(x, cx), c(y, cy), col = border.col, lwd = border.width * 0.5)
+
+    # Connection circle
+    graphics::symbols(
+      x = cx, y = cy,
+      circles = conn_radius,
+      inches = FALSE, add = TRUE,
+      fg = border.col, bg = col, lwd = border.width * 0.7
+    )
+  }
+}
+
+#' Draw Chip Node (Base R)
+#'
+#' Square with pins extending from all edges.
+#'
+#' @keywords internal
+draw_chip_node_base <- function(x, y, size, col, border.col, border.width,
+                                pins_per_side = 3) {
+  body_size <- size * 0.7
+  pin_length <- size * 0.2
+  pin_width <- body_size * 0.8 / (pins_per_side * 2 - 1)
+
+  # Main body (square with corner notch)
+  notch_size <- body_size * 0.15
+  xs <- c(x - body_size, x - body_size + notch_size, x + body_size, x + body_size, x - body_size)
+  ys <- c(y - body_size, y + body_size, y + body_size, y - body_size, y - body_size)
+  graphics::polygon(xs, ys, col = col, border = border.col, lwd = border.width)
+
+  # Draw pins
+  for (side in c("top", "bottom", "left", "right")) {
+    for (i in seq_len(pins_per_side)) {
+      offset <- (i - (pins_per_side + 1) / 2) * (body_size * 1.5 / pins_per_side)
+
+      if (side == "top") {
+        px <- x + offset
+        py <- y + body_size
+        p_xs <- c(px - pin_width/2, px + pin_width/2, px + pin_width/2, px - pin_width/2)
+        p_ys <- c(py, py, py + pin_length, py + pin_length)
+      } else if (side == "bottom") {
+        px <- x + offset
+        py <- y - body_size
+        p_xs <- c(px - pin_width/2, px + pin_width/2, px + pin_width/2, px - pin_width/2)
+        p_ys <- c(py, py, py - pin_length, py - pin_length)
+      } else if (side == "left") {
+        px <- x - body_size
+        py <- y + offset
+        p_xs <- c(px, px, px - pin_length, px - pin_length)
+        p_ys <- c(py - pin_width/2, py + pin_width/2, py + pin_width/2, py - pin_width/2)
+      } else {
+        px <- x + body_size
+        py <- y + offset
+        p_xs <- c(px, px, px + pin_length, px + pin_length)
+        p_ys <- c(py - pin_width/2, py + pin_width/2, py + pin_width/2, py - pin_width/2)
+      }
+
+      graphics::polygon(p_xs, p_ys, col = border.col, border = border.col)
+    }
+  }
+}
+
+#' Draw Robot Node (Base R)
+#'
+#' Rounded square with antenna and eyes.
+#'
+#' @keywords internal
+draw_robot_node_base <- function(x, y, size, col, border.col, border.width) {
+  head_w <- size * 0.8
+  head_h <- size * 0.7
+
+  # Robot head (rectangle with rounded-ish appearance)
+  graphics::rect(
+    xleft = x - head_w, ybottom = y - head_h - size * 0.1,
+    xright = x + head_w, ytop = y + head_h - size * 0.1,
+    col = col, border = border.col, lwd = border.width
+  )
+
+  # Antenna
+  antenna_base_y <- y + head_h - size * 0.1
+  graphics::lines(c(x, x), c(antenna_base_y, y + size), col = border.col, lwd = border.width)
+  graphics::symbols(
+    x = x, y = y + size + size * 0.08,
+    circles = size * 0.08,
+    inches = FALSE, add = TRUE, fg = border.col, bg = border.col
+  )
+
+  # Eyes
+  eye_y <- y
+  eye_radius <- size * 0.12
+  graphics::symbols(
+    x = c(x - head_w * 0.4, x + head_w * 0.4),
+    y = c(eye_y, eye_y),
+    circles = rep(eye_radius, 2),
+    inches = FALSE, add = TRUE,
+    fg = border.col, bg = "white", lwd = border.width * 0.7
+  )
+
+  # Mouth
+  graphics::lines(
+    c(x - head_w * 0.3, x + head_w * 0.3),
+    c(y - head_h * 0.4, y - head_h * 0.4),
+    col = border.col, lwd = border.width
+  )
+}
+
+#' Draw Network Node (Base R)
+#'
+#' Interconnected nodes pattern.
+#'
+#' @keywords internal
+draw_network_node_base <- function(x, y, size, col, border.col, border.width) {
+  # Outer boundary
+  graphics::symbols(
+    x = x, y = y,
+    circles = size,
+    inches = FALSE, add = TRUE,
+    fg = border.col, bg = col, lwd = border.width
+  )
+
+  # Mini nodes (pentagon arrangement)
+  n_nodes <- 5
+  inner_r <- size * 0.55
+  node_r <- size * 0.12
+  angles <- seq(pi/2, pi/2 + 2 * pi * (1 - 1/n_nodes), length.out = n_nodes)
+
+  node_x <- x + inner_r * cos(angles)
+  node_y <- y + inner_r * sin(angles)
+
+  # Edges
+  for (i in seq_len(n_nodes)) {
+    for (j in seq_len(n_nodes)) {
+      if (i < j) {
+        graphics::lines(
+          c(node_x[i], node_x[j]), c(node_y[i], node_y[j]),
+          col = border.col, lwd = border.width * 0.5
+        )
+      }
+    }
+  }
+
+  # Nodes
+  graphics::symbols(
+    x = node_x, y = node_y,
+    circles = rep(node_r, n_nodes),
+    inches = FALSE, add = TRUE,
+    fg = border.col, bg = "white", lwd = border.width * 0.7
+  )
+}
+
+#' Draw Database Node (Base R)
+#'
+#' Cylinder shape.
+#'
+#' @keywords internal
+draw_database_node_base <- function(x, y, size, col, border.col, border.width) {
+  cyl_width <- size * 0.8
+  cyl_height <- size * 1.2
+  ellipse_h <- size * 0.25
+
+  n_pts <- 50
+  bottom_y <- y - cyl_height / 2
+  top_y <- y + cyl_height / 2
+
+  # Body
+  graphics::rect(
+    xleft = x - cyl_width, ybottom = bottom_y,
+    xright = x + cyl_width, ytop = top_y,
+    col = col, border = NA
+  )
+
+  # Side lines
+  graphics::lines(c(x - cyl_width, x - cyl_width), c(bottom_y, top_y), col = border.col, lwd = border.width)
+  graphics::lines(c(x + cyl_width, x + cyl_width), c(bottom_y, top_y), col = border.col, lwd = border.width)
+
+  # Bottom ellipse (lower arc)
+  angles <- seq(0, pi, length.out = n_pts)
+  bottom_x <- x + cyl_width * cos(angles)
+  bottom_y_pts <- bottom_y + ellipse_h * sin(angles) * (-1)
+  graphics::lines(bottom_x, bottom_y_pts, col = border.col, lwd = border.width)
+
+  # Top ellipse
+  angles_full <- seq(0, 2 * pi, length.out = n_pts * 2)
+  top_x <- x + cyl_width * cos(angles_full)
+  top_y_pts <- top_y + ellipse_h * sin(angles_full)
+  graphics::polygon(top_x, top_y_pts, col = col, border = border.col, lwd = border.width)
 }
 
 #' Render All Nodes

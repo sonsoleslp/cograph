@@ -207,6 +207,121 @@ regular_polygon_vertices <- function(x, y, r, n, rotation = pi/2) {
   )
 }
 
+#' Inset Polygon Vertices
+#'
+#' Creates an inner polygon by scaling vertices toward the centroid.
+#'
+#' @param outer List with x, y vectors of outer polygon vertices.
+#' @param inner_ratio Ratio to scale vertices toward center (0-1).
+#' @return List with x, y vectors of inner polygon vertices.
+#' @keywords internal
+inset_polygon_vertices <- function(outer, inner_ratio) {
+  # Calculate centroid
+  cx <- mean(outer$x)
+  cy <- mean(outer$y)
+
+  # Scale vertices toward centroid
+  list(
+    x = cx + (outer$x - cx) * inner_ratio,
+    y = cy + (outer$y - cy) * inner_ratio
+  )
+}
+
+#' Get Polygon Vertices by Shape Name
+#'
+#' Returns outer polygon vertices for donut ring shapes.
+#'
+#' @param shape Shape name.
+#' @param x Center x coordinate.
+#' @param y Center y coordinate.
+#' @param r Radius/size.
+#' @return List with x, y vectors of vertices.
+#' @keywords internal
+get_donut_base_vertices <- function(shape, x, y, r) {
+  switch(shape,
+    circle = circle_vertices(x, y, r, n = 100),
+    square = square_vertices(x, y, r),
+    rectangle = rectangle_vertices(x, y, r, r * 0.7),
+    triangle = triangle_vertices(x, y, r),
+    diamond = diamond_vertices(x, y, r),
+    pentagon = pentagon_vertices(x, y, r),
+    hexagon = hexagon_vertices(x, y, r),
+    # Default to circle
+    circle_vertices(x, y, r, n = 100)
+  )
+}
+
+#' Generate Gear Vertices
+#'
+#' @param x Center x coordinate.
+#' @param y Center y coordinate.
+#' @param r Outer radius.
+#' @param n_teeth Number of teeth.
+#' @return List with x, y vectors of vertices.
+#' @keywords internal
+gear_vertices <- function(x, y, r, n_teeth = 8) {
+  inner_r <- r * 0.65
+  tooth_height <- r * 0.25
+
+  n_pts_per_tooth <- 8
+  n_total <- n_teeth * n_pts_per_tooth
+  angles <- seq(0, 2 * pi, length.out = n_total + 1)[-1]
+
+  gear_x <- numeric(n_total)
+  gear_y <- numeric(n_total)
+
+  for (i in seq_len(n_total)) {
+    pos_in_tooth <- (i - 1) %% n_pts_per_tooth
+
+    if (pos_in_tooth < 2 || pos_in_tooth >= 6) {
+      rad <- inner_r
+    } else {
+      rad <- inner_r + tooth_height
+    }
+
+    gear_x[i] <- x + rad * cos(angles[i])
+    gear_y[i] <- y + rad * sin(angles[i])
+  }
+
+  list(x = gear_x, y = gear_y)
+}
+
+#' Generate Cloud Vertices
+#'
+#' @param x Center x coordinate.
+#' @param y Center y coordinate.
+#' @param r Radius.
+#' @param n Number of vertices.
+#' @return List with x, y vectors of vertices.
+#' @keywords internal
+cloud_vertices <- function(x, y, r, n = 100) {
+  t <- seq(0, 2 * pi, length.out = n)
+  rad <- r * (0.65 + 0.2 * sin(4 * t) + 0.1 * sin(6 * t))
+
+  list(
+    x = x + rad * cos(t),
+    y = y + rad * sin(t) * 0.6 + r * 0.1
+  )
+}
+
+#' Generate Brain Vertices
+#'
+#' @param x Center x coordinate.
+#' @param y Center y coordinate.
+#' @param r Radius.
+#' @param n Number of vertices.
+#' @return List with x, y vectors of vertices.
+#' @keywords internal
+brain_vertices <- function(x, y, r, n = 80) {
+  t <- seq(0, 2 * pi, length.out = n)
+  rad <- r * (0.7 + 0.15 * sin(3 * t) + 0.1 * sin(5 * t) + 0.05 * cos(7 * t))
+
+  list(
+    x = x + rad * cos(t),
+    y = y + rad * sin(t) * 0.85
+  )
+}
+
 #' Get Shape Vertices
 #'
 #' Dispatch function to get vertices for any supported shape.
@@ -234,6 +349,9 @@ get_shape_vertices <- function(shape, x, y, r, r2 = NULL, ...) {
     heart = heart_vertices(x, y, r),
     ellipse = ellipse_vertices(x, y, r, r2),
     cross = cross_vertices(x, y, r, ...),
+    gear = gear_vertices(x, y, r, ...),
+    cloud = cloud_vertices(x, y, r),
+    brain = brain_vertices(x, y, r),
     # Default to circle
     circle_vertices(x, y, r)
   )

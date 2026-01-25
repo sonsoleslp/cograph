@@ -34,6 +34,10 @@ NULL
 #' @param label_border Border style: NULL (none), "rect", "rounded", "circle" (default NULL).
 #' @param label_border_color Border color for label border (default "gray50").
 #' @param label_underline Logical. Underline the label text? (default FALSE).
+#' @param label_shadow Logical. Enable drop shadow for labels? (default FALSE).
+#' @param label_shadow_color Color for label shadow (default "gray40").
+#' @param label_shadow_offset Offset distance for shadow in points (default 0.5).
+#' @param label_shadow_alpha Transparency for shadow (0-1, default 0.5).
 #' @param bidirectional Logical. Show arrows at both ends of edges?
 #' @param loop_rotation Angle in radians for self-loop direction (default: pi/2 = top).
 #' @param curve_shape Spline tension for curved edges (-1 to 1, default: 0).
@@ -91,6 +95,10 @@ sn_edges <- function(network,
                      label_border = NULL,
                      label_border_color = NULL,
                      label_underline = NULL,
+                     label_shadow = NULL,
+                     label_shadow_color = NULL,
+                     label_shadow_offset = NULL,
+                     label_shadow_alpha = NULL,
                      bidirectional = NULL,
                      loop_rotation = NULL,
                      curve_shape = NULL,
@@ -253,6 +261,23 @@ sn_edges <- function(network,
 
   if (!is.null(label_underline)) {
     aes$label_underline <- label_underline
+  }
+
+  if (!is.null(label_shadow)) {
+    aes$label_shadow <- label_shadow
+  }
+
+  if (!is.null(label_shadow_color)) {
+    aes$label_shadow_color <- label_shadow_color
+  }
+
+  if (!is.null(label_shadow_offset)) {
+    aes$label_shadow_offset <- label_shadow_offset
+  }
+
+  if (!is.null(label_shadow_alpha)) {
+    validate_range(label_shadow_alpha, 0, 1, "label_shadow_alpha")
+    aes$label_shadow_alpha <- label_shadow_alpha
   }
 
   if (!is.null(bidirectional)) {

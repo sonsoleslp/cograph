@@ -166,6 +166,140 @@ draw_pie <- function(x, y, size, fill, border_color, border_width,
   do.call(grid::gList, grobs)
 }
 
+#' Draw Polygon Donut Node
+#'
+#' Draws a donut ring on a polygon shape where segments follow polygon edges.
+#'
+#' @param donut_shape Base polygon shape: "circle", "square", "hexagon", "triangle", "diamond", "pentagon".
+#' @param donut_border_width Border width for donut ring.
+#' @keywords internal
+draw_polygon_donut <- function(x, y, size, fill, border_color, border_width,
+                               alpha = 1, values = NULL, colors = NULL,
+                               inner_ratio = 0.5, bg_color = "gray90",
+                               donut_shape = "square",
+                               show_value = TRUE, value_size = 8, value_color = "black",
+                               value_fontface = "bold", value_fontfamily = "sans",
+                               value_digits = 2, value_prefix = "", value_suffix = "",
+                               value_format = NULL, donut_border_width = NULL, ...) {
+  fill_col <- adjust_alpha(fill, alpha)
+  border_col <- adjust_alpha(border_color, alpha)
+  bg_col <- adjust_alpha(bg_color, alpha)
+
+  ring_border <- if (!is.null(donut_border_width)) donut_border_width else border_width
+
+  # Get outer polygon vertices
+  outer <- get_donut_base_vertices(donut_shape, x, y, size)
+
+  # Get inner polygon vertices
+  inner <- inset_polygon_vertices(outer, inner_ratio)
+
+  n_verts <- length(outer$x)
+  grobs <- list()
+  center_value <- NULL
+
+  # Helper to draw a ring segment between two vertex pairs
+  draw_ring_segment <- function(idx_start, idx_end, segment_col) {
+    seg_x <- c(outer$x[idx_start], outer$x[idx_end], inner$x[idx_end], inner$x[idx_start])
+    seg_y <- c(outer$y[idx_start], outer$y[idx_end], inner$y[idx_end], inner$y[idx_start])
+
+    grid::polygonGrob(
+      x = grid::unit(seg_x, "npc"),
+      y = grid::unit(seg_y, "npc"),
+      gp = grid::gpar(fill = segment_col, col = NA)
+    )
+  }
+
+  if (is.null(values) || length(values) == 0) {
+    values <- 1
+    if (is.null(colors)) colors <- fill_col
+  }
+
+  if (length(values) == 1) {
+    # Progress donut
+    prop <- max(0, min(1, values))
+    center_value <- prop
+
+    # Draw background ring
+    for (i in seq_len(n_verts)) {
+      i_next <- if (i == n_verts) 1 else i + 1
+      grobs[[length(grobs) + 1]] <- draw_ring_segment(i, i_next, bg_col)
+    }
+
+    # Draw filled portion
+    if (prop > 0) {
+      segment_col <- if (!is.null(colors)) colors[1] else fill_col
+      filled_verts <- max(1, round(prop * n_verts))
+
+      for (i in seq_len(filled_verts)) {
+        i_next <- if (i == n_verts) 1 else i + 1
+        grobs[[length(grobs) + 1]] <- draw_ring_segment(i, i_next, segment_col)
+      }
+    }
+  } else {
+    # Multi-segment donut
+    props <- values / sum(values)
+    n_seg <- length(props)
+
+    if (is.null(colors)) {
+      colors <- grDevices::rainbow(n_seg, s = 0.7, v = 0.9)
+    }
+    colors <- recycle_to_length(colors, n_seg)
+
+    vert_idx <- 1
+    for (seg in seq_len(n_seg)) {
+      seg_verts <- max(1, round(props[seg] * n_verts))
+      seg_col <- adjust_alpha(colors[seg], alpha)
+
+      for (j in seq_len(seg_verts)) {
+        if (vert_idx > n_verts) break
+        i_next <- if (vert_idx == n_verts) 1 else vert_idx + 1
+        grobs[[length(grobs) + 1]] <- draw_ring_segment(vert_idx, i_next, seg_col)
+        vert_idx <- vert_idx + 1
+      }
+    }
+  }
+
+  # Outer border
+  grobs[[length(grobs) + 1]] <- grid::polygonGrob(
+    x = grid::unit(outer$x, "npc"),
+    y = grid::unit(outer$y, "npc"),
+    gp = grid::gpar(fill = NA, col = border_col, lwd = ring_border)
+  )
+
+  # Inner border and fill
+  grobs[[length(grobs) + 1]] <- grid::polygonGrob(
+    x = grid::unit(inner$x, "npc"),
+    y = grid::unit(inner$y, "npc"),
+    gp = grid::gpar(fill = "white", col = border_col, lwd = ring_border)
+  )
+
+  # Value text in center
+  if (show_value && !is.null(center_value)) {
+    if (!is.null(value_format) && is.function(value_format)) {
+      formatted_value <- value_format(center_value)
+    } else {
+      formatted_value <- round(center_value, value_digits)
+    }
+    label_text <- paste0(value_prefix, formatted_value, value_suffix)
+
+    fontface_num <- switch(value_fontface,
+      "plain" = 1, "bold" = 2, "italic" = 3, "bold.italic" = 4, 2
+    )
+
+    grobs[[length(grobs) + 1]] <- grid::textGrob(
+      label = label_text,
+      x = grid::unit(x, "npc"),
+      y = grid::unit(y, "npc"),
+      gp = grid::gpar(
+        fontsize = value_size, col = value_color,
+        fontface = fontface_num, fontfamily = value_fontfamily
+      )
+    )
+  }
+
+  do.call(grid::gList, grobs)
+}
+
 #' Draw Donut Node
 #'
 #' Draw a donut chart node. If given a single value (0-1), shows that proportion
@@ -178,7 +312,9 @@ draw_donut <- function(x, y, size, fill, border_color, border_width,
                        alpha = 1, values = NULL, colors = NULL,
                        inner_ratio = 0.5, bg_color = "gray90",
                        show_value = TRUE, value_size = 8, value_color = "black",
-                       donut_border_width = NULL, ...) {
+                       value_fontface = "bold", value_fontfamily = "sans",
+                       value_digits = 2, value_prefix = "", value_suffix = "",
+                       value_format = NULL, donut_border_width = NULL, ...) {
   fill_col <- adjust_alpha(fill, alpha)
   border_col <- adjust_alpha(border_color, alpha)
   bg_col <- adjust_alpha(bg_color, alpha)
@@ -334,11 +470,33 @@ draw_donut <- function(x, y, size, fill, border_color, border_width,
 
   # Add value text in center (for single value donut)
   if (show_value && !is.null(center_value)) {
+    # Format the value
+    if (!is.null(value_format) && is.function(value_format)) {
+      formatted_value <- value_format(center_value)
+    } else {
+      formatted_value <- round(center_value, value_digits)
+    }
+    label_text <- paste0(value_prefix, formatted_value, value_suffix)
+
+    # Convert fontface string to numeric
+    fontface_num <- switch(value_fontface,
+      "plain" = 1,
+      "bold" = 2,
+      "italic" = 3,
+      "bold.italic" = 4,
+      2  # default to bold
+    )
+
     grobs[[length(grobs) + 1]] <- grid::textGrob(
-      label = round(center_value, 2),
+      label = label_text,
       x = grid::unit(x, "npc"),
       y = grid::unit(y, "npc"),
-      gp = grid::gpar(fontsize = value_size, col = value_color, fontface = "bold")
+      gp = grid::gpar(
+        fontsize = value_size,
+        col = value_color,
+        fontface = fontface_num,
+        fontfamily = value_fontfamily
+      )
     )
   }
 
@@ -646,6 +804,479 @@ draw_double_donut_pie <- function(x, y, size, fill, border_color, border_width,
     x = grid::unit(x, "npc"), y = grid::unit(y, "npc"),
     r = grid::unit(inner_r, "npc"),
     gp = grid::gpar(fill = NA, col = border_col, lwd = ring_border)
+  )
+
+  do.call(grid::gList, grobs)
+}
+
+#' Draw Neural Node
+#'
+#' Circle with small connection circles around the perimeter (neuron-like).
+#'
+#' @param n_connections Number of connection points around perimeter.
+#' @keywords internal
+draw_neural <- function(x, y, size, fill, border_color, border_width,
+                        alpha = 1, n_connections = 6, ...) {
+  fill_col <- adjust_alpha(fill, alpha)
+  border_col <- adjust_alpha(border_color, alpha)
+
+  # Get viewport dimensions for aspect correction
+  vp_width <- grid::convertWidth(grid::unit(1, "npc"), "inches", valueOnly = TRUE)
+  vp_height <- grid::convertHeight(grid::unit(1, "npc"), "inches", valueOnly = TRUE)
+  min_dim <- min(vp_width, vp_height)
+  x_scale <- min_dim / vp_width
+  y_scale <- min_dim / vp_height
+
+  grobs <- list()
+
+  # Main center circle
+  grobs[[1]] <- grid::circleGrob(
+    x = grid::unit(x, "npc"),
+    y = grid::unit(y, "npc"),
+    r = grid::unit(size * 0.6, "npc"),
+    gp = grid::gpar(fill = fill_col, col = border_col, lwd = border_width)
+  )
+
+  # Connection circles around perimeter
+  conn_radius <- size * 0.15
+  angles <- seq(0, 2 * pi * (1 - 1/n_connections), length.out = n_connections)
+
+  for (i in seq_along(angles)) {
+    cx <- x + (size * 0.85 * x_scale) * cos(angles[i])
+    cy <- y + (size * 0.85 * y_scale) * sin(angles[i])
+
+    # Line from center to connection
+    grobs[[length(grobs) + 1]] <- grid::segmentsGrob(
+      x0 = grid::unit(x, "npc"),
+      y0 = grid::unit(y, "npc"),
+      x1 = grid::unit(cx, "npc"),
+      y1 = grid::unit(cy, "npc"),
+      gp = grid::gpar(col = border_col, lwd = border_width * 0.5)
+    )
+
+    # Connection circle
+    grobs[[length(grobs) + 1]] <- grid::circleGrob(
+      x = grid::unit(cx, "npc"),
+      y = grid::unit(cy, "npc"),
+      r = grid::unit(conn_radius, "npc"),
+      gp = grid::gpar(fill = fill_col, col = border_col, lwd = border_width * 0.7)
+    )
+  }
+
+  do.call(grid::gList, grobs)
+}
+
+#' Draw Chip Node
+#'
+#' Square with pins extending from all edges (processor/IC chip).
+#'
+#' @param pins_per_side Number of pins per side.
+#' @keywords internal
+draw_chip <- function(x, y, size, fill, border_color, border_width,
+                      alpha = 1, pins_per_side = 3, ...) {
+  fill_col <- adjust_alpha(fill, alpha)
+  border_col <- adjust_alpha(border_color, alpha)
+
+  grobs <- list()
+
+  # Main body (square with corner notch)
+  body_size <- size * 0.7
+  notch_size <- body_size * 0.15
+
+  # Create notched square polygon
+  xs <- c(
+    x - body_size, x - body_size + notch_size, x + body_size, x + body_size, x - body_size
+  )
+  ys <- c(
+    y - body_size, y + body_size, y + body_size, y - body_size, y - body_size
+  )
+
+  grobs[[1]] <- grid::polygonGrob(
+    x = grid::unit(xs, "npc"),
+    y = grid::unit(ys, "npc"),
+    gp = grid::gpar(fill = fill_col, col = border_col, lwd = border_width)
+  )
+
+  # Draw pins on each side
+  pin_length <- size * 0.2
+  pin_width <- body_size * 0.8 / (pins_per_side * 2 - 1)
+
+  # Helper to draw pins
+  draw_pins <- function(side) {
+    pin_grobs <- list()
+    for (i in seq_len(pins_per_side)) {
+      offset <- (i - (pins_per_side + 1) / 2) * (body_size * 1.5 / pins_per_side)
+
+      if (side == "top") {
+        px <- x + offset
+        py <- y + body_size
+        p_xs <- c(px - pin_width/2, px + pin_width/2, px + pin_width/2, px - pin_width/2)
+        p_ys <- c(py, py, py + pin_length, py + pin_length)
+      } else if (side == "bottom") {
+        px <- x + offset
+        py <- y - body_size
+        p_xs <- c(px - pin_width/2, px + pin_width/2, px + pin_width/2, px - pin_width/2)
+        p_ys <- c(py, py, py - pin_length, py - pin_length)
+      } else if (side == "left") {
+        px <- x - body_size
+        py <- y + offset
+        p_xs <- c(px, px, px - pin_length, px - pin_length)
+        p_ys <- c(py - pin_width/2, py + pin_width/2, py + pin_width/2, py - pin_width/2)
+      } else {  # right
+        px <- x + body_size
+        py <- y + offset
+        p_xs <- c(px, px, px + pin_length, px + pin_length)
+        p_ys <- c(py - pin_width/2, py + pin_width/2, py + pin_width/2, py - pin_width/2)
+      }
+
+      pin_grobs[[i]] <- grid::polygonGrob(
+        x = grid::unit(p_xs, "npc"),
+        y = grid::unit(p_ys, "npc"),
+        gp = grid::gpar(fill = border_col, col = border_col, lwd = 0.5)
+      )
+    }
+    pin_grobs
+  }
+
+  grobs <- c(grobs, draw_pins("top"), draw_pins("bottom"),
+             draw_pins("left"), draw_pins("right"))
+
+  do.call(grid::gList, grobs)
+}
+
+#' Draw Robot Node
+#'
+#' Rounded square with antenna and eyes (robot head).
+#'
+#' @keywords internal
+draw_robot <- function(x, y, size, fill, border_color, border_width,
+                       alpha = 1, ...) {
+  fill_col <- adjust_alpha(fill, alpha)
+  border_col <- adjust_alpha(border_color, alpha)
+
+  grobs <- list()
+
+  # Robot head (rounded rectangle)
+  head_w <- size * 0.8
+  head_h <- size * 0.7
+
+  grobs[[1]] <- grid::roundrectGrob(
+    x = grid::unit(x, "npc"),
+    y = grid::unit(y - size * 0.1, "npc"),
+    width = grid::unit(head_w * 2, "npc"),
+    height = grid::unit(head_h * 2, "npc"),
+    r = grid::unit(0.2, "npc"),
+    gp = grid::gpar(fill = fill_col, col = border_col, lwd = border_width)
+  )
+
+  # Antenna stem
+  antenna_base_y <- y + head_h - size * 0.1
+  grobs[[2]] <- grid::segmentsGrob(
+    x0 = grid::unit(x, "npc"),
+    y0 = grid::unit(antenna_base_y, "npc"),
+    x1 = grid::unit(x, "npc"),
+    y1 = grid::unit(y + size, "npc"),
+    gp = grid::gpar(col = border_col, lwd = border_width)
+  )
+
+  # Antenna ball
+  grobs[[3]] <- grid::circleGrob(
+    x = grid::unit(x, "npc"),
+    y = grid::unit(y + size + size * 0.08, "npc"),
+    r = grid::unit(size * 0.08, "npc"),
+    gp = grid::gpar(fill = border_col, col = border_col)
+  )
+
+  # Eyes (two circles)
+  eye_y <- y
+  eye_radius <- size * 0.12
+
+  grobs[[4]] <- grid::circleGrob(
+    x = grid::unit(x - head_w * 0.4, "npc"),
+    y = grid::unit(eye_y, "npc"),
+    r = grid::unit(eye_radius, "npc"),
+    gp = grid::gpar(fill = "white", col = border_col, lwd = border_width * 0.7)
+  )
+
+  grobs[[5]] <- grid::circleGrob(
+    x = grid::unit(x + head_w * 0.4, "npc"),
+    y = grid::unit(eye_y, "npc"),
+    r = grid::unit(eye_radius, "npc"),
+    gp = grid::gpar(fill = "white", col = border_col, lwd = border_width * 0.7)
+  )
+
+  # Mouth (horizontal line)
+  grobs[[6]] <- grid::segmentsGrob(
+    x0 = grid::unit(x - head_w * 0.3, "npc"),
+    y0 = grid::unit(y - head_h * 0.4, "npc"),
+    x1 = grid::unit(x + head_w * 0.3, "npc"),
+    y1 = grid::unit(y - head_h * 0.4, "npc"),
+    gp = grid::gpar(col = border_col, lwd = border_width)
+  )
+
+  do.call(grid::gList, grobs)
+}
+
+#' Draw Brain Node
+#'
+#' Simplified brain outline using overlapping curves.
+#'
+#' @keywords internal
+draw_brain <- function(x, y, size, fill, border_color, border_width,
+                       alpha = 1, ...) {
+  fill_col <- adjust_alpha(fill, alpha)
+  border_col <- adjust_alpha(border_color, alpha)
+
+  # Brain shape using overlapping lobes
+  n_pts <- 80
+  t <- seq(0, 2 * pi, length.out = n_pts)
+
+  # Create irregular brain-like shape
+  r <- size * (0.7 + 0.15 * sin(3 * t) + 0.1 * sin(5 * t) + 0.05 * cos(7 * t))
+  xs <- x + r * cos(t)
+  ys <- y + r * sin(t) * 0.85  # Slightly flattened
+
+  grobs <- list()
+
+  # Main brain shape
+  grobs[[1]] <- grid::polygonGrob(
+    x = grid::unit(xs, "npc"),
+    y = grid::unit(ys, "npc"),
+    gp = grid::gpar(fill = fill_col, col = border_col, lwd = border_width)
+  )
+
+  # Central fissure (dividing line)
+  grobs[[2]] <- grid::segmentsGrob(
+    x0 = grid::unit(x, "npc"),
+    y0 = grid::unit(y + size * 0.6, "npc"),
+    x1 = grid::unit(x, "npc"),
+    y1 = grid::unit(y - size * 0.5, "npc"),
+    gp = grid::gpar(col = border_col, lwd = border_width * 0.5)
+  )
+
+  do.call(grid::gList, grobs)
+}
+
+#' Draw Network Node
+#'
+#' Interconnected nodes pattern (mini network inside).
+#'
+#' @keywords internal
+draw_network <- function(x, y, size, fill, border_color, border_width,
+                         alpha = 1, ...) {
+  fill_col <- adjust_alpha(fill, alpha)
+  border_col <- adjust_alpha(border_color, alpha)
+
+  # Get viewport dimensions for aspect correction
+  vp_width <- grid::convertWidth(grid::unit(1, "npc"), "inches", valueOnly = TRUE)
+  vp_height <- grid::convertHeight(grid::unit(1, "npc"), "inches", valueOnly = TRUE)
+  min_dim <- min(vp_width, vp_height)
+  x_scale <- min_dim / vp_width
+  y_scale <- min_dim / vp_height
+
+  grobs <- list()
+
+  # Outer boundary circle
+  grobs[[1]] <- grid::circleGrob(
+    x = grid::unit(x, "npc"),
+    y = grid::unit(y, "npc"),
+    r = grid::unit(size, "npc"),
+    gp = grid::gpar(fill = fill_col, col = border_col, lwd = border_width)
+  )
+
+  # Mini nodes inside (pentagon arrangement)
+  n_nodes <- 5
+  inner_r <- size * 0.55
+  node_r <- size * 0.12
+  angles <- seq(pi/2, pi/2 + 2 * pi * (1 - 1/n_nodes), length.out = n_nodes)
+
+  node_x <- x + (inner_r * x_scale) * cos(angles)
+  node_y <- y + (inner_r * y_scale) * sin(angles)
+
+  # Draw edges between nodes
+  for (i in seq_len(n_nodes)) {
+    for (j in seq_len(n_nodes)) {
+      if (i < j) {
+        grobs[[length(grobs) + 1]] <- grid::segmentsGrob(
+          x0 = grid::unit(node_x[i], "npc"),
+          y0 = grid::unit(node_y[i], "npc"),
+          x1 = grid::unit(node_x[j], "npc"),
+          y1 = grid::unit(node_y[j], "npc"),
+          gp = grid::gpar(col = border_col, lwd = border_width * 0.5)
+        )
+      }
+    }
+  }
+
+  # Draw mini nodes
+  for (i in seq_len(n_nodes)) {
+    grobs[[length(grobs) + 1]] <- grid::circleGrob(
+      x = grid::unit(node_x[i], "npc"),
+      y = grid::unit(node_y[i], "npc"),
+      r = grid::unit(node_r, "npc"),
+      gp = grid::gpar(fill = "white", col = border_col, lwd = border_width * 0.7)
+    )
+  }
+
+  do.call(grid::gList, grobs)
+}
+
+#' Draw Database Node
+#'
+#' Cylinder shape (data storage).
+#'
+#' @keywords internal
+draw_database <- function(x, y, size, fill, border_color, border_width,
+                          alpha = 1, ...) {
+  fill_col <- adjust_alpha(fill, alpha)
+  border_col <- adjust_alpha(border_color, alpha)
+
+  grobs <- list()
+
+  cyl_width <- size * 0.8
+  cyl_height <- size * 1.2
+  ellipse_h <- size * 0.25
+
+  n_pts <- 50
+  angles <- seq(0, pi, length.out = n_pts)
+  angles_full <- seq(0, 2 * pi, length.out = n_pts * 2)
+
+  # Bottom ellipse
+  bottom_y <- y - cyl_height / 2
+
+  # Cylinder body (rectangle)
+  body_xs <- c(x - cyl_width, x + cyl_width, x + cyl_width, x - cyl_width)
+  body_ys <- c(bottom_y, bottom_y, y + cyl_height / 2, y + cyl_height / 2)
+
+  grobs[[1]] <- grid::polygonGrob(
+    x = grid::unit(body_xs, "npc"),
+    y = grid::unit(body_ys, "npc"),
+    gp = grid::gpar(fill = fill_col, col = NA)
+  )
+
+  # Bottom ellipse (lower half visible)
+  bottom_x <- x + cyl_width * cos(angles)
+  bottom_y_pts <- bottom_y + ellipse_h * sin(angles) * (-1)
+
+  grobs[[2]] <- grid::linesGrob(
+    x = grid::unit(bottom_x, "npc"),
+    y = grid::unit(bottom_y_pts, "npc"),
+    gp = grid::gpar(col = border_col, lwd = border_width)
+  )
+
+  # Top ellipse (full)
+  top_y <- y + cyl_height / 2
+  top_x <- x + cyl_width * cos(angles_full)
+  top_y_pts <- top_y + ellipse_h * sin(angles_full)
+
+  grobs[[3]] <- grid::polygonGrob(
+    x = grid::unit(top_x, "npc"),
+    y = grid::unit(top_y_pts, "npc"),
+    gp = grid::gpar(fill = fill_col, col = border_col, lwd = border_width)
+  )
+
+  # Side lines
+  grobs[[4]] <- grid::segmentsGrob(
+    x0 = grid::unit(x - cyl_width, "npc"),
+    y0 = grid::unit(bottom_y, "npc"),
+    x1 = grid::unit(x - cyl_width, "npc"),
+    y1 = grid::unit(y + cyl_height / 2, "npc"),
+    gp = grid::gpar(col = border_col, lwd = border_width)
+  )
+
+  grobs[[5]] <- grid::segmentsGrob(
+    x0 = grid::unit(x + cyl_width, "npc"),
+    y0 = grid::unit(bottom_y, "npc"),
+    x1 = grid::unit(x + cyl_width, "npc"),
+    y1 = grid::unit(y + cyl_height / 2, "npc"),
+    gp = grid::gpar(col = border_col, lwd = border_width)
+  )
+
+  do.call(grid::gList, grobs)
+}
+
+#' Draw Cloud Node
+#'
+#' Cloud shape (cloud computing).
+#'
+#' @keywords internal
+draw_cloud <- function(x, y, size, fill, border_color, border_width,
+                       alpha = 1, ...) {
+  fill_col <- adjust_alpha(fill, alpha)
+  border_col <- adjust_alpha(border_color, alpha)
+
+  # Cloud made of overlapping circles
+  n_pts <- 100
+  t <- seq(0, 2 * pi, length.out = n_pts)
+
+  # Bumpy cloud shape
+  r <- size * (0.65 + 0.2 * sin(4 * t) + 0.1 * sin(6 * t))
+  xs <- x + r * cos(t)
+  ys <- y + r * sin(t) * 0.6 + size * 0.1  # Flattened and raised
+
+  grid::polygonGrob(
+    x = grid::unit(xs, "npc"),
+    y = grid::unit(ys, "npc"),
+    gp = grid::gpar(fill = fill_col, col = border_col, lwd = border_width)
+  )
+}
+
+#' Draw Gear Node
+#'
+#' Gear/cog shape (processing/automation).
+#'
+#' @param n_teeth Number of gear teeth.
+#' @keywords internal
+draw_gear <- function(x, y, size, fill, border_color, border_width,
+                      alpha = 1, n_teeth = 8, ...) {
+  fill_col <- adjust_alpha(fill, alpha)
+  border_col <- adjust_alpha(border_color, alpha)
+
+  grobs <- list()
+
+  # Gear parameters
+  outer_r <- size
+  inner_r <- size * 0.65
+  tooth_height <- size * 0.25
+  center_r <- size * 0.25
+
+  # Generate gear teeth
+  n_pts_per_tooth <- 8
+  n_total <- n_teeth * n_pts_per_tooth
+  angles <- seq(0, 2 * pi, length.out = n_total + 1)[-1]
+
+  gear_x <- numeric(n_total)
+  gear_y <- numeric(n_total)
+
+  for (i in seq_len(n_total)) {
+    tooth_idx <- (i - 1) %/% n_pts_per_tooth
+    pos_in_tooth <- (i - 1) %% n_pts_per_tooth
+
+    if (pos_in_tooth < 2 || pos_in_tooth >= 6) {
+      # Valley
+      r <- inner_r
+    } else {
+      # Tooth
+      r <- inner_r + tooth_height
+    }
+
+    gear_x[i] <- x + r * cos(angles[i])
+    gear_y[i] <- y + r * sin(angles[i])
+  }
+
+  # Main gear body
+  grobs[[1]] <- grid::polygonGrob(
+    x = grid::unit(gear_x, "npc"),
+    y = grid::unit(gear_y, "npc"),
+    gp = grid::gpar(fill = fill_col, col = border_col, lwd = border_width)
+  )
+
+  # Center hole
+  grobs[[2]] <- grid::circleGrob(
+    x = grid::unit(x, "npc"),
+    y = grid::unit(y, "npc"),
+    r = grid::unit(center_r, "npc"),
+    gp = grid::gpar(fill = "white", col = border_col, lwd = border_width * 0.7)
   )
 
   do.call(grid::gList, grobs)

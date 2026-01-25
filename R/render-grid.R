@@ -65,7 +65,16 @@ NULL
 #' @param donut2_colors List of color vectors for inner donut ring segments.
 #' @param donut2_inner_ratio Inner radius ratio for inner donut ring. Default 0.4.
 #'
-#' @param edge_width Edge width.
+#' @param edge_width Edge width. If NULL, scales by weight using esize and edge_width_range.
+#' @param esize Base edge size for weight scaling. NULL (default) uses adaptive sizing
+#'   based on network size: `15 * exp(-n_nodes/90) + 1`. Larger values = thicker edges.
+#' @param edge_width_range Output width range as c(min, max) for weight-based scaling.
+#'   Default c(0.5, 4). Edges are scaled to fit within this range.
+#' @param edge_scale_mode Scaling mode for edge weights: "linear" (default),
+#'   "log" (for wide weight ranges), "sqrt" (moderate compression),
+#'   or "rank" (equal visual spacing).
+#' @param cut Two-tier cutoff for edge width scaling. NULL (default) = auto 75th percentile.
+#'   0 = disabled. Positive number = manual threshold.
 #' @param edge_width_scale Scale factor for edge widths. Values > 1 make edges thicker.
 #' @param edge_color Edge color.
 #' @param edge_alpha Edge transparency (0-1).
@@ -162,6 +171,10 @@ soplot <- function(network, title = NULL, title_size = 14,
                       donut2_inner_ratio = 0.4,
                       # Edge aesthetics
                       edge_width = NULL,
+                      esize = NULL,
+                      edge_width_range = NULL,
+                      edge_scale_mode = "linear",
+                      cut = NULL,
                       edge_width_scale = NULL,
                       edge_color = NULL,
                       edge_alpha = NULL,
@@ -379,6 +392,10 @@ soplot <- function(network, title = NULL, title_size = 14,
   # Apply edge aesthetics if any specified
   edge_aes <- list(
     width = edge_width,
+    esize = esize,
+    edge_width_range = edge_width_range,
+    edge_scale_mode = edge_scale_mode,
+    cut = cut,
     width_scale = edge_width_scale,
     color = edge_color,
     alpha = edge_alpha,
@@ -522,8 +539,9 @@ soplot <- function(network, title = NULL, title_size = 14,
     donut_value_suffix = donut_value_suffix,
     donut2_values = donut2_values, donut2_colors = donut2_colors,
     donut2_inner_ratio = donut2_inner_ratio,
-    edge_width = edge_width,
-    edge_width_scale = edge_width_scale, edge_color = edge_color,
+    edge_width = edge_width, esize = esize,
+    edge_width_range = edge_width_range, edge_scale_mode = edge_scale_mode,
+    cut = cut, edge_width_scale = edge_width_scale, edge_color = edge_color,
     edge_alpha = edge_alpha, edge_style = edge_style,
     curvature = curvature, arrow_size = arrow_size, show_arrows = show_arrows,
     positive_color = positive_color, negative_color = negative_color,

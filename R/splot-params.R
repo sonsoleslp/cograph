@@ -42,43 +42,72 @@ resolve_edge_colors <- function(edges, edge.color = NULL, posCol = "#2E7D32",
 #' Resolve Edge Widths
 #'
 #' Determines edge widths based on weights or explicit values.
+#' Supports multiple scaling modes, two-tier cutoff, and output range specification.
 #'
 #' @param edges Edge data frame.
 #' @param edge.width User-specified width(s) or NULL.
+#' @param esize Base edge size. NULL uses adaptive sizing based on n_nodes.
+#' @param n_nodes Number of nodes (for adaptive esize calculation).
+#' @param directed Whether network is directed.
 #' @param maximum Maximum weight for scaling (NULL for auto).
 #' @param minimum Minimum weight threshold.
-#' @param base_width Base width value.
-#' @param scale_factor Width scaling factor.
+#' @param cut Two-tier cutoff. NULL = auto (75th pct), 0 = disabled.
+#' @param edge_width_range Output width range c(min, max).
+#' @param edge_scale_mode Scaling mode: "linear", "log", "sqrt", "rank".
+#' @param scaling Scaling mode for constants: "default" or "legacy".
+#' @param base_width Legacy: Base width value.
+#' @param scale_factor Legacy: Width scaling factor.
 #' @return Vector of widths for each edge.
 #' @keywords internal
-resolve_edge_widths <- function(edges, edge.width = NULL, maximum = NULL,
-                                minimum = 0, base_width = 1, scale_factor = 3) {
+resolve_edge_widths <- function(edges,
+                                edge.width = NULL,
+                                esize = NULL,
+                                n_nodes = NULL,
+                                directed = FALSE,
+                                maximum = NULL,
+                                minimum = 0,
+                                cut = NULL,
+                                edge_width_range = NULL,
+                                edge_scale_mode = NULL,
+                                scaling = "default",
+                                base_width = NULL,
+                                scale_factor = NULL) {
   m <- nrow(edges)
   if (m == 0) return(numeric(0))
 
+  # If explicit widths provided, use them directly
   if (!is.null(edge.width)) {
     return(recycle_to_length(edge.width, m))
   }
 
-  # Scale by weight
-  if ("weight" %in% names(edges)) {
-    weights <- abs(edges$weight)
+  # Get scale constants
+  scale <- get_scale_constants(scaling)
 
-    # Apply minimum threshold
-    weights[weights < minimum] <- 0
-
-    # Get maximum for scaling
-    if (is.null(maximum)) {
-      maximum <- max(weights, na.rm = TRUE)
-    }
-    if (maximum == 0) maximum <- 1
-
-    # Scale weights to width range
-    widths <- (weights / maximum) * scale_factor + base_width * 0.5
-    return(widths)
+  # Use defaults from scale constants if not specified
+  if (is.null(edge_width_range)) {
+    edge_width_range <- scale$edge_width_range
+  }
+  if (is.null(edge_scale_mode)) {
+    edge_scale_mode <- scale$edge_scale_mode
   }
 
-  rep(base_width, m)
+  # Scale by weight if available
+  if ("weight" %in% names(edges)) {
+    return(scale_edge_widths(
+      weights = edges$weight,
+      esize = esize,
+      n_nodes = n_nodes,
+      directed = directed,
+      mode = edge_scale_mode,
+      maximum = maximum,
+      minimum = minimum,
+      cut = cut,
+      range = edge_width_range
+    ))
+  }
+
+  # Default width when no weights - use scale constants
+  rep(scale$edge_width_default, m)
 }
 
 #' Resolve Node Sizes

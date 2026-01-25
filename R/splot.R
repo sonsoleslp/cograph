@@ -83,7 +83,18 @@ NULL
 #'
 #' @section Edge Aesthetics:
 #' @param edge_color Edge color(s). If NULL, uses positive_color/negative_color based on weight.
-#' @param edge_width Edge width(s). If NULL, scales by weight.
+#' @param edge_width Edge width(s). If NULL, scales by weight using esize and edge_width_range.
+#' @param esize Base edge size for weight scaling. NULL (default) uses adaptive sizing
+#'   based on network size: `15 * exp(-n_nodes/90) + 1`. For directed networks, this
+#'   is halved. Larger values = thicker edges overall.
+#' @param edge_width_range Output width range as c(min, max) for weight-based scaling.
+#'   Default c(0.5, 4). Edges are scaled to fit within this range.
+#' @param edge_scale_mode Scaling mode for edge weights: "linear" (default, qgraph-style),
+#'   "log" (logarithmic for wide weight ranges), "sqrt" (moderate compression),
+#'   or "rank" (equal visual spacing regardless of weight distribution).
+#' @param cut Two-tier cutoff for edge width scaling. NULL (default) = auto-calculate
+#'   as 75th percentile of weights (qgraph behavior). 0 = disabled (continuous scaling).
+#'   Positive number = manual threshold. Edges below cut get minimal width variation.
 #' @param edge_alpha Edge transparency (0-1). Default 0.8.
 #' @param edge_labels Edge labels: TRUE (show weights), FALSE (none),
 #'   or character vector.
@@ -250,6 +261,10 @@ splot <- function(
     # Edge aesthetics
     edge_color = NULL,
     edge_width = NULL,
+    esize = NULL,
+    edge_width_range = c(0.5, 4),
+    edge_scale_mode = "linear",
+    cut = NULL,
     edge_alpha = 0.8,
     edge_labels = FALSE,
     edge_label_size = 0.8,
@@ -457,7 +472,19 @@ splot <- function(
     }
 
     # Edge widths
-    edge_widths <- resolve_edge_widths(edges, edge_width, maximum, threshold)
+    edge_widths <- resolve_edge_widths(
+      edges = edges,
+      edge.width = edge_width,
+      esize = esize,
+      n_nodes = n_nodes,
+      directed = directed,
+      maximum = maximum,
+      minimum = threshold,
+      cut = cut,
+      edge_width_range = edge_width_range,
+      edge_scale_mode = edge_scale_mode,
+      scaling = scaling
+    )
 
     # Line types
     ltys <- recycle_to_length(edge_style, n_edges)

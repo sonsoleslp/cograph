@@ -10,6 +10,15 @@ NULL
 #' @param network A sonnet_network object, matrix, data.frame, or igraph object.
 #'   Matrices and other inputs are auto-converted.
 #' @param width Edge width. Can be a single value, vector (per-edge), or "weight".
+#' @param esize Base edge size for weight scaling. NULL (default) uses adaptive sizing
+#'   based on network size: `15 * exp(-n_nodes/90) + 1`. Larger values = thicker edges.
+#' @param edge_width_range Output width range as c(min, max) for weight-based scaling.
+#'   Default c(0.5, 4). Edges are scaled to fit within this range.
+#' @param edge_scale_mode Scaling mode for edge weights: "linear" (default),
+#'   "log" (for wide weight ranges), "sqrt" (moderate compression),
+#'   or "rank" (equal visual spacing).
+#' @param cut Two-tier cutoff for edge width scaling. NULL (default) = auto 75th percentile.
+#'   0 = disabled. Positive number = manual threshold.
 #' @param color Edge color. Can be a single color, vector, or "weight" for
 #'   automatic coloring based on edge weights.
 #' @param positive_color Color for positive edge weights.
@@ -74,6 +83,10 @@ NULL
 #' adj |> sn_edges(width = 2, color = "gray50")
 sn_edges <- function(network,
                      width = NULL,
+                     esize = NULL,
+                     edge_width_range = NULL,
+                     edge_scale_mode = NULL,
+                     cut = NULL,
                      color = NULL,
                      positive_color = NULL,
                      negative_color = NULL,
@@ -143,7 +156,7 @@ sn_edges <- function(network,
       if (!is.null(maximum)) {
         weights_for_scale <- pmin(weights_for_scale, maximum)
       }
-      aes$width <- scale_edge_widths(weights_for_scale, maximum = maximum)
+      aes$width <- scale_edge_widths_simple(weights_for_scale, maximum = maximum)
     } else {
       aes$width <- resolve_aesthetic(width, edges_df, m)
     }
@@ -151,6 +164,28 @@ sn_edges <- function(network,
 
   if (!is.null(maximum)) {
     aes$maximum <- maximum
+  }
+
+  # New edge width scaling parameters
+  if (!is.null(esize)) {
+    aes$esize <- esize
+  }
+
+  if (!is.null(edge_width_range)) {
+    aes$edge_width_range <- edge_width_range
+  }
+
+  if (!is.null(edge_scale_mode)) {
+    valid_modes <- c("linear", "log", "sqrt", "rank")
+    if (!edge_scale_mode %in% valid_modes) {
+      stop("edge_scale_mode must be one of: ", paste(valid_modes, collapse = ", "),
+           call. = FALSE)
+    }
+    aes$edge_scale_mode <- edge_scale_mode
+  }
+
+  if (!is.null(cut)) {
+    aes$cut <- cut
   }
 
   if (!is.null(width_scale)) {
@@ -387,9 +422,11 @@ sn_edges <- function(network,
   as_sonnet_network(new_net)
 }
 
-#' Scale Edge Widths
+#' Scale Edge Widths (Simple Version)
 #'
-#' Scale edge widths based on a numeric variable.
+#' Simple linear edge width scaling used by sn_edges() when width="weight".
+#' For the full-featured version with multiple modes and cut parameter,
+#' see scale_edge_widths() in scale-constants.R.
 #'
 #' @param values Numeric values to scale.
 #' @param range Target width range (min, max).
@@ -397,7 +434,7 @@ sn_edges <- function(network,
 #'   maps to the max of range, and values above it are capped.
 #' @return Scaled width values.
 #' @keywords internal
-scale_edge_widths <- function(values, range = c(0.5, 3), maximum = NULL) {
+scale_edge_widths_simple <- function(values, range = c(0.5, 3), maximum = NULL) {
   if (all(is.na(values))) return(rep(mean(range), length(values)))
 
   # Use maximum as the upper bound if provided

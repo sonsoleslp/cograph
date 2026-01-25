@@ -21,14 +21,31 @@ render_edges_grid <- function(network) {
   if (is.null(edges) || nrow(edges) == 0) return(grid::gList())
 
   m <- nrow(edges)
+  n <- nrow(nodes)
 
-  # Resolve aesthetics
-  widths <- recycle_to_length(
-    if (!is.null(aes$width)) aes$width else theme$get("edge_width"),
-    m
-  )
+  # Resolve edge widths using the enhanced scaling system
+  if (!is.null(aes$width)) {
+    # Explicit widths provided
+    widths <- recycle_to_length(aes$width, m)
+  } else if ("weight" %in% names(edges)) {
+    # Use weight-based scaling with new system
+    widths <- scale_edge_widths(
+      weights = edges$weight,
+      esize = aes$esize,
+      n_nodes = n,
+      directed = network$is_directed,
+      mode = if (!is.null(aes$edge_scale_mode)) aes$edge_scale_mode else "linear",
+      maximum = aes$maximum,
+      minimum = 0,
+      cut = aes$cut,
+      range = if (!is.null(aes$edge_width_range)) aes$edge_width_range else c(0.5, 4)
+    )
+  } else {
+    # No weights, use default
+    widths <- recycle_to_length(theme$get("edge_width"), m)
+  }
 
-  # Apply width_scale if provided
+  # Apply width_scale if provided (additional multiplier)
   if (!is.null(aes$width_scale)) {
     widths <- widths * aes$width_scale
   }

@@ -213,6 +213,7 @@ draw_pie_node_base <- function(x, y, size, values, colors = NULL,
 draw_polygon_donut_node_base <- function(x, y, size, values, colors = NULL,
                                          default_color = NULL,
                                          inner_ratio = 0.5, bg_color = "gray90",
+                                         center_color = "white",
                                          donut_shape = "square",
                                          border.col = "black", border.width = 1,
                                          donut_border.width = NULL,
@@ -291,8 +292,8 @@ draw_polygon_donut_node_base <- function(x, y, size, values, colors = NULL,
   # Outer border
   graphics::polygon(outer$x, outer$y, col = NA, border = border.col, lwd = ring_border_width)
 
-  # Inner border and fill
-  graphics::polygon(inner$x, inner$y, col = "white", border = border.col, lwd = ring_border_width)
+  # Inner border and fill (center of donut)
+  graphics::polygon(inner$x, inner$y, col = center_color, border = border.col, lwd = ring_border_width)
 
   # Show value in center
   if (show_value && !is.null(center_value)) {
@@ -342,6 +343,7 @@ draw_polygon_donut_node_base <- function(x, y, size, values, colors = NULL,
 draw_donut_node_base <- function(x, y, size, values, colors = NULL,
                                  default_color = NULL,
                                  inner_ratio = 0.5, bg_color = "gray90",
+                                 center_color = "white",
                                  border.col = "black", border.width = 1,
                                  donut_border.width = NULL,
                                  show_value = TRUE, value_cex = 0.8,
@@ -432,12 +434,12 @@ draw_donut_node_base <- function(x, y, size, values, colors = NULL,
     }
   }
 
-  # Fill inner hole with white
+  # Fill inner hole (center of donut)
   angles <- seq(0, 2 * pi, length.out = n_points)
   graphics::polygon(
     x = x + inner_r * cos(angles),
     y = y + inner_r * sin(angles),
-    col = "white",
+    col = center_color,
     border = NA
   )
 

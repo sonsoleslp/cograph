@@ -287,11 +287,11 @@ draw_polygon_donut <- function(x, y, size, fill, border_color, border_width,
     gp = grid::gpar(fill = NA, col = border_col, lwd = ring_border)
   )
 
-  # Inner border and fill
+  # Inner border and fill (center uses node fill color)
   grobs[[length(grobs) + 1]] <- grid::polygonGrob(
     x = grid::unit(inner$x, "npc"),
     y = grid::unit(inner$y, "npc"),
-    gp = grid::gpar(fill = "white", col = border_col, lwd = ring_border)
+    gp = grid::gpar(fill = fill_col, col = border_col, lwd = ring_border)
   )
 
   # Value text in center
@@ -426,11 +426,11 @@ draw_donut <- function(x, y, size, fill, border_color, border_width,
       )
     }
 
-    # 3. Fill inner hole with white
+    # 3. Fill inner hole (center uses node fill color)
     grobs[[length(grobs) + 1]] <- grid::circleGrob(
       x = grid::unit(x, "npc"), y = grid::unit(y, "npc"),
       r = grid::unit(inner_r, "npc"),
-      gp = grid::gpar(fill = "white", col = NA)
+      gp = grid::gpar(fill = fill_col, col = NA)
     )
 
     # 4. Redraw borders for clean edges
@@ -472,11 +472,11 @@ draw_donut <- function(x, y, size, fill, border_color, border_width,
       start_ang <- end_ang
     }
 
-    # Fill inner hole with white
+    # Fill inner hole (center uses node fill color)
     grobs[[length(grobs) + 1]] <- grid::circleGrob(
       x = grid::unit(x, "npc"), y = grid::unit(y, "npc"),
       r = grid::unit(inner_r, "npc"),
-      gp = grid::gpar(fill = "white", col = NA)
+      gp = grid::gpar(fill = fill_col, col = NA)
     )
 
     # Draw borders

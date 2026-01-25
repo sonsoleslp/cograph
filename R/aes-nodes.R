@@ -24,17 +24,21 @@ NULL
 #' @param label_color Label text color.
 #' @param label_position Label position: "center", "above", "below", "left", "right".
 #' @param show_labels Logical. Show node labels? Default TRUE.
-#' @param pie_values For pie/donut/donut_pie shape: list or matrix of values for segments.
-#'   For donut with single value (0-1), shows that proportion filled.
-#' @param pie_colors For pie/donut/donut_pie shape: colors for pie segments.
+#' @param pie_values For pie shape: list or matrix of values for pie segments.
+#'   Each element corresponds to a node and contains values for its segments.
+#' @param pie_colors For pie shape: colors for pie segments.
 #' @param pie_border_width Border width for pie chart nodes.
-#' @param donut_values For donut_pie shape: vector of values (0-1) for the outer ring proportion.
-#' @param donut_colors For donut shape: colors for donut segments.
+#' @param donut_fill For donut shape: numeric value (0-1) specifying fill proportion.
+#'   0.1 = 10% filled, 0.5 = 50% filled, 1.0 = fully filled ring.
+#'   Can be a single value (all nodes) or vector (per-node values).
+#' @param donut_values Deprecated. Use donut_fill for simple fill proportion.
+#'   Still works for backwards compatibility.
+#' @param donut_colors For donut shape: fill color(s) for the donut ring.
 #' @param donut_border_width Border width for donut chart nodes.
 #' @param donut_inner_ratio For donut shape: inner radius ratio (0-1). Default 0.5.
 #' @param donut_bg_color For donut shape: background color for unfilled portion.
 #' @param donut_shape For donut: base shape for ring ("circle", "square", "hexagon", "triangle", "diamond", "pentagon"). Default "circle".
-#' @param donut_show_value For donut shape: show value in center? Default TRUE.
+#' @param donut_show_value For donut shape: show value in center? Default FALSE.
 #' @param donut_value_size For donut shape: font size for center value.
 #' @param donut_value_color For donut shape: color for center value text.
 #' @param donut_value_fontface For donut shape: font face for center value ("plain", "bold", "italic", "bold.italic"). Default "bold".
@@ -79,6 +83,7 @@ sn_nodes <- function(network,
                      pie_values = NULL,
                      pie_colors = NULL,
                      pie_border_width = NULL,
+                     donut_fill = NULL,
                      donut_values = NULL,
                      donut_colors = NULL,
                      donut_border_width = NULL,
@@ -194,7 +199,13 @@ sn_nodes <- function(network,
     aes$pie_border_width <- pie_border_width
   }
 
-  if (!is.null(donut_values)) {
+  if (!is.null(donut_fill)) {
+    # donut_fill is the new simplified API - single value (0-1) for fill proportion
+    # Convert to list format for internal use
+    aes$donut_fill <- donut_fill
+    # Also set donut_values for backwards compatibility with drawing functions
+    aes$donut_values <- donut_fill
+  } else if (!is.null(donut_values)) {
     aes$donut_values <- donut_values
   }
 

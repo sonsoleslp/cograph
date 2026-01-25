@@ -50,14 +50,16 @@ NULL
 #'   corresponds to a node and contains values for pie segments.
 #' @param pie_colors List of color vectors for pie segments.
 #' @param pie_border_width Border width for pie slice dividers. NULL uses node_border_width.
-#' @param donut_values List of values for donut chart nodes. Single value (0-1)
-#'   for progress donut, or vector for segmented donut.
-#' @param donut_colors List of color vectors for donut segments.
+#' @param donut_fill Numeric value (0-1) for donut fill proportion. This is the
+#'   qgraph-style API: 0.1 = 10% filled, 0.5 = 50% filled, 1.0 = fully filled.
+#'   Can be a single value (all nodes) or vector (per-node values).
+#' @param donut_values Deprecated. Use donut_fill for simple fill proportion.
+#' @param donut_colors Fill color(s) for the donut ring.
 #' @param donut_border_width Border width for donut rings. NULL uses node_border_width.
 #' @param donut_inner_ratio Inner radius ratio for donut (0-1). Default 0.5.
 #' @param donut_bg_color Background color for unfilled donut portion.
 #' @param donut_shape Base shape for donut: "circle", "square", "hexagon", "triangle", "diamond", "pentagon". Default "circle".
-#' @param donut_show_value Logical: show value in donut center? Default TRUE.
+#' @param donut_show_value Logical: show value in donut center? Default FALSE.
 #' @param donut_value_size Font size for donut center value.
 #' @param donut_value_color Color for donut center value.
 #' @param donut_value_fontface Font face for donut center value: "plain", "bold", "italic", "bold.italic". Default "bold".
@@ -210,13 +212,14 @@ splot <- function(
     pie_values = NULL,
     pie_colors = NULL,
     pie_border_width = NULL,
+    donut_fill = NULL,
     donut_values = NULL,
     donut_colors = NULL,
     donut_border_width = NULL,
     donut_inner_ratio = 0.5,
     donut_bg_color = "gray90",
     donut_shape = "circle",
-    donut_show_value = TRUE,
+    donut_show_value = FALSE,
     donut_value_size = 0.8,
     donut_value_color = "black",
     donut_value_fontface = "bold",
@@ -659,6 +662,19 @@ splot <- function(
   # 7. RENDER NODES
   # ============================================
 
+  # Handle donut_fill: convert to list format if provided
+  # donut_fill takes precedence over donut_values for the new simplified API
+  effective_donut_values <- donut_values
+  if (!is.null(donut_fill)) {
+    # Convert donut_fill to list format for internal use
+    if (!is.list(donut_fill)) {
+      fill_vec <- recycle_to_length(donut_fill, n_nodes)
+      effective_donut_values <- as.list(fill_vec)
+    } else {
+      effective_donut_values <- donut_fill
+    }
+  }
+
   render_nodes_splot(
     layout = layout_mat,
     node_size = vsize_usr,
@@ -670,7 +686,7 @@ splot <- function(
     pie_values = pie_values,
     pie_colors = pie_colors,
     pie_border_width = pie_border_width,
-    donut_values = donut_values,
+    donut_values = effective_donut_values,
     donut_colors = donut_colors,
     donut_border_width = donut_border_width,
     donut_inner_ratio = donut_inner_ratio,
@@ -939,6 +955,9 @@ render_edges_splot <- function(edges, layout, node_sizes, shapes,
 
 
 #' Render Nodes for splot
+#'
+#' @param donut_values List of values for donut chart. Each element is a single
+#'   numeric (0-1) representing fill proportion for that node.
 #' @keywords internal
 render_nodes_splot <- function(layout, node_size, node_size2, node_shape, node_fill,
                                node_border_color, node_border_width, pie_values, pie_colors,

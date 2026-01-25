@@ -187,7 +187,28 @@ draw_pie_node_base <- function(x, y, size, values, colors = NULL,
 #' Draw Polygon Donut Node (Base R)
 #'
 #' Renders a donut on a polygon shape where segments follow polygon edges.
+#' The donut shows a fill proportion (0-1) as filled segments starting from the top.
 #'
+#' @param x,y Node center coordinates.
+#' @param size Outer radius.
+#' @param values Single numeric value (0-1) specifying fill proportion.
+#'   0.1 = 10% filled, 0.5 = 50% filled, 1.0 = full ring.
+#' @param colors Fill color for the donut ring.
+#' @param default_color Fallback color when colors is NULL.
+#' @param inner_ratio Ratio of inner to outer radius (0-1). Default 0.5.
+#' @param bg_color Background color for unfilled portion. Default "gray90".
+#' @param donut_shape Base polygon shape: "square", "hexagon", "triangle", etc.
+#' @param border.col Border color.
+#' @param border.width Border line width.
+#' @param donut_border.width Border width for donut ring (NULL = use border.width).
+#' @param show_value Logical: show value in center? Default FALSE.
+#' @param value_cex Text size for center value.
+#' @param value_col Text color for center value.
+#' @param value_fontface Font face for center value.
+#' @param value_fontfamily Font family for center value.
+#' @param value_digits Decimal places for value display.
+#' @param value_prefix Text before value (e.g., "$").
+#' @param value_suffix Text after value (e.g., "%").
 #' @keywords internal
 draw_polygon_donut_node_base <- function(x, y, size, values, colors = NULL,
                                          default_color = NULL,
@@ -296,18 +317,20 @@ draw_polygon_donut_node_base <- function(x, y, size, values, colors = NULL,
 #' Draw Donut Chart Node
 #'
 #' Renders a node as a donut chart with an inner hole.
+#' The donut shows a fill proportion (0-1) as an arc starting from 12 o'clock.
 #'
 #' @param x,y Node center coordinates.
 #' @param size Outer radius.
-#' @param values Numeric vector of values (or single value 0-1 for progress).
-#' @param colors Vector of colors for segments.
-#' @param default_color Fallback color when colors is NULL and values length is 1.
-#' @param inner_ratio Ratio of inner to outer radius (0-1).
-#' @param bg_color Background color for unfilled portion.
+#' @param values Single numeric value (0-1) specifying fill proportion.
+#'   0.1 = 10% filled arc, 0.5 = 50% filled, 1.0 = full ring.
+#' @param colors Fill color for the donut ring.
+#' @param default_color Fallback color when colors is NULL.
+#' @param inner_ratio Ratio of inner to outer radius (0-1). Default 0.5.
+#' @param bg_color Background color for unfilled portion. Default "gray90".
 #' @param border.col Border color.
 #' @param border.width Border line width.
 #' @param donut_border.width Border width for donut ring (NULL = use border.width).
-#' @param show_value Logical: show value in center?
+#' @param show_value Logical: show value in center? Default FALSE.
 #' @param value_cex Text size for center value.
 #' @param value_col Text color for center value.
 #' @param value_fontface Font face for center value ("plain", "bold", "italic", "bold.italic").

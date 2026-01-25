@@ -169,9 +169,30 @@ draw_pie <- function(x, y, size, fill, border_color, border_width,
 #' Draw Polygon Donut Node
 #'
 #' Draws a donut ring on a polygon shape where segments follow polygon edges.
+#' The fill shows a proportion (0-1) as filled segments starting from the top vertex.
 #'
+#' @param x,y Node center coordinates (NPC units).
+#' @param size Node radius (NPC units).
+#' @param fill Fill color for the donut ring.
+#' @param border_color Border color.
+#' @param border_width Border line width.
+#' @param alpha Transparency (0-1).
+#' @param values Single numeric value (0-1) specifying fill proportion.
+#'   0.1 = 10% filled, 0.5 = 50% filled, 1.0 = full ring.
+#' @param colors Override fill color (optional).
+#' @param inner_ratio Ratio of inner to outer radius (0-1). Default 0.5.
+#' @param bg_color Background color for unfilled portion. Default "gray90".
 #' @param donut_shape Base polygon shape: "circle", "square", "hexagon", "triangle", "diamond", "pentagon".
-#' @param donut_border_width Border width for donut ring.
+#' @param show_value Logical: show value in center? Default FALSE.
+#' @param value_size Font size for center value.
+#' @param value_color Color for center value text.
+#' @param value_fontface Font face for center value.
+#' @param value_fontfamily Font family for center value.
+#' @param value_digits Decimal places for value display.
+#' @param value_prefix Text before value.
+#' @param value_suffix Text after value.
+#' @param value_format Custom format function.
+#' @param donut_border_width Border width for donut ring (NULL = use border_width).
 #' @keywords internal
 draw_polygon_donut <- function(x, y, size, fill, border_color, border_width,
                                alpha = 1, values = NULL, colors = NULL,
@@ -302,11 +323,30 @@ draw_polygon_donut <- function(x, y, size, fill, border_color, border_width,
 
 #' Draw Donut Node
 #'
-#' Draw a donut chart node. If given a single value (0-1), shows that proportion
-#' filled with the fill color, and the remainder in the background color.
-#' If given multiple values, works like a pie chart with a hole.
+#' Draw a donut chart node showing a fill proportion (0-1) as an arc.
+#' The fill starts from 12 o'clock (top) and fills clockwise.
 #'
-#' @param donut_border_width Border width for the donut ring (optional, defaults to border_width).
+#' @param x,y Node center coordinates (NPC units).
+#' @param size Node radius (NPC units).
+#' @param fill Fill color for the donut ring.
+#' @param border_color Border color.
+#' @param border_width Border line width.
+#' @param alpha Transparency (0-1).
+#' @param values Single numeric value (0-1) specifying fill proportion.
+#'   0.1 = 10% filled arc, 0.5 = 50% filled, 1.0 = full ring.
+#' @param colors Override fill color (optional).
+#' @param inner_ratio Ratio of inner to outer radius (0-1). Default 0.5.
+#' @param bg_color Background color for unfilled portion. Default "gray90".
+#' @param show_value Logical: show value in center? Default FALSE.
+#' @param value_size Font size for center value.
+#' @param value_color Color for center value text.
+#' @param value_fontface Font face for center value.
+#' @param value_fontfamily Font family for center value.
+#' @param value_digits Decimal places for value display.
+#' @param value_prefix Text before value (e.g., "$").
+#' @param value_suffix Text after value (e.g., "%").
+#' @param value_format Custom format function (overrides digits).
+#' @param donut_border_width Border width for donut ring (NULL = use border_width).
 #' @keywords internal
 draw_donut <- function(x, y, size, fill, border_color, border_width,
                        alpha = 1, values = NULL, colors = NULL,

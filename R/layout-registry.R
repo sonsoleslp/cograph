@@ -111,19 +111,96 @@ register_builtin_layouts <- function() {
     coords
   })
 
-  # Gephi Fruchterman-Reingold layout
-  register_layout("gephi_fr", function(network, area = 10000, gravity = 10.0,
-                                        speed = 1.0, niter = 100, ...) {
+  # Gephi Fruchterman-Reingold layout (full algorithm inline)
+  gephi_fr_func <- function(network, area = 10000, gravity = 10.0,
+                            speed = 1.0, niter = 100, ...) {
     g <- network_to_igraph(network)
-    coords <- layout_gephi_fr(g, area = area, gravity = gravity,
-                              speed = speed, niter = niter)
+
+    # Constants from Gephi Java source
+    SPEED_DIVISOR <- 800.0
+    AREA_MULTIPLICATOR <- 10000.0
+
+    nodes_count <- igraph::vcount(g)
+    if (nodes_count == 0) return(data.frame(x = numeric(0), y = numeric(0)))
+
+    # Initialize positions
+    coords <- matrix(stats::runif(nodes_count * 2, min = -500, max = 500), ncol = 2)
+
+    # Get edges
+    edges <- igraph::as_edgelist(g, names = FALSE)
+    has_edges <- nrow(edges) > 0
+
+    # Pre-calculate constants
+    k <- sqrt((AREA_MULTIPLICATOR * area) / (1.0 + nodes_count))
+    max_displace <- sqrt(AREA_MULTIPLICATOR * area) / 10.0
+
+    # Main loop
+    for (iter in 1:niter) {
+      disp <- matrix(0, nrow = nodes_count, ncol = 2)
+
+      # Repulsion
+      dx_mat <- outer(coords[, 1], coords[, 1], "-")
+      dy_mat <- outer(coords[, 2], coords[, 2], "-")
+      sq_dist_mat <- dx_mat^2 + dy_mat^2
+      safe_sq_dist <- sq_dist_mat
+      safe_sq_dist[safe_sq_dist == 0] <- Inf
+      factor <- (k^2) / safe_sq_dist
+      disp[, 1] <- disp[, 1] + rowSums(dx_mat * factor)
+      disp[, 2] <- disp[, 2] + rowSums(dy_mat * factor)
+
+      # Attraction
+      if (has_edges) {
+        src_indices <- edges[, 1]
+        tgt_indices <- edges[, 2]
+        x_dist <- coords[src_indices, 1] - coords[tgt_indices, 1]
+        y_dist <- coords[src_indices, 2] - coords[tgt_indices, 2]
+        dist <- sqrt(x_dist^2 + y_dist^2)
+        mask <- dist > 0
+
+        if (any(mask)) {
+          x_d <- x_dist[mask]; y_d <- y_dist[mask]; d <- dist[mask]
+          force_factor <- d / k
+          fx <- x_d * force_factor; fy <- y_d * force_factor
+
+          fx_src <- tapply(fx, src_indices[mask], sum)
+          fy_src <- tapply(fy, src_indices[mask], sum)
+          src_rows <- as.integer(names(fx_src))
+          disp[src_rows, 1] <- disp[src_rows, 1] - fx_src
+          disp[src_rows, 2] <- disp[src_rows, 2] - fy_src
+
+          fx_tgt <- tapply(fx, tgt_indices[mask], sum)
+          fy_tgt <- tapply(fy, tgt_indices[mask], sum)
+          tgt_rows <- as.integer(names(fx_tgt))
+          disp[tgt_rows, 1] <- disp[tgt_rows, 1] + fx_tgt
+          disp[tgt_rows, 2] <- disp[tgt_rows, 2] + fy_tgt
+        }
+      }
+
+      # Gravity
+      gravity_factor <- 0.01 * k * gravity
+      disp[, 1] <- disp[, 1] - (coords[, 1] * gravity_factor)
+      disp[, 2] <- disp[, 2] - (coords[, 2] * gravity_factor)
+
+      # Speed
+      speed_ratio <- speed / SPEED_DIVISOR
+      disp <- disp * speed_ratio
+
+      # Apply displacement
+      disp_dist <- sqrt(disp[, 1]^2 + disp[, 2]^2)
+      move_mask <- disp_dist > 0
+      if (any(move_mask)) {
+        limit_val <- max_displace * speed_ratio
+        scale_factors <- rep(1, nodes_count)
+        limited_mask <- move_mask & (disp_dist > limit_val)
+        scale_factors[limited_mask] <- limit_val / disp_dist[limited_mask]
+        coords[move_mask, 1] <- coords[move_mask, 1] + (disp[move_mask, 1] * scale_factors[move_mask])
+        coords[move_mask, 2] <- coords[move_mask, 2] + (disp[move_mask, 2] * scale_factors[move_mask])
+      }
+    }
+
     data.frame(x = coords[, 1], y = coords[, 2])
-  })
-  register_layout("gephi", function(network, area = 10000, gravity = 10.0,
-                                     speed = 1.0, niter = 100, ...) {
-    g <- network_to_igraph(network)
-    coords <- layout_gephi_fr(g, area = area, gravity = gravity,
-                              speed = speed, niter = niter)
-    data.frame(x = coords[, 1], y = coords[, 2])
-  })
+  }
+
+  register_layout("gephi_fr", gephi_fr_func)
+  register_layout("gephi", gephi_fr_func)
 }

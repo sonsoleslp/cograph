@@ -4,6 +4,80 @@
 #' @keywords internal
 NULL
 
+#' Find Split Index for Curve Based on Arc Length Fraction
+#'
+#' Calculates the index at which to split a curve's coordinate arrays
+#' so that the first segment covers a given fraction of the total arc length.
+#'
+#' @param x,y Vectors of curve coordinates.
+#' @param fraction Desired fraction of total arc length (0-1).
+#' @return Index at which to split the arrays.
+#' @keywords internal
+find_curve_split_index <- function(x, y, fraction) {
+  n <- length(x)
+  if (n < 2 || fraction <= 0) return(1)
+  if (fraction >= 1) return(n)
+
+  # Calculate cumulative arc length
+  dx <- diff(x)
+  dy <- diff(y)
+  segment_lengths <- sqrt(dx^2 + dy^2)
+  cumulative_length <- c(0, cumsum(segment_lengths))
+  total_length <- cumulative_length[n]
+
+  if (total_length < 1e-10) return(1)
+
+  # Find index where cumulative length crosses target
+  target_length <- total_length * fraction
+  split_idx <- which(cumulative_length >= target_length)[1]
+
+  # Ensure at least 2 points in each segment
+  split_idx <- max(2, min(split_idx, n - 1))
+
+  return(split_idx)
+}
+
+#' Draw Curve with Optional Start Segment
+#'
+#' Draws a curve (as lines) with an optional differently-styled start segment.
+#' Used internally to support dashed/dotted start segments for edge direction clarity.
+#'
+#' @param x,y Vectors of curve coordinates.
+#' @param col Line color.
+#' @param lwd Line width.
+#' @param lty Main line type.
+#' @param start_lty Line type for start segment.
+#' @param start_fraction Fraction of curve for start segment (0-0.5).
+#' @keywords internal
+draw_curve_with_start_segment <- function(x, y, col, lwd, lty,
+                                          start_lty = 1, start_fraction = 0) {
+  n <- length(x)
+  if (n < 2) return(invisible())
+
+  # If no split needed, draw single line
+  if (start_fraction <= 0 || start_lty == lty) {
+    graphics::lines(x, y, col = col, lwd = lwd, lty = lty)
+    return(invisible())
+  }
+
+  # Find split index based on arc length
+  split_idx <- find_curve_split_index(x, y, start_fraction)
+
+  # Draw start segment (dashed/dotted)
+  if (split_idx >= 2) {
+    graphics::lines(x[1:split_idx], y[1:split_idx],
+                    col = col, lwd = lwd, lty = start_lty)
+  }
+
+  # Draw main segment (solid)
+  if (split_idx < n) {
+    graphics::lines(x[split_idx:n], y[split_idx:n],
+                    col = col, lwd = lwd, lty = lty)
+  }
+
+  invisible()
+}
+
 #' Draw Straight Edge
 #'
 #' Renders a straight edge between two points with optional arrow.
@@ -16,10 +90,13 @@ NULL
 #' @param arrow Logical: draw arrow at target?
 #' @param asize Arrow size.
 #' @param bidirectional Logical: draw arrow at source too?
+#' @param start_lty Line type for start segment. 1=solid (default), 2=dashed, 3=dotted.
+#' @param start_fraction Fraction of edge length for start segment (0-0.5). Default 0.
 #' @keywords internal
 draw_straight_edge_base <- function(x1, y1, x2, y2, col = "gray50", lwd = 1,
                                     lty = 1, arrow = TRUE, asize = 0.02,
-                                    bidirectional = FALSE) {
+                                    bidirectional = FALSE,
+                                    start_lty = 1, start_fraction = 0) {
   # Calculate angle
   angle <- splot_angle(x1, y1, x2, y2)
 
@@ -46,13 +123,39 @@ draw_straight_edge_base <- function(x1, y1, x2, y2, col = "gray50", lwd = 1,
   }
 
   # Draw line (ends at arrow base, not at tip)
-  graphics::lines(
-    x = c(line_x1, line_x2),
-    y = c(line_y1, line_y2),
-    col = col,
-    lwd = lwd,
-    lty = lty
-  )
+  # If start_lty differs from main lty and start_fraction > 0, split into two segments
+  if (start_fraction > 0 && start_lty != lty) {
+    # Calculate split point
+    split_x <- line_x1 + start_fraction * (line_x2 - line_x1)
+    split_y <- line_y1 + start_fraction * (line_y2 - line_y1)
+
+    # Draw start segment (dashed/dotted)
+    graphics::lines(
+      x = c(line_x1, split_x),
+      y = c(line_y1, split_y),
+      col = col,
+      lwd = lwd,
+      lty = start_lty
+    )
+
+    # Draw main segment (solid)
+    graphics::lines(
+      x = c(split_x, line_x2),
+      y = c(split_y, line_y2),
+      col = col,
+      lwd = lwd,
+      lty = lty
+    )
+  } else {
+    # Single line with uniform style
+    graphics::lines(
+      x = c(line_x1, line_x2),
+      y = c(line_y1, line_y2),
+      col = col,
+      lwd = lwd,
+      lty = lty
+    )
+  }
 
   # Draw arrow at target (TIP at node boundary)
   if (arrow && asize > 0) {
@@ -84,14 +187,18 @@ draw_straight_edge_base <- function(x1, y1, x2, y2, col = "gray50", lwd = 1,
 #' @param arrow Logical: draw arrow at target?
 #' @param asize Arrow size.
 #' @param bidirectional Logical: draw arrow at source too?
+#' @param start_lty Line type for start segment. 1=solid (default), 2=dashed, 3=dotted.
+#' @param start_fraction Fraction of edge length for start segment (0-0.5). Default 0.
 #' @keywords internal
 draw_curved_edge_base <- function(x1, y1, x2, y2, curve = 0.2, curvePivot = 0.5,
                                   col = "gray50", lwd = 1, lty = 1,
                                   arrow = TRUE, asize = 0.02,
-                                  bidirectional = FALSE) {
+                                  bidirectional = FALSE,
+                                  start_lty = 1, start_fraction = 0) {
   if (abs(curve) < 1e-6) {
     # Fall back to straight edge
-    draw_straight_edge_base(x1, y1, x2, y2, col, lwd, lty, arrow, asize, bidirectional)
+    draw_straight_edge_base(x1, y1, x2, y2, col, lwd, lty, arrow, asize, bidirectional,
+                            start_lty, start_fraction)
     return(invisible())
   }
 
@@ -183,14 +290,16 @@ draw_curved_edge_base <- function(x1, y1, x2, y2, curve = 0.2, curvePivot = 0.5,
     if (length(keep_idx) > 0) {
       curve_x <- c(spl$x[keep_idx], base$x)
       curve_y <- c(spl$y[keep_idx], base$y)
-      graphics::lines(curve_x, curve_y, col = col, lwd = lwd, lty = lty)
+      draw_curve_with_start_segment(curve_x, curve_y, col, lwd, lty,
+                                    start_lty, start_fraction)
     }
 
     # 5. Draw arrow with TIP at node boundary (x2, y2)
     draw_arrow_base(x2, y2, angle, asize, col = col)
   } else {
     # No arrow - draw full curve
-    graphics::lines(spl$x, spl$y, col = col, lwd = lwd, lty = lty)
+    draw_curve_with_start_segment(spl$x, spl$y, col, lwd, lty,
+                                  start_lty, start_fraction)
   }
 
   # Draw arrow at source if bidirectional
@@ -230,7 +339,8 @@ draw_curved_edge_base <- function(x1, y1, x2, y2, curve = 0.2, curvePivot = 0.5,
         }
       }
 
-      graphics::lines(curve_x, curve_y, col = col, lwd = lwd, lty = lty)
+      draw_curve_with_start_segment(curve_x, curve_y, col, lwd, lty,
+                                    start_lty, start_fraction)
     }
 
     # Draw arrow at source

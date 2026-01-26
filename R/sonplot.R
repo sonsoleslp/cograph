@@ -138,7 +138,8 @@ NULL
 #' @param background Background color.
 #' @param rescale Logical: rescale layout to [-1, 1]?
 #' @param layout_scale Scale factor for layout. >1 expands (spreads nodes apart),
-#'   <1 contracts (brings nodes closer). Default 1.
+#'   <1 contracts (brings nodes closer). Use "auto" to automatically scale based
+#'   on node count (compact for small networks, expanded for large). Default 1.
 #' @param layout_margin Margin around layout as fraction of range. Default 0.15.
 #' @param aspect Logical: maintain aspect ratio?
 #' @param usePCH Logical: use points() for simple circles (faster). Default FALSE.
@@ -386,7 +387,16 @@ sonplot <- function(
   }
 
   # Apply layout scale (expand/contract around center)
-  if (layout_scale != 1) {
+  # Handle "auto" scaling based on node count
+  if (identical(layout_scale, "auto")) {
+    # Auto-scale formula:
+    # - Small networks (<10): compact (0.8-0.9)
+    # - Medium networks (10-30): normal (0.9-1.1)
+    # - Large networks (>30): expanded (1.1-1.4)
+    layout_scale <- 0.7 + 0.7 * (1 - exp(-n_nodes / 25))
+  }
+
+  if (is.numeric(layout_scale) && layout_scale != 1) {
     center <- colMeans(layout_mat)
     layout_mat <- t(t(layout_mat - center) * layout_scale + center)
   }

@@ -26,8 +26,8 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"),
 
   # --- Input matrix ---
   x <- args$input
+  el <- q$Edgelist
   if (is.null(x)) {
-    el <- q$Edgelist
     n <- length(ga_nodes$names)
     if (is.null(n) || n == 0) n <- max(c(el$from, el$to))
     x <- matrix(0, n, n)
@@ -35,6 +35,7 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"),
       x[el$from[i], el$to[i]] <- el$weight[i]
     }
   }
+  n <- nrow(x)
 
   # --- Build params ---
   params <- list(x = x)
@@ -76,38 +77,35 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"),
   }
   if (!is.null(ga_nodes$pieColor))     params$donut_color       <- ga_nodes$pieColor
 
-  # --- Reorder per-edge vectors from qgraph order to Sonnet order ---
-  # qgraph's Edgelist is row-major; Sonnet's which(m != 0, arr.ind=TRUE) is column-major
-  el <- q$Edgelist
-  directed <- if (!is.null(el$directed)) any(el$directed) else !isSymmetric(x)
-  if (directed) {
-    sonnet_idx <- which(x != 0, arr.ind = TRUE)
-  } else {
-    sonnet_idx <- which(upper.tri(x) & x != 0, arr.ind = TRUE)
-  }
-  qg_from <- el$from
-  qg_to <- el$to
-  n_sonnet <- nrow(sonnet_idx)
-  reorder <- integer(n_sonnet)
-  for (i in seq_len(n_sonnet)) {
-    match_idx <- which(qg_from == sonnet_idx[i, 1] & qg_to == sonnet_idx[i, 2])
-    reorder[i] <- if (length(match_idx) == 1) match_idx else NA_integer_
-  }
-  reorder_edge_vec <- function(v) {
-    if (is.null(v) || length(v) != length(qg_from)) return(v)
-    v[reorder]
+  # --- Reorder per-edge vectors via matrix intermediary ---
+  # qgraph's Edgelist order may differ from Sonnet's which(x!=0, arr.ind=TRUE) order.
+  # Place each per-edge vector into an n×n matrix keyed by (from, to), then extract
+  # in the order Sonnet will use.
+  edge_vec_to_sonnet_order <- function(v) {
+    if (is.null(v) || length(v) != nrow(el)) return(v)
+    mat <- matrix(NA, n, n)
+    for (i in seq_len(nrow(el))) {
+      mat[el$from[i], el$to[i]] <- v[i]
+    }
+    directed <- if (!is.null(el$directed)) any(el$directed) else !isSymmetric(x)
+    if (directed) {
+      idx <- which(x != 0, arr.ind = TRUE)
+    } else {
+      idx <- which(upper.tri(x) & x != 0, arr.ind = TRUE)
+    }
+    mat[idx]
   }
 
   # --- Edge aesthetics from graphAttributes$Edges ---
-  if (!is.null(ga_edges$color))              params$edge_color          <- reorder_edge_vec(ga_edges$color)
-  if (!is.null(ga_edges$width))              params$edge_width          <- reorder_edge_vec(ga_edges$width) * 0.5
-  if (!is.null(ga_edges$labels))             params$edge_labels         <- reorder_edge_vec(ga_edges$labels)
-  if (!is.null(ga_edges$label.cex))          params$edge_label_size     <- reorder_edge_vec(ga_edges$label.cex) * 0.5
-  if (!is.null(ga_edges$lty))                params$edge_style          <- map_qgraph_lty(reorder_edge_vec(ga_edges$lty))
+  if (!is.null(ga_edges$color))              params$edge_color          <- edge_vec_to_sonnet_order(ga_edges$color)
+  if (!is.null(ga_edges$width))              params$edge_width          <- edge_vec_to_sonnet_order(ga_edges$width) * 0.5
+  if (!is.null(ga_edges$labels))             params$edge_labels         <- edge_vec_to_sonnet_order(ga_edges$labels)
+  if (!is.null(ga_edges$label.cex))          params$edge_label_size     <- edge_vec_to_sonnet_order(ga_edges$label.cex) * 0.5
+  if (!is.null(ga_edges$lty))                params$edge_style          <- map_qgraph_lty(edge_vec_to_sonnet_order(ga_edges$lty))
   if (!is.null(ga_edges$curve) && length(ga_edges$curve) == 1)
     params$curvature <- ga_edges$curve
-  if (!is.null(ga_edges$asize))              params$arrow_size          <- reorder_edge_vec(ga_edges$asize) * 0.3
-  if (!is.null(ga_edges$edge.label.position)) params$edge_label_position <- reorder_edge_vec(ga_edges$edge.label.position)
+  if (!is.null(ga_edges$asize))              params$arrow_size          <- edge_vec_to_sonnet_order(ga_edges$asize) * 0.3
+  if (!is.null(ga_edges$edge.label.position)) params$edge_label_position <- edge_vec_to_sonnet_order(ga_edges$edge.label.position)
 
   # --- Graph-level from graphAttributes$Graph ---
   if (!is.null(ga_graph$cut))          params$cut               <- ga_graph$cut

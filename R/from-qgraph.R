@@ -97,8 +97,9 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"),
   }
 
   # --- Edge aesthetics from graphAttributes$Edges ---
-  if (!is.null(ga_edges$color))              params$edge_color          <- edge_vec_to_sonnet_order(ga_edges$color)
-  if (!is.null(ga_edges$width))              params$edge_width          <- edge_vec_to_sonnet_order(ga_edges$width) * 0.5
+  # edge_color and edge_width are intentionally not passed — qgraph bakes its
+  # cut-based fading into these vectors, producing near-invisible edges. Let
+  # Sonnet apply its own weight-based styling instead.
   if (!is.null(ga_edges$labels))             params$edge_labels         <- edge_vec_to_sonnet_order(ga_edges$labels)
   if (!is.null(ga_edges$label.cex))          params$edge_label_size     <- edge_vec_to_sonnet_order(ga_edges$label.cex) * 0.5
   if (!is.null(ga_edges$lty))                params$edge_style          <- map_qgraph_lty(edge_vec_to_sonnet_order(ga_edges$lty))
@@ -108,7 +109,7 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"),
   if (!is.null(ga_edges$edge.label.position)) params$edge_label_position <- edge_vec_to_sonnet_order(ga_edges$edge.label.position)
 
   # --- Graph-level from graphAttributes$Graph ---
-  if (!is.null(ga_graph$cut))          params$cut               <- ga_graph$cut
+  # cut is intentionally not passed — qgraph's cut causes faint edges with hanging labels
   if (!is.null(ga_graph$minimum))      params$threshold         <- ga_graph$minimum
   if (!is.null(ga_graph$maximum))      params$maximum           <- ga_graph$maximum
   if (!is.null(ga_graph$groups))       params$groups            <- ga_graph$groups
@@ -117,8 +118,11 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"),
   if (!is.null(q$Edgelist$directed))   params$directed          <- any(q$Edgelist$directed)
 
   # --- Apply overrides (user can override anything) ---
+  # Map qgraph-style parameter names to Sonnet equivalents
+  qgraph_to_sonnet <- c(minimum = "threshold", cut = "cut")
   for (nm in names(overrides)) {
-    params[[nm]] <- overrides[[nm]]
+    sonnet_nm <- if (nm %in% names(qgraph_to_sonnet)) qgraph_to_sonnet[[nm]] else nm
+    params[[sonnet_nm]] <- overrides[[nm]]
   }
 
   # --- Plot ---

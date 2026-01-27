@@ -233,6 +233,7 @@ sonplot <- function(
     donut_value_digits = 2,
     donut_value_prefix = "",
     donut_value_suffix = "",
+    donut_empty = TRUE,
     donut2_values = NULL,
     donut2_colors = NULL,
     donut2_inner_ratio = 0.4,
@@ -360,7 +361,7 @@ sonplot <- function(
   layout_coords <- network$network$get_layout()
 
   layout_info <- network$network$get_layout_info()
-  if (!is.null(layout_info$name) && layout_info$name %in% c("oval", "ellipse")) {
+  if (is.list(layout_info) && length(layout_info$name) == 1 && layout_info$name %in% c("oval", "ellipse")) {
     aspect <- FALSE
   }
 
@@ -803,6 +804,15 @@ sonplot <- function(
       effective_donut_values <- as.list(fill_vec)
     } else {
       effective_donut_values <- donut_fill
+    }
+  }
+
+  # When donut_empty = TRUE, replace NA values with 0 so empty rings still render
+  if (donut_empty && !is.null(effective_donut_values)) {
+    for (di in seq_along(effective_donut_values)) {
+      if (length(effective_donut_values[[di]]) == 1 && is.na(effective_donut_values[[di]])) {
+        effective_donut_values[[di]] <- 0
+      }
     }
   }
 

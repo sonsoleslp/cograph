@@ -57,7 +57,23 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"),
   if (!is.null(ga_nodes$label.color))  params$label_color       <- ga_nodes$label.color
 
   # --- Pie → Donut mapping ---
-  if (!is.null(args$pie))              params$donut_fill        <- as.numeric(args$pie)
+  if (!is.null(args$pie)) {
+    pie_data <- args$pie
+    n_nodes <- if (is.matrix(x)) nrow(x) else length(ga_nodes$names)
+    if (is.list(pie_data)) {
+      # qgraph pie is a list of per-node proportion vectors; sum each to get fill
+      fill_vec <- vapply(pie_data, function(v) {
+        if (is.null(v) || all(is.na(v))) NA_real_ else sum(v, na.rm = TRUE)
+      }, numeric(1))
+    } else {
+      fill_vec <- as.numeric(pie_data)
+    }
+    # Pad to n_nodes with NA if shorter
+    if (length(fill_vec) < n_nodes) {
+      fill_vec <- c(fill_vec, rep(NA_real_, n_nodes - length(fill_vec)))
+    }
+    params$donut_fill <- fill_vec
+  }
   if (!is.null(ga_nodes$pieColor))     params$donut_color       <- ga_nodes$pieColor
 
   # --- Reorder per-edge vectors from qgraph order to Sonnet order ---

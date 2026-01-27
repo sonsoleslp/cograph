@@ -360,10 +360,7 @@ sonplot <- function(
   edges <- network$network$get_edges()
   layout_coords <- network$network$get_layout()
 
-  layout_info <- network$network$get_layout_info()
-  if (is.list(layout_info) && length(layout_info$name) == 1 && layout_info$name %in% c("oval", "ellipse")) {
-    aspect <- FALSE
-  }
+  # (oval layout uses elliptical spacing but nodes remain circular via aspect=TRUE)
 
   n_nodes <- nrow(nodes)
   n_edges <- if (!is.null(edges)) nrow(edges) else 0

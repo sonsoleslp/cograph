@@ -212,14 +212,13 @@ draw_curved_edge_base <- function(x1, y1, x2, y2, curve = 0.2, curvePivot = 0.5,
   }
 
 
-  # Perpendicular unit vector (rotated 90 degrees clockwise from edge direction)
-  # Clockwise rotation: (dx, dy) -> (dy, -dx)
-  px <- dy / len
-  py <- -dx / len
+  # Perpendicular unit vector (rotated 90 degrees counter-clockwise)
+  # Matches the (-dy, dx) convention used by the curve direction algorithm
+  px <- -dy / len
+  py <- dx / len
 
   # qgraph-style: curve offset scales with edge length for proportional appearance
-  # Note: negate to match expected visual direction (positive curve = bulge in perp direction)
-  curve_offset <- -curve * len * 0.3  # Scale factor for visual consistency
+  curve_offset <- curve * len * 0.3  # Scale factor for visual consistency
 
   # Create smooth curve using multiple control points (qgraph approach)
   # Use 5 points for smoother curve: start, 1/4, mid, 3/4, end

@@ -72,21 +72,20 @@ SonnetLayout <- R6::R6Class(
         names(coords)[1:2] <- c("x", "y")
       }
 
-      # Normalize to [padding, 1-padding]
+      # Normalize to [padding, 1-padding] using uniform scaling to preserve aspect ratio
       x_range <- range(coords$x, na.rm = TRUE)
       y_range <- range(coords$y, na.rm = TRUE)
 
-      if (diff(x_range) > 0) {
-        coords$x <- padding + (1 - 2 * padding) *
-          (coords$x - x_range[1]) / diff(x_range)
+      max_spread <- max(diff(x_range), diff(y_range))
+
+      if (max_spread > 0) {
+        scale <- (1 - 2 * padding) / max_spread
+        x_center <- mean(x_range)
+        y_center <- mean(y_range)
+        coords$x <- 0.5 + (coords$x - x_center) * scale
+        coords$y <- 0.5 + (coords$y - y_center) * scale
       } else {
         coords$x <- 0.5
-      }
-
-      if (diff(y_range) > 0) {
-        coords$y <- padding + (1 - 2 * padding) *
-          (coords$y - y_range[1]) / diff(y_range)
-      } else {
         coords$y <- 0.5
       }
 

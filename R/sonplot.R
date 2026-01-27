@@ -222,7 +222,7 @@ sonplot <- function(
     donut_colors = NULL,
     donut_border_color = NULL,
     donut_border_width = NULL,
-    donut_inner_ratio = 0.5,
+    donut_inner_ratio = 0.8,
     donut_bg_color = "gray90",
     donut_shape = "circle",
     donut_show_value = FALSE,
@@ -359,6 +359,11 @@ sonplot <- function(
   edges <- network$network$get_edges()
   layout_coords <- network$network$get_layout()
 
+  layout_info <- network$network$get_layout_info()
+  if (!is.null(layout_info$name) && layout_info$name %in% c("oval", "ellipse")) {
+    aspect <- FALSE
+  }
+
   n_nodes <- nrow(nodes)
   n_edges <- if (!is.null(edges)) nrow(edges) else 0
 
@@ -465,8 +470,16 @@ sonplot <- function(
 
   if (n_edges > 0) {
     # Filter by minimum weight (threshold)
+    orig_n_edges <- n_edges
+    orig_weights <- edges$weight
     edges <- filter_edges_by_weight(edges, effective_threshold)
     n_edges <- nrow(edges)
+
+    # Subset edge_labels to match filtered edges
+    if (n_edges < orig_n_edges && is.character(edge_labels) && length(edge_labels) == orig_n_edges) {
+      keep_idx <- which(abs(orig_weights) >= effective_threshold)
+      edge_labels <- edge_labels[keep_idx]
+    }
   }
 
   # ============================================
@@ -546,7 +559,7 @@ sonplot <- function(
     }
 
     # Curve magnitude (user-specified or default 0.25)
-    curve_magnitude <- if (curvature == 0) 0.25 else abs(curvature)
+    curve_magnitude <- if (curvature == 0) 0.175 else abs(curvature)
 
     # Initialize curves vector to 0 (straight)
     curves_vec <- rep(0, n_edges)

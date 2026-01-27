@@ -49,7 +49,7 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"),
   if (!is.null(ga_nodes$labels))       params$labels            <- ga_nodes$labels
   else if (!is.null(ga_nodes$names))   params$labels            <- ga_nodes$names
   if (!is.null(ga_nodes$color))        params$node_fill         <- ga_nodes$color
-  if (!is.null(ga_nodes$width))        params$node_size         <- ga_nodes$width
+  if (!is.null(ga_nodes$width))        params$node_size         <- ga_nodes$width * 1.3
   if (!is.null(ga_nodes$shape))        params$node_shape        <- map_qgraph_shape(ga_nodes$shape)
   if (!is.null(ga_nodes$border.color)) params$node_border_color <- ga_nodes$border.color
   if (!is.null(ga_nodes$border.width)) params$node_border_width <- ga_nodes$border.width
@@ -65,7 +65,7 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"),
   if (!is.null(ga_edges$width))              params$edge_width          <- ga_edges$width * 0.5
   if (!is.null(ga_edges$labels))             params$edge_labels         <- ga_edges$labels
   if (!is.null(ga_edges$label.cex))          params$edge_label_size     <- ga_edges$label.cex * 0.5
-  if (!is.null(ga_edges$lty))                params$edge_style          <- ga_edges$lty
+  if (!is.null(ga_edges$lty))                params$edge_style          <- map_qgraph_lty(ga_edges$lty)
   if (!is.null(ga_edges$curve) && length(ga_edges$curve) == 1)
     params$curvature <- ga_edges$curve
   if (!is.null(ga_edges$asize))              params$arrow_size          <- ga_edges$asize * 0.3
@@ -93,10 +93,41 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"),
       plot_params$x <- NULL
     }
     plot_fn <- switch(engine, splot = splot, soplot = soplot, sonplot = sonplot)
+    # Filter to only params accepted by the target engine
+    accepted <- names(formals(plot_fn))
+    if (!"..." %in% accepted) {
+      plot_params <- plot_params[intersect(names(plot_params), accepted)]
+    }
+    # soplot expects scalar edge params; collapse per-edge vectors
+    if (engine == "soplot") {
+      edge_scalar_params <- c("edge_style", "arrow_size", "edge_label_size",
+                              "edge_label_position")
+      for (ep in edge_scalar_params) {
+        v <- plot_params[[ep]]
+        if (!is.null(v) && length(v) > 1) {
+          uv <- unique(v)
+          plot_params[[ep]] <- if (length(uv) == 1) uv else uv[1]
+        }
+      }
+    }
     do.call(plot_fn, plot_params)
   }
 
   invisible(params)
+}
+
+#' Map qgraph lty codes to Sonnet edge style names
+#' @param lty Numeric or character vector of R line types
+#' @return Character vector of Sonnet style names
+#' @keywords internal
+map_qgraph_lty <- function(lty) {
+  mapping <- c("1" = "solid", "2" = "dashed", "3" = "dotted",
+               "4" = "dotdash", "5" = "longdash", "6" = "twodash",
+               "solid" = "solid", "dashed" = "dashed", "dotted" = "dotted",
+               "longdash" = "longdash", "twodash" = "twodash")
+  result <- mapping[as.character(lty)]
+  result[is.na(result)] <- "solid"
+  unname(result)
 }
 
 #' Map qgraph shape names to Sonnet equivalents

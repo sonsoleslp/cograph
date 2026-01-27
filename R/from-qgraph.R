@@ -1,5 +1,8 @@
 #' Convert a qgraph object to Sonnet parameters
 #'
+#' Extracts the network, layout, node labels, node colors, and pie chart data
+#' from a qgraph object and passes them to a Sonnet plotting engine.
+#'
 #' @param qgraph_object Return value of \code{qgraph::qgraph()}
 #' @param engine Which Sonnet renderer to use: \code{"splot"}, \code{"soplot"}, or \code{"sonplot"}
 #' @param plot If TRUE, immediately plot using the chosen engine
@@ -31,81 +34,42 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"),
   # --- Build params ---
   params <- list(x = x)
 
-  # Layout: use the computed layout, not the string argument
+  # Layout
   if (!is.null(qgraph_object$layout)) {
     params$layout <- qgraph_object$layout
-    params$rescale <- FALSE
   }
 
-  # Direct mappings from Arguments
-  direct_map <- list(
-    directed    = "directed",
-    labels      = "labels",
-    groups      = "groups",
-    vsize       = "node_size",
-    vsize2      = "node_size2",
-    color       = "node_fill",
-    border.color = "node_border_color",
-    border.width = "node_border_width",
-    label.cex   = "label_size",
-    label.color  = "label_color",
-    edge.width   = "edge_width",
-    esize        = "esize",
-    asize        = "arrow_size",
-    minimum      = "threshold",
-    maximum      = "maximum",
-    cut          = "cut",
-    curve        = "curvature",
-    curveShape   = "curve_shape",
-    curveScale   = "curve_scale",
-    edge.labels  = "edge_labels",
-    edge.label.cex = "edge_label_size",
-    title        = "title"
-  )
-
-  for (qname in names(direct_map)) {
-    val <- args[[qname]]
-    if (!is.null(val)) {
-      params[[ direct_map[[qname]] ]] <- val
-    }
+  # Labels
+  if (!is.null(args$labels)) {
+    params$labels <- args$labels
   }
 
-  # Shape mapping
+  # Groups
+  if (!is.null(args$groups)) {
+    params$groups <- args$groups
+  }
+
+  # Node colors
+  if (!is.null(args$color)) {
+    params$node_fill <- args$color
+  }
+
+  # Node shape
   if (!is.null(args$shape)) {
     params$node_shape <- map_qgraph_shape(args$shape)
   }
 
-  # Edge color: may be n×n matrix, convert to per-edge vector
-  if (!is.null(args$edge.color)) {
-    ec <- args$edge.color
-    if (is.matrix(ec) && !is.null(qgraph_object$Edgelist)) {
-      el <- qgraph_object$Edgelist
-      params$edge_color <- vapply(seq_along(el$from), function(i) {
-        ec[el$from[i], el$to[i]]
-      }, character(1))
-    } else {
-      params$edge_color <- ec
-    }
+  # Pie charts
+  if (!is.null(args$pie)) {
+    params$pie_values <- args$pie
+  }
+  if (!is.null(args$pieColor)) {
+    params$pie_colors <- args$pieColor
   }
 
-  # posCol / negCol: qgraph uses length-2 vectors; take the second (strong) color
-  if (!is.null(args$posCol)) {
-    pc <- args$posCol
-    params$positive_color <- if (length(pc) >= 2) pc[2] else pc[1]
-  }
-  if (!is.null(args$negCol)) {
-    nc <- args$negCol
-    params$negative_color <- if (length(nc) >= 2) nc[2] else nc[1]
-  }
-
-  # curveAll
-  if (isTRUE(args$curveAll)) {
-    params$curves <- "force"
-  }
-
-  # arrows
-  if (!is.null(args$arrows) && identical(args$arrows, FALSE)) {
-    params$show_arrows <- FALSE
+  # Title
+  if (!is.null(args$title)) {
+    params$title <- args$title
   }
 
   # Apply overrides
@@ -119,9 +83,6 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"),
     if (engine == "soplot") {
       plot_params$network <- plot_params$x
       plot_params$x <- NULL
-      # Remove params not supported by soplot
-      soplot_unsupported <- c("directed", "rescale", "node_size2", "curve_scale")
-      plot_params[soplot_unsupported] <- NULL
     }
     plot_fn <- switch(engine, splot = splot, soplot = soplot, sonplot = sonplot)
     do.call(plot_fn, plot_params)
@@ -144,7 +105,6 @@ map_qgraph_shape <- function(shapes) {
     "diamond"   = "diamond"
   )
   result <- mapping[shapes]
-  # For unknown shapes, pass through as-is
   unknown <- is.na(result)
   result[unknown] <- shapes[unknown]
   unname(result)

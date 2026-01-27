@@ -6,7 +6,7 @@
 \usage{
 from_qgraph(
   qgraph_object,
-  engine = c("splot", "soplot", "sonplot"),
+  engine = c("splot", "soplot"),
   plot = TRUE,
   ...
 )
@@ -14,7 +14,7 @@ from_qgraph(
 \arguments{
 \item{qgraph_object}{Return value of \code{qgraph::qgraph()}}
 
-\item{engine}{Which Sonnet renderer to use: \code{"splot"}, \code{"soplot"}, or \code{"sonplot"}}
+\item{engine}{Which Sonnet renderer to use: \code{"splot"} or \code{"soplot"}}
 
 \item{plot}{If TRUE, immediately plot using the chosen engine}
 

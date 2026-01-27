@@ -27,6 +27,6 @@ QGRAPH_SCALE
 }
 \description{
 Scaling constants that exactly replicate qgraph's visual formulas.
-Used by sonplot() for qgraph-compatible network visualization.
+Used by splot() for qgraph-compatible network visualization.
 }
 \keyword{internal}

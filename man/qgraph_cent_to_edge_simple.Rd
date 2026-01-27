@@ -21,7 +21,7 @@ qgraph_cent_to_edge_simple(x, y, angle, node_size, shape = "circle")
 List with x, y coordinates on boundary.
 }
 \description{
-Simplified boundary calculation for sonplot that approximates qgraph behavior
+Simplified boundary calculation for splot that approximates qgraph behavior
 while working with sonnet's coordinate system.
 }
 \keyword{internal}

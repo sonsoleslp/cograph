@@ -5,6 +5,6 @@
 \title{qgraph-Compatible Geometry Utilities}
 \description{
 Coordinate transformation and geometry functions that exactly replicate
-qgraph's visual logic. Used by sonplot() for qgraph-compatible network visualization.
+qgraph's visual logic. Used by splot() for qgraph-compatible network visualization.
 }
 \keyword{internal}

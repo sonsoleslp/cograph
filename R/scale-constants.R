@@ -7,7 +7,7 @@ NULL
 #' qgraph Scaling Constants (Exact Values)
 #'
 #' Scaling constants that exactly replicate qgraph's visual formulas.
-#' Used by sonplot() for qgraph-compatible network visualization.
+#' Used by splot() for qgraph-compatible network visualization.
 #'
 #' @format A list with the following elements:
 #' \describe{

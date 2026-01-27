@@ -1,6 +1,6 @@
 #' @title qgraph-Compatible Geometry Utilities
 #' @description Coordinate transformation and geometry functions that exactly replicate
-#' qgraph's visual logic. Used by sonplot() for qgraph-compatible network visualization.
+#' qgraph's visual logic. Used by splot() for qgraph-compatible network visualization.
 #' @name sonplot-qgraph-geometry
 #' @keywords internal
 NULL
@@ -196,7 +196,7 @@ qgraph_vsize_to_user <- function(vsize, plot_info = NULL) {
 
 #' qgraph Point on Node Boundary
 #'
-#' Simplified boundary calculation for sonplot that approximates qgraph behavior
+#' Simplified boundary calculation for splot that approximates qgraph behavior
 #' while working with sonnet's coordinate system.
 #'
 #' @param x Node center x coordinate.

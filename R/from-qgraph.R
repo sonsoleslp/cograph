@@ -5,12 +5,12 @@
 #' from \code{graphAttributes} rather than raw \code{Arguments}.
 #'
 #' @param qgraph_object Return value of \code{qgraph::qgraph()}
-#' @param engine Which Sonnet renderer to use: \code{"splot"}, \code{"soplot"}, or \code{"sonplot"}
+#' @param engine Which Sonnet renderer to use: \code{"splot"} or \code{"soplot"}
 #' @param plot If TRUE, immediately plot using the chosen engine
 #' @param ... Override any extracted parameter
 #' @return Invisibly, a named list of Sonnet parameters
 #' @export
-from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"), plot = TRUE, ...) {
+from_qgraph <- function(qgraph_object, engine = c("splot", "soplot"), plot = TRUE, ...) {
   engine <- match.arg(engine)
 
   if (!inherits(qgraph_object, "qgraph") && is.null(qgraph_object$Arguments)) {
@@ -136,7 +136,7 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot", "sonplot"),
       plot_params$network <- plot_params$x
       plot_params$x <- NULL
     }
-    plot_fn <- switch(engine, splot = splot, soplot = soplot, sonplot = sonplot)
+    plot_fn <- switch(engine, splot = splot, soplot = soplot)
     # Filter to only params accepted by the target engine
     accepted <- names(formals(plot_fn))
     if (!"..." %in% accepted) {

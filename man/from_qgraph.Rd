@@ -21,7 +21,7 @@ from_qgraph(
 \item{plot}{If TRUE, immediately plot using the chosen engine}
 
 \item{weight_digits}{Number of decimal places to round edge weights to. Default 2.
-  Edges that round to zero are removed unless \code{show_zero_edges = TRUE}.}
+Edges that round to zero are removed unless \code{show_zero_edges = TRUE}.}
 
 \item{show_zero_edges}{If TRUE, keep edges even if their weight rounds to zero. Default FALSE.}
 

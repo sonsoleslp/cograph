@@ -63,30 +63,27 @@ from_qgraph <- function(qgraph_object, engine = c("splot", "soplot"), plot = TRU
   if (!is.null(args$theme))            params$theme             <- args$theme
 
   # --- Pie → Donut mapping ---
-  if (!is.null(args$pie)) {
-    pie_data <- args$pie
+  # qgraph pie values are single values per node (e.g. from tna)
+  # Use graphAttributes$Nodes$pie which has the resolved values
+  pie_data <- ga_nodes$pie
+  if (!is.null(pie_data)) {
     n_nodes <- if (is.matrix(x)) nrow(x) else length(ga_nodes$names)
     if (is.list(pie_data)) {
-      # qgraph pie is a list of per-node proportion vectors
-      # Pass each node's proportions as donut_fill values
       fill_vec <- vapply(pie_data, function(v) {
-        if (is.null(v) || all(is.na(v))) NA_real_ else sum(v, na.rm = TRUE)
+        if (is.null(v) || all(is.na(v))) NA_real_ else v[1]
       }, numeric(1))
     } else {
       fill_vec <- as.numeric(pie_data)
     }
-    # Pad to n_nodes with NA if shorter
     if (length(fill_vec) < n_nodes) {
       fill_vec <- c(fill_vec, rep(NA_real_, n_nodes - length(fill_vec)))
     }
     params$donut_fill <- fill_vec
-    # Pass per-node pie colors from qgraph
-    if (!is.null(args$pieColor)) {
-      params$donut_color <- args$pieColor
-    }
   }
-  if (!is.null(ga_nodes$pieColor) && is.null(params$donut_color))
+  if (!is.null(ga_nodes$pieColor) && !all(is.na(ga_nodes$pieColor)))
     params$donut_color <- ga_nodes$pieColor
+  if (!is.null(args$pieColor) && is.null(params$donut_color))
+    params$donut_color <- args$pieColor
 
   # --- Reorder per-edge vectors via matrix intermediary ---
   # qgraph's Edgelist order may differ from Sonnet's which(x!=0, arr.ind=TRUE) order.

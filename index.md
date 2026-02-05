@@ -1,4 +1,4 @@
-# cograph ![](reference/figures/logo.png)
+# cograph
 
 **cograph** is a modern R package for network visualization. It renders
 publication-ready network plots from adjacency matrices, edge lists,

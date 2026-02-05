@@ -1,6 +1,6 @@
 # Test outputs
 test_output/
-*.png
+vignettes/*.png
 *.pdf
 *.rds
 Rplots.pdf

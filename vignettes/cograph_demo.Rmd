@@ -1,35 +1,32 @@
 ---
-title: "cograph: Complete Feature Demo"
-author: "cograph Package"
-date: "`r Sys.Date()`"
-output:
-  html_document:
-    toc: true
-    toc_float: true
-    toc_depth: 3
-    code_folding: show
-    theme: flatly
-    highlight: tango
+title: "Intermediate example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Intermediate example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
+```{r, include = FALSE}
 knitr::opts_chunk$set(
-  fig.width = 8,
-  fig.height = 8,
-  dpi = 150,
-  message = FALSE,
-  warning = FALSE
+  collapse = TRUE,
+  fig.width = 6,
+  fig.height = 4,
+  out.width = "100%",
+  dev = "jpeg",
+  dpi = 100,
+  comment = "#>"
 )
+suppressPackageStartupMessages({
+  library("cograph") 
+})
+options(scipen = 99)
+options(digits = 2)
+options(max.print = 30)
+options(width = 83)
 ```
 
-# Setup
-
-```{r load-package}
-# Load the development version from the project root
-devtools::load_all(rprojroot::find_root(rprojroot::has_file("DESCRIPTION")))
-```
-
-# Demo Data: 10-Node Transition Matrix
+ 
 
 We create a directed, row-normalized transition matrix with self-regulation style
 state labels typical of TNA (Transition Network Analysis).
@@ -40,11 +37,11 @@ set.seed(42)
 states <- c("Explore", "Plan", "Monitor", "Evaluate", "Adapt",
             "Reflect", "Regulate", "Execute", "Collaborate", "Review")
 
-# Generate random directed weights
+## Generate random directed weights
 mat <- matrix(runif(100, 0, 0.5), nrow = 10, dimnames = list(states, states))
 diag(mat) <- 0
 
-# Add structure: make some transitions stronger
+## Add structure: make some transitions stronger
 mat["Explore", "Plan"]       <- 0.6
 mat["Plan", "Execute"]       <- 0.7
 mat["Execute", "Monitor"]    <- 0.5
@@ -56,13 +53,13 @@ mat["Reflect", "Collaborate"] <- 0.4
 mat["Collaborate", "Review"]  <- 0.5
 mat["Review", "Explore"]      <- 0.35
 
-# Row-normalize
+## Row-normalize
 mat <- mat / rowSums(mat)
 
 round(mat, 2)
 ```
 
-# 1. Basic splot()
+## 1. Basic splot()
 
 ```{r basic-splot-spring, fig.cap="Spring layout with edge weights"}
 splot(mat, layout = "spring", seed = 42, edge_labels = TRUE,
@@ -73,13 +70,13 @@ splot(mat, layout = "spring", seed = 42, edge_labels = TRUE,
 splot(mat, layout = "circle")
 ```
 
-# 2. Basic soplot()
+## 2. Basic soplot()
 
 ```{r basic-soplot, fig.cap="soplot() with grid graphics"}
 soplot(mat, layout = "spring", seed = 42)
 ```
 
-# 3. Node Shapes Showcase
+## 3. Node Shapes Showcase
 
 Display all available shapes, one per node.
 
@@ -99,7 +96,7 @@ splot(mat,
 )
 ```
 
-# 4. Edge Styling
+## 4. Edge Styling
 
 ```{r edge-styling, fig.cap="Curved edges with dashed starts and weights shown"}
 splot(mat,
@@ -128,9 +125,9 @@ splot(mat,
 )
 ```
 
-# 5. Pie Chart Nodes
+## 5. Pie Chart Nodes
 
-## Basic pie chart
+### Basic pie chart
 
 ```{r pie-basic, fig.cap="Pie chart nodes with 4 segments each"}
 set.seed(1)
@@ -146,11 +143,11 @@ splot(mat,
 )
 ```
 
-## Pie with varying segment counts
+### Pie with varying segment counts
 
 ```{r pie-varying, fig.cap="Pie nodes with 2-6 segments per node"}
 set.seed(11)
-# Each node has a different number of segments
+## Each node has a different number of segments
 pie_vals2 <- lapply(1:10, function(i) runif(sample(2:6, 1)))
 pie_cols2 <- c("#E41A1C", "#377EB8", "#4DAF4A", "#FF7F00", "#984EA3", "#A65628")
 
@@ -166,7 +163,7 @@ splot(mat,
 )
 ```
 
-## Pie with custom styling on dark theme
+### Pie with custom styling on dark theme
 
 ```{r pie-styled, fig.cap="Styled pie nodes on dark theme"}
 set.seed(12)
@@ -184,21 +181,21 @@ splot(mat,
 )
 ```
 
-## Pie with per-node color palettes
+### Pie with per-node color palettes
 
 Each node can have its own set of colors using a list of color vectors.
 
 ```{r pie-per-node-colors, fig.cap="Pie nodes with different color palettes per node"}
 set.seed(20)
 
-# Create a separate network for this demo
+## Create a separate network for this demo
 n <- 10
 mat2 <- matrix(runif(n*n, 0, 0.4), n, n)
 diag(mat2) <- 0
 mat2 <- mat2 / rowSums(mat2)
 rownames(mat2) <- colnames(mat2) <- LETTERS[1:n]
 
-# Each node has 3 segments with different colors
+## Each node has 3 segments with different colors
 pie_vals_multi <- lapply(1:n, function(i) runif(3))
 pie_cols_multi <- list(
   c("#E63946", "#F1FAEE", "#A8DADC"),
@@ -225,7 +222,7 @@ splot(mat2,
 )
 ```
 
-# 6. Simple Donut Nodes
+## 6. Simple Donut Nodes
 
 Single-value donut fill (0-1 progress indicator).
 
@@ -244,14 +241,14 @@ splot(mat,
 )
 ```
 
-# 7. Segmented Donut Nodes
+## 7. Segmented Donut Nodes
 
 Multi-segment donuts using `donut_values` (list of segment vectors) and `donut_colors`.
 
 ```{r donut-segmented, fig.cap="Segmented donut nodes with 3 categories each"}
 set.seed(21)
 
-# Each node has 3 segments
+## Each node has 3 segments
 donut_vals <- lapply(1:10, function(i) c(runif(1), runif(1), runif(1)))
 donut_cols <- list(c("#E63946", "#457B9D", "#2A9D8F"))
 
@@ -267,12 +264,12 @@ splot(mat,
 )
 ```
 
-## Segmented donuts with per-node colors
+### Segmented donuts with per-node colors
 
 ```{r donut-per-node-colors, fig.cap="Segmented donuts with different color palettes per node"}
 set.seed(22)
 
-# Each node has 4 segments with unique colors
+## Each node has 4 segments with unique colors
 donut_vals2 <- lapply(1:10, function(i) runif(4))
 donut_cols2 <- list(
   c("#003049", "#D62828", "#F77F00", "#FCBF49"),
@@ -300,7 +297,7 @@ splot(mat,
 )
 ```
 
-# 8. Polygon Donut Shapes
+## 8. Polygon Donut Shapes
 
 ```{r donut-polygon, fig.cap="Donut rings with different polygon shapes"}
 set.seed(3)
@@ -319,7 +316,7 @@ splot(mat,
 )
 ```
 
-# 9. Donut with Value Display
+## 9. Donut with Value Display
 
 ```{r donut-values, fig.cap="Donut nodes showing fill percentages"}
 set.seed(4)
@@ -338,7 +335,7 @@ splot(mat,
 )
 ```
 
-# 10. Donut + Pie Combo
+## 10. Donut + Pie Combo
 
 Outer donut ring with inner pie chart segments.
 
@@ -359,12 +356,12 @@ splot(mat,
 )
 ```
 
-## Segmented donut + pie with per-node colors
+### Segmented donut + pie with per-node colors
 
 ```{r donut-pie-multi, fig.cap="Segmented outer donut with inner pie, per-node colors"}
 set.seed(23)
 
-# Outer donut: 3 segments per node
+## Outer donut: 3 segments per node
 outer_vals <- lapply(1:10, function(i) c(runif(1), runif(1), runif(1)))
 outer_cols <- list(
   c("#E63946", "#457B9D", "#2A9D8F"),
@@ -379,7 +376,7 @@ outer_cols <- list(
   c("#264653", "#2A9D8F", "#E9C46A")
 )
 
-# Inner pie: 4 segments per node
+## Inner pie: 4 segments per node
 pie_vals <- lapply(1:10, function(i) runif(4))
 pie_cols_inner <- list(
   c("#264653", "#E9C46A", "#F4A261", "#E76F51"),
@@ -410,7 +407,7 @@ splot(mat,
 )
 ```
 
-## Donut + Pie on dark theme
+### Donut + Pie on dark theme
 
 ```{r donut-pie-dark, fig.cap="Donut + pie combo on dark theme with weights"}
 set.seed(13)
@@ -445,11 +442,11 @@ splot(mat,
 )
 ```
 
-# 11. Double Donut
+## 11. Double Donut
 
 Two concentric donut rings per node.
 
-## Simple double donut (progress rings)
+### Simple double donut (progress rings)
 
 ```{r double-donut, fig.cap="Double donut: outer and inner progress rings"}
 set.seed(6)
@@ -467,14 +464,14 @@ splot(mat,
 )
 ```
 
-## Segmented double donut
+### Segmented double donut
 
 Both rings with multiple segments and different colors per node.
 
 ```{r double-donut-segmented, fig.cap="Segmented double donut with per-node colors"}
 set.seed(24)
 
-# Outer donut: 4 categories
+## Outer donut: 4 categories
 outer_vals <- lapply(1:10, function(i) c(3, 2, 2, 1) + runif(4, -0.5, 0.5))
 outer_cols <- list(
   c("#003049", "#D62828", "#F77F00", "#FCBF49"),
@@ -489,7 +486,7 @@ outer_cols <- list(
   c("#D8F3DC", "#B7E4C7", "#95D5B2", "#74C69D")
 )
 
-# Inner donut: 3 categories
+## Inner donut: 3 categories
 inner_vals <- lapply(1:10, function(i) c(2, 3, 1) + runif(3, -0.3, 0.3))
 inner_cols <- list(
   c("#E63946", "#457B9D", "#2A9D8F"),
@@ -521,20 +518,20 @@ splot(mat,
 )
 ```
 
-## Double donut + pie (triple layer)
+### Double donut + pie (triple layer)
 
 ```{r triple-layer, fig.cap="Triple layer: outer donut + inner donut + center pie"}
 set.seed(25)
 
-# Outer donut
+## Outer donut
 outer_vals <- lapply(1:10, function(i) c(runif(1), runif(1), runif(1)))
 outer_cols <- list(c("#E63946", "#457B9D", "#2A9D8F"))
 
-# Inner donut (progress)
+## Inner donut (progress)
 inner_vals <- as.list(runif(10, 0.4, 0.9))
 inner_cols <- list("#F4A261")
 
-# Center pie
+## Center pie
 pie_vals <- lapply(1:10, function(i) sample(1:5, 4))
 pie_cols <- list(c("#264653", "#E9C46A", "#F4A261", "#E76F51"))
 
@@ -559,7 +556,7 @@ splot(mat,
 )
 ```
 
-## Double donut with polygon shapes
+### Double donut with polygon shapes
 
 ```{r double-donut-polygon, fig.cap="Double donut with hexagon shape"}
 set.seed(15)
@@ -579,7 +576,7 @@ splot(mat,
 )
 ```
 
-# 12. All 7 Themes
+## 12. All 7 Themes
 
 ```{r themes, fig.width=8, fig.height=6}
 themes <- c("classic", "dark", "colorblind", "gray", "minimal", "viridis", "nature")
@@ -590,7 +587,7 @@ for (th in themes) {
 }
 ```
 
-# 13. Weight Handling
+## 13. Weight Handling
 
 ```{r weight-digits, fig.cap="Weights rounded to 1 digit with labels"}
 splot(mat, layout = "spring", seed = 42, weight_digits = 1,
@@ -606,7 +603,7 @@ splot(mat, layout = "spring", seed = 42, threshold = 0.1,
 splot(mat, layout = "spring", seed = 42, edge_scale_mode = "log", cut = 0)
 ```
 
-# 14. Edge Labels
+## 14. Edge Labels
 
 ```{r edge-labels-estimate, fig.cap="Edge labels showing estimates"}
 splot(mat,
@@ -635,7 +632,7 @@ splot(mat,
 )
 ```
 
-# 15. Directed vs Undirected
+## 15. Directed vs Undirected
 
 ```{r directed, fig.cap="Directed with reciprocal curves and weights"}
 splot(mat,
@@ -658,7 +655,7 @@ splot(sym_mat,
 )
 ```
 
-# 16. Legends
+## 16. Legends
 
 ```{r legends, fig.cap="Legend with groups and edge colors"}
 groups <- rep(c("Cognitive", "Social", "Metacognitive"), length.out = 10)
@@ -674,14 +671,14 @@ splot(mat,
 )
 ```
 
-# 17. TNA-Style with Donut Fills
+## 17. TNA-Style with Donut Fills
 
 Simulating initial state probabilities as donut fills, similar to `from_tna()` output.
 
 ```{r tna-style, fig.cap="TNA-style: donut fills represent initial state probabilities"}
 set.seed(8)
 
-# Simulate initial state probabilities
+## Simulate initial state probabilities
 initial_probs <- runif(10, 0.05, 0.5)
 initial_probs <- initial_probs / sum(initial_probs)
 

@@ -1,31 +1,29 @@
 ---
 title: "Pie & Donut Nodes in cograph"
-subtitle: "A Comprehensive Guide to Data-Rich Network Visualizations"
-author: "cograph Package"
-date: "`r Sys.Date()`"
-output:
-  html_document:
-    toc: true
-    toc_float: true
-    toc_depth: 3
-    theme: flatly
-    highlight: tango
-    code_folding: show
-    fig_width: 8
-    fig_height: 6
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Basic example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
+```{r, include = FALSE}
 knitr::opts_chunk$set(
-  echo = TRUE,
-  message = FALSE,
-  warning = FALSE,
-  fig.align = "center",
-  out.width = "80%"
+  collapse = TRUE,
+  fig.width = 8,
+  fig.height = 6,
+  out.width = "100%",
+  dev = "jpeg",
+  dpi = 100,
+  comment = "#>"
 )
-
-# Load required packages
-library(cograph)
+suppressPackageStartupMessages({
+  library("cograph")
+})
+options(scipen = 99)
+options(digits = 2)
+options(max.print = 30)
+options(width = 83)
 ```
 
 # Introduction {#introduction}

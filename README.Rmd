@@ -38,7 +38,7 @@ install.packages("cograph")
 
 # Or install the development version from GitHub
 # install.packages("devtools")
-devtools::install_github("username/cograph")
+#devtools::install_github("username/cograph")
 ```
 
 ## Quick Start

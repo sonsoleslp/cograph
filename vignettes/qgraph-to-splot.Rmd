@@ -1,4 +1,33 @@
-# Migrating from qgraph to splot
+---
+title: "Migrating from qgraph to splot"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Migrating from qgraph to splot}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.width = 6,
+  fig.height = 4,
+  out.width = "100%",
+  dev = "jpeg",
+  dpi = 100,
+  comment = "#>"
+)
+suppressPackageStartupMessages({
+  library("cograph")
+  library("qgraph")
+})
+options(scipen = 99)
+options(digits = 2)
+options(max.print = 30)
+options(width = 83)
+```
+
+#
 
 This guide helps users transition from `qgraph::qgraph()` to `cograph::splot()` for network visualization.
 
@@ -16,14 +45,14 @@ This guide helps users transition from `qgraph::qgraph()` to `cograph::splot()` 
 
 ## Quick Start
 
-```r
+```{r}
 # Install cograph
 # devtools::install_github("lamethods/cograph")
 
 library(cograph)
 
 # Basic usage - identical input format
-adj <- matrix(c(0, .5, .3, .5, 0, .4, .3, .4, 0), 3, 3)
+adj <- matrix(c(0, .5, -.3, .5, 0, .4, .3, .4, 0), 3, 3)
 
 # qgraph style:
 # qgraph::qgraph(adj)
@@ -100,7 +129,7 @@ splot(adj)
 
 ### Basic Network
 
-```r
+```{r}
 # qgraph
 qgraph(adj, layout = "circle", vsize = 10, edge.labels = TRUE)
 
@@ -110,7 +139,7 @@ splot(adj, layout = "circle", node_size = 10, edge_labels = TRUE)
 
 ### Weighted Network with Colors
 
-```r
+```{r}
 # qgraph
 qgraph(adj, posCol = "darkgreen", negCol = "red", minimum = 0.1)
 
@@ -120,7 +149,7 @@ splot(adj, edge_positive_color = "darkgreen", edge_negative_color = "red", thres
 
 ### Custom Node Appearance
 
-```r
+```{r}
 # qgraph
 qgraph(adj,
        shape = "square",
@@ -140,7 +169,7 @@ splot(adj,
 
 ### Curved Edges
 
-```r
+```{r}
 # qgraph
 qgraph(adj, curve = 0.3, curveAll = TRUE)
 
@@ -150,7 +179,7 @@ splot(adj, curvature = 0.3, curves = "force")
 
 ### Pie/Donut Nodes (e.g., TNA initial probabilities)
 
-```r
+```{r}
 # qgraph style (single value per node = donut fill)
 qgraph(adj, pie = c(0.2, 0.5, 0.3), pieColor = "steelblue")
 
@@ -165,19 +194,19 @@ splot(adj,
 
 ### Save to File
 
-```r
+```{r}
 # qgraph
-qgraph(adj, filetype = "png", filename = "network", width = 7, height = 7)
+qgraph(adj, filetype = "png", filename = "network_qgraph", width = 7, height = 7)
 
 # splot (default 600 DPI for publication quality)
-splot(adj, filetype = "png", filename = "network", width = 7, height = 7, res = 600)
+splot(adj, filetype = "png", filename = "network_cograph", width = 7, height = 7, res = 600)
 ```
 
 ## Features Unique to splot
 
 ### 1. Edge CI Underlays (Uncertainty Visualization)
 
-```r
+```{r}
 # Show confidence intervals as semi-transparent underlays
 splot(adj,
       edge_ci = c(0.2, 0.5, 0.1, 0.3, 0.4, 0.2),  # CI widths
@@ -188,7 +217,7 @@ splot(adj,
 
 ### 2. Edge Label Templates
 
-```r
+```{r}
 # Show estimate with significance stars
 splot(adj,
       edge_label_template = "{est}{stars}",
@@ -196,7 +225,7 @@ splot(adj,
 
 # Full statistical labels
 splot(adj,
-      edge_label_template = "{est} {range} {p}",
+      edge_label_template = "{est} {range}, {p}",
       edge_ci_lower = c(0.3, 0.1, 0.5, 0.2, 0.4, 0.1),
       edge_ci_upper = c(0.7, 0.5, 0.9, 0.6, 0.8, 0.5),
       edge_label_p = c(0.001, 0.02, 0.5, 0.008, 0.04, 0.001))
@@ -204,7 +233,7 @@ splot(adj,
 
 ### 3. Edge Start Style (Direction Indicator)
 
-```r
+```{r}
 # Dotted line at edge start to show direction
 splot(adj,
       edge_start_style = "dotted",
@@ -213,7 +242,7 @@ splot(adj,
 
 ### 4. Polygon Donuts
 
-```r
+```{r}
 # Hexagonal donut nodes
 splot(adj,
       node_shape = "hexagon",
@@ -223,7 +252,7 @@ splot(adj,
 
 ### 5. Double Donuts
 
-```r
+```{r}
 # Two concentric rings per node
 splot(adj,
       donut_fill = c(0.8, 0.6, 0.9),
@@ -235,7 +264,7 @@ splot(adj,
 
 If you have existing qgraph code, use `from_qgraph()` for automatic conversion:
 
-```r
+```{r}
 library(qgraph)
 q <- qgraph(adj, theme = "colorblind", posCol = "blue")
 
@@ -252,9 +281,9 @@ do.call(splot, params)
 
 For TNA (Transition Network Analysis), splot provides native support:
 
-```r
+```{r}
 library(tna)
-trans <- tna(transition_matrix)
+trans <- tna(adj)
 
 # Direct plotting (recommended)
 splot(trans)

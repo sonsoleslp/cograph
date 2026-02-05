@@ -1,13 +1,42 @@
-# cograph Basic Example
-# ====================
-# This script demonstrates the basic usage of the cograph package.
+---
+title: "Basic example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Basic example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+  
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.width = 6,
+  fig.height = 4,
+  out.width = "100%",
+  dev = "jpeg",
+  dpi = 100,
+  comment = "#>"
+)
+suppressPackageStartupMessages({
+  library("cograph") 
+})
+options(scipen = 99)
+options(digits = 2)
+options(max.print = 30)
+options(width = 83)
+```
 
+
+This script demonstrates the basic usage of the `cograph` package.
+
+```{r}
 library(cograph)
+```
 
 # Example 1: Simple Network from Adjacency Matrix
-# ------------------------------------------------
 
-# Create a simple adjacency matrix
+Create a simple adjacency matrix
+```{r}
 adj <- matrix(c(
   0, 1, 1, 0, 0,
   1, 0, 1, 1, 0,
@@ -21,11 +50,10 @@ rownames(adj) <- colnames(adj) <- c("A", "B", "C", "D", "E")
 
 # Basic visualization
 cograph(adj)
-
+```
 
 # Example 2: Customized Network
-# ------------------------------
-
+```{r}
 adj |>
   cograph(layout = "circle") |>
   sn_nodes(
@@ -39,11 +67,10 @@ adj |>
     color = "gray50"
   ) |>
   sn_render(title = "My Network")
-
+```
 
 # Example 3: Weighted Network with Positive/Negative Edges
-# ---------------------------------------------------------
-
+```{r}
 weighted_adj <- matrix(c(
   0, 0.8, -0.5, 0, 0,
   0.8, 0, 0.3, -0.7, 0,
@@ -62,11 +89,10 @@ weighted_adj |>
   ) |>
   sn_nodes(size = 0.06, fill = "gray90") |>
   sn_render(title = "Weighted Network")
-
+```
 
 # Example 4: Group-Based Layout
-# -----------------------------
-
+```{r}
 # Create a larger network
 n <- 12
 group_adj <- matrix(0, n, n)
@@ -80,7 +106,10 @@ for (g in list(1:4, 5:8, 9:12)) {
     }
   }
 }
-# Add some connections between groups
+```
+
+Add some connections between groups
+```{r}
 group_adj[4, 5] <- group_adj[5, 4] <- 1
 group_adj[8, 9] <- group_adj[9, 8] <- 1
 
@@ -95,11 +124,10 @@ group_adj |>
   ) |>
   sn_theme("minimal") |>
   sn_render(title = "Grouped Network")
-
+```
 
 # Example 5: Different Themes
-# ----------------------------
-
+```{r}
 # Classic theme
 cograph(adj) |> sn_theme("classic") |> sn_render(title = "Classic Theme")
 
@@ -111,11 +139,10 @@ cograph(adj) |> sn_theme("minimal") |> sn_render(title = "Minimal Theme")
 
 # Colorblind-friendly theme
 cograph(adj) |> sn_theme("colorblind") |> sn_render(title = "Colorblind Theme")
-
+```
 
 # Example 6: Different Node Shapes
-# --------------------------------
-
+```{r}
 shapes <- c("circle", "square", "triangle", "diamond", "star")
 
 adj |>
@@ -126,11 +153,10 @@ adj |>
     fill = palette_colorblind(5)
   ) |>
   sn_render(title = "Different Node Shapes")
-
+```
 
 # Example 7: Convert to ggplot2
-# ------------------------------
-
+```{r}
 library(ggplot2)
 
 p <- adj |>
@@ -148,11 +174,10 @@ p +
     plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
     plot.subtitle = element_text(hjust = 0.5, color = "gray50")
   )
-
+```
 
 # Example 8: Directed Network
-# ----------------------------
-
+```{r}
 dir_adj <- matrix(c(
   0, 1, 1, 0, 0,
   0, 0, 1, 1, 0,
@@ -169,11 +194,10 @@ dir_adj |>
   ) |>
   sn_nodes(fill = "lightblue") |>
   sn_render(title = "Directed Network")
-
+```
 
 # Example 9: Edge List Input
-# ---------------------------
-
+```{r}
 edges <- data.frame(
   from = c("Alice", "Alice", "Bob", "Bob", "Carol"),
   to = c("Bob", "Carol", "Carol", "Dave", "Dave"),
@@ -185,11 +209,10 @@ edges |>
   sn_edges(width = "weight") |>
   sn_nodes(size = 0.06, fill = "mediumpurple") |>
   sn_render(title = "Network from Edge List")
-
+```
 
 # Example 10: Save to File
-# -------------------------
-
+```{r}
 # Uncomment to save:
 # net <- cograph(adj) |>
 #   sn_nodes(fill = "steelblue") |>
@@ -200,3 +223,4 @@ edges |>
 # sn_save(net, "network.svg", width = 8, height = 8)
 
 cat("\ncograph examples completed successfully!\n")
+```

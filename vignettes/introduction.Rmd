@@ -10,11 +10,23 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
   fig.width = 6,
-  fig.height = 6
+  fig.height = 4,
+  out.width = "100%",
+  dev = "jpeg",
+  dpi = 100,
+  comment = "#>"
 )
+suppressPackageStartupMessages({
+  library("cograph")
+  library("ggplot2")
+})
+options(scipen = 99)
+options(digits = 2)
+options(max.print = 30)
+options(width = 83)
 ```
+
 
 ## Overview
 

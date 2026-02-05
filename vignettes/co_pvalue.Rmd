@@ -1,10 +1,35 @@
-# cograph Confidence Interval and P-Value Demo
-# ============================================
-# This script demonstrates edge uncertainty visualization features.
+---
+title: "Confidence Interval and p-value Demo"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Confidence Interval and p-value Demo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
-library(cograph)
+This script demonstrates edge uncertainty visualization features.
 
-# Create a weighted transition matrix (e.g., regression coefficients)
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.width = 6,
+  fig.height = 4,
+  out.width = "100%",
+  dev = "jpeg",
+  dpi = 100,
+  comment = "#>"
+)
+suppressPackageStartupMessages({
+  library("cograph")
+})
+options(scipen = 99)
+options(digits = 2)
+options(max.print = 30)
+options(width = 83)
+```
+
+Create a weighted transition matrix (e.g., regression coefficients)
+```{r}
 set.seed(123)
 states <- c("A", "B", "C", "D", "E")
 mat <- matrix(c(
@@ -26,12 +51,12 @@ ci_upper <- abs(mat[mat != 0]) + runif(n_edges, 0.1, 0.2)
 p_values <- c(0.001, 0.023, 0.045, 0.089, 0.002,
               0.034, 0.067, 0.001, 0.056, 0.012,
               0.078, 0.003, 0.041)
+```
 
+# #Example 1: Basic CI Underlays
 
-# Example 1: Basic CI Underlays
-# -----------------------------
-# CI width shown as translucent underlay beneath edges
-
+CI width shown as translucent underlay beneath edges
+```{r}
 splot(mat,
   layout = "circle",
   edge_ci = ci_widths,
@@ -41,12 +66,12 @@ splot(mat,
   label_size = 0.8,
   title = "Confidence Interval Underlays"
 )
+```
 
+## Example 2: P-Values with Significance Stars
 
-# Example 2: P-Values with Significance Stars
-# -------------------------------------------
-# Automatic star notation: *** p<0.001, ** p<0.01, * p<0.05
-
+Automatic star notation: *** p<0.001, ** p<0.01, * p<0.05
+```{r}
 splot(mat,
   layout = "circle",
   edge_labels = TRUE,
@@ -58,12 +83,12 @@ splot(mat,
   label_size = 0.8,
   title = "Edge Labels with Significance Stars"
 )
+```
 
+## Example 3: Custom Label Template with CI Range
 
-# Example 3: Custom Label Template with CI Range
-# ----------------------------------------------
-# Template placeholders: {est}, {low}, {up}, {p}, {stars}, {range}
-
+Template placeholders: {est}, {low}, {up}, {p}, {stars}, {range}
+```{r}
 splot(mat,
   layout = "circle",
   edge_label_template = "{est}\n[{low}, {up}]",
@@ -76,12 +101,11 @@ splot(mat,
   label_size = 0.8,
   title = "Estimates with CI Ranges"
 )
+```
 
-
-# Example 4: Full Statistical Labels
-# ----------------------------------
-# Combine estimate, CI, and p-value in one label
-
+## Example 4: Full Statistical Labels
+Combine estimate, CI, and p-value in one label
+```{r}
 splot(mat,
   layout = "spring",
   seed = 42,
@@ -103,11 +127,10 @@ splot(mat,
   theme = "minimal",
   title = "Full Statistical Edge Labels with CI Underlays"
 )
+```
 
-
-# Example 5: P-Value Only Labels
-# ------------------------------
-
+## Example 5: P-Value Only Labels
+```{r}
 splot(mat,
   layout = "circle",
   edge_label_template = "{p}",
@@ -120,12 +143,12 @@ splot(mat,
   label_size = 0.8,
   title = "P-Value Labels"
 )
+```
 
+## Example 6: CI Underlay Styling Options
 
-# Example 6: CI Underlay Styling Options
-# --------------------------------------
-# Customize CI underlay appearance
-
+Customize CI underlay appearance
+```{r}
 splot(mat,
   layout = "circle",
   edge_ci = ci_widths,
@@ -137,11 +160,10 @@ splot(mat,
   label_size = 0.8,
   title = "Custom CI Underlay Style"
 )
+```
 
-
-# Example 7: Combining with Themes
-# --------------------------------
-
+## Example 7: Combining with Themes
+```{r}
 splot(mat,
   layout = "spring",
   seed = 123,
@@ -158,11 +180,11 @@ splot(mat,
   title = "CI and Stars with Dark Theme"
 )
 
+```
 
-# Example 8: Publication-Ready Network
-# ------------------------------------
-# Clean visualization suitable for academic papers
-
+## Example 8: Publication-Ready Network
+Clean visualization suitable for academic papers
+```{r}
 splot(mat,
   layout = "circle",
   # CI underlays
@@ -203,3 +225,4 @@ cat("  edge_label_p     - P-values for significance\n")
 cat("  edge_label_stars - Show significance stars\n")
 cat("  edge_label_template - Custom label format\n")
 cat("  edge_ci_lower/upper - CI bounds for labels\n")
+```

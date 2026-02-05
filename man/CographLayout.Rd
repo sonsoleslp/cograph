@@ -15,6 +15,7 @@ adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
 net <- CographNetwork$new(adj)
 coords <- layout$compute(net)
 }
+\keyword{internal}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{

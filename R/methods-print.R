@@ -1,4 +1,5 @@
 #' @title Print Methods
+#' @keywords internal
 #' @description S3 print methods for Cograph objects.
 #' @name methods-print
 NULL
@@ -7,6 +8,8 @@ NULL
 #'
 #' @param x A cograph_network object.
 #' @param ... Ignored.
+#' @keywords internal
+
 #' @return Invisible x.
 #' @export
 print.cograph_network <- function(x, ...) {

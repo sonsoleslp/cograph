@@ -6,3 +6,4 @@
 \description{
 Main grid-based rendering functions.
 }
+\keyword{internal}

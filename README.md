@@ -1,23 +1,36 @@
+
 # cograph <img src="man/figures/logo.png" align="right" height="139" />
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/username/cograph/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/username/cograph/actions/workflows/R-CMD-check.yaml)
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![R-CMD-check](https://github.com/sonsoleslp/cograph/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sonsoleslp/cograph/actions/workflows/R-CMD-check.yaml)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/cograph)](https://CRAN.R-project.org/package=cograph)
+[![Codecov test
+coverage](https://codecov.io/gh/sonsoleslp/cograph/graph/badge.svg)](https://app.codecov.io/gh/sonsoleslp/cograph)
+[![License:
+MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 <!-- badges: end -->
 
-**cograph** is a modern R package for network visualization. Plot networks from
-matrices, igraph, network, qgraph, or tna objects with a single function:
-**`splot()`**.
+**cograph** is a modern R package for network visualization. It renders
+publication-ready network plots from adjacency matrices, edge lists,
+igraph, statnet network, qgraph, or tna objects using a pipe-friendly
+API with full control over nodes, edges, layouts, and themes.
 
 Key features:
 
-- **Universal input**: `splot()` handles adjacency matrices, edge lists, igraph, statnet network, qgraph, and tna objects
+- **Base R and grid rendering** via `splot()` and `soplot()`
+- **Pipe-friendly API**:
+  `cograph() |> sn_nodes() |> sn_edges() |> sn_theme()`
 - **12+ node shapes** including pie charts and donut rings
 - **7 built-in themes** and multiple color palettes
-- **Confidence interval underlays**, edge label templates, weight scaling
-- **Specialized TNA functions**: `plot_tna()`, `plot_htna()`, `plot_mtna()`, `plot_mlna()`
+- **Confidence interval underlays**, edge label templates, weight
+  scaling
+- **Converters** for `tna` and `qgraph` objects
 
 ## Installation
 
@@ -27,13 +40,16 @@ install.packages("cograph")
 
 # Or install the development version from GitHub
 # install.packages("devtools")
-devtools::install_github("username/cograph")
+#devtools::install_github("sonsoleslp/cograph")
 ```
 
 ## Quick Start
 
 ``` r
 library(cograph)
+#> cograph: Modern Network Visualization for R
+#> Version: 1.5.2
+#> Type ?cograph for help
 
 # 10-node directed transition matrix (TNA-style)
 set.seed(42)
@@ -45,32 +61,35 @@ mat <- mat / rowSums(mat)  # row-normalize
 
 # Basic plot
 splot(mat)
-
-# Customized plot
-splot(mat,
-  layout = "oval",
-  node_size = 7,
-  node_fill = palette_pastel(10),
-  edge_labels = TRUE,
-  edge_label_size = 0.4,
-  edge_color = "darkblue",
-  curvature = 0.175,
-  threshold = 0.05,
-  title = "My Network"
-)
 ```
 
-> **Note**: `soplot()` provides the same functionality using grid graphics
-> instead of base R. Both functions accept identical parameters.
+<img src="man/figures/README-unnamed-chunk-3-1.png" alt="" width="100%" />
 
-## Supported Input Types
+``` r
 
-`splot()` automatically detects and handles six input types:
+# Pipe-chain style
+cograph(mat, layout = "spring") |>
+  sn_nodes(size = 0.07, fill = "steelblue", shape = "circle") |>
+  sn_edges(width = "weight", color = "weight") |>
+  sn_theme("minimal") |>
+  sn_render()
+```
+
+<img src="man/figures/README-unnamed-chunk-3-2.png" alt="" width="100%" />
+
+## Input Formats
+
+cograph accepts six input types:
 
 ``` r
 # 1. Adjacency matrix
 adj <- matrix(c(0,1,1, 1,0,1, 1,1,0), nrow = 3)
 splot(adj)
+```
+
+<img src="man/figures/README-unnamed-chunk-4-1.png" alt="" width="100%" />
+
+``` r
 
 # 2. Edge list (data.frame with from, to, and optional weight)
 edges <- data.frame(
@@ -79,53 +98,166 @@ edges <- data.frame(
   weight = c(0.8, 0.5, 0.3)
 )
 splot(edges)
+```
+
+<img src="man/figures/README-unnamed-chunk-4-2.png" alt="" width="100%" />
+
+``` r
 
 # 3. igraph object
 library(igraph)
+#> 
+#> Attaching package: 'igraph'
+#> The following object is masked from 'package:cograph':
+#> 
+#>     is_directed
+#> The following objects are masked from 'package:stats':
+#> 
+#>     decompose, spectrum
+#> The following object is masked from 'package:base':
+#> 
+#>     union
 g <- make_ring(10)
 splot(g)
+```
+
+<img src="man/figures/README-unnamed-chunk-4-3.png" alt="" width="100%" />
+
+``` r
 
 # 4. statnet network object
 library(network)
+#> 
+#> 'network' 1.19.0 (2024-12-08), part of the Statnet Project
+#> * 'news(package="network")' for changes since last version
+#> * 'citation("network")' for citation information
+#> * 'https://statnet.org' for help, support, and other information
+#> 
+#> Attaching package: 'network'
+#> The following objects are masked from 'package:igraph':
+#> 
+#>     %c%, %s%, add.edges, add.vertices, delete.edges, delete.vertices,
+#>     get.edge.attribute, get.edges, get.vertex.attribute, is.bipartite,
+#>     is.directed, list.edge.attributes, list.vertex.attributes,
+#>     set.edge.attribute, set.vertex.attribute
 net <- network.initialize(5, directed = FALSE)
 net[1,2] <- net[2,3] <- net[3,4] <- net[4,5] <- net[1,5] <- 1
 splot(net)
+```
+
+<img src="man/figures/README-unnamed-chunk-4-4.png" alt="" width="100%" />
+
+``` r
 
 # 5. qgraph object
 library(qgraph)
 q <- qgraph(adj)
+```
+
+<img src="man/figures/README-unnamed-chunk-4-5.png" alt="" width="100%" />
+
+``` r
 splot(q)
+```
+
+<img src="man/figures/README-unnamed-chunk-4-6.png" alt="" width="100%" />
+
+``` r
 
 # 6. tna object (transition network analysis)
 library(tna)
-tna_obj <- tna(sequences)
+#> 'tna' package version 1.1.0
+#> ------------------------------------------------------
+#>   Tikka, S., López-Pernas, S., and Saqr, M. (2025). 
+#>   tna: An R Package for Transition Network Analysis.
+#>   Applied Psychological Measurement.
+#>   https://doi.org/10.1177/01466216251348840
+#> ------------------------------------------------------
+#> Please type 'citation("tna")' for more citation information.
+#> See the package website at https://sonsoles.me/tna/
+#> 
+#> Attaching package: 'tna'
+#> The following objects are masked from 'package:igraph':
+#> 
+#>     cliques, communities, compare
+tna_obj <- tna(group_regulation)
 splot(tna_obj)
 ```
 
-For explicit conversion with parameter overrides, use `from_tna()` or `from_qgraph()`:
+<img src="man/figures/README-unnamed-chunk-4-7.png" alt="" width="100%" />
+
+## splot() vs soplot()
+
+`splot()` uses base R graphics; `soplot()` uses grid graphics. Both
+accept the same parameters.
 
 ``` r
-from_tna(tna_obj, theme = "dark", layout = "circle")
-from_qgraph(q, node_fill = "steelblue")
+# Base R (recommended for knitting and file output)
+splot(mat, layout = "circle", theme = "classic")
 ```
+
+<img src="man/figures/README-unnamed-chunk-5-1.png" alt="" width="100%" />
+
+``` r
+
+# Grid-based (useful for sn_ggplot())
+soplot(mat, layout = "circle", theme = "classic")
+```
+
+<img src="man/figures/README-unnamed-chunk-5-2.png" alt="" width="100%" />
 
 ## Layouts
 
 ``` r
 # Built-in layouts
 splot(mat, layout = "circle")
+```
+
+<img src="man/figures/README-unnamed-chunk-6-1.png" alt="" width="100%" />
+
+``` r
 splot(mat, layout = "spring")
-splot(mat, layout = "oval")
+```
+
+<img src="man/figures/README-unnamed-chunk-6-2.png" alt="" width="100%" />
+
+``` r
+
+# Group-based layout
+groups <- rep(1:3, length.out = 10)
+cograph(mat) |> sn_layout("groups", groups = groups) |> sn_render()
+```
+
+<img src="man/figures/README-unnamed-chunk-6-3.png" alt="" width="100%" />
+
+``` r
 
 # igraph layout codes
 splot(mat, layout = "kk")    # Kamada-Kawai
+```
+
+<img src="man/figures/README-unnamed-chunk-6-4.png" alt="" width="100%" />
+
+``` r
 splot(mat, layout = "fr")    # Fruchterman-Reingold
+```
+
+<img src="man/figures/README-unnamed-chunk-6-5.png" alt="" width="100%" />
+
+``` r
 splot(mat, layout = "mds")   # Multidimensional scaling
+```
+
+<img src="man/figures/README-unnamed-chunk-6-6.png" alt="" width="100%" />
+
+``` r
 
 # Custom coordinates
 coords <- matrix(runif(20), ncol = 2)
-splot(mat, layout = coords)
+cograph(mat) |> sn_layout(coords) |> sn_render()
 ```
+
+<img src="man/figures/README-unnamed-chunk-6-7.png" alt="" width="100%" />
 
 ## Node Shapes
 
@@ -140,6 +272,8 @@ shapes <- c("circle", "square", "triangle", "diamond", "pentagon",
             "hexagon", "ellipse", "heart", "star", "cross")
 splot(mat, node_shape = shapes, node_fill = palette_rainbow(10), layout = "circle")
 ```
+
+<img src="man/figures/README-unnamed-chunk-7-1.png" alt="" width="100%" />
 
 ## Node Aesthetics
 
@@ -156,18 +290,24 @@ splot(mat,
 )
 ```
 
+<img src="man/figures/README-unnamed-chunk-8-1.png" alt="" width="100%" />
+
 ## Edge Aesthetics
 
 ``` r
 # Width, color, and style
 splot(mat,
-  edge_positive_color = "#2E7D32",
-  edge_negative_color = "#C62828",
+  positive_color = "#2E7D32",
+  negative_color = "#C62828",
   edge_style = "solid",
   curvature = 0.2,
   arrow_size = 0.015
 )
+#> Warning: 'positive_color' is deprecated, use 'edge_positive_color' instead.
+#> Warning: 'negative_color' is deprecated, use 'edge_negative_color' instead.
 ```
+
+<img src="man/figures/README-unnamed-chunk-9-1.png" alt="" width="100%" />
 
 ## Confidence Intervals and P-Values
 
@@ -182,6 +322,11 @@ splot(mat,
   edge_ci_scale = 2.5,
   edge_ci_style = 1  # 1=solid, 2=dashed, 3=dotted
 )
+```
+
+<img src="man/figures/README-unnamed-chunk-10-1.png" alt="" width="100%" />
+
+``` r
 
 # P-values with significance stars (*** p<0.001, ** p<0.01, * p<0.05)
 splot(mat,
@@ -190,6 +335,11 @@ splot(mat,
   edge_label_stars = TRUE,
   edge_label_size = 0.5
 )
+```
+
+<img src="man/figures/README-unnamed-chunk-10-2.png" alt="" width="100%" />
+
+``` r
 
 # Custom template with CI bounds
 splot(mat,
@@ -201,6 +351,11 @@ splot(mat,
   edge_label_digits = 2,
   edge_label_size = 0.45
 )
+```
+
+<img src="man/figures/README-unnamed-chunk-10-3.png" alt="" width="100%" />
+
+``` r
 
 # Publication-ready with CI underlays and labels
 splot(mat,
@@ -214,26 +369,30 @@ splot(mat,
 )
 ```
 
+<img src="man/figures/README-unnamed-chunk-10-4.png" alt="" width="100%" />
+
 Template placeholders: `{est}`, `{low}`, `{up}`, `{range}`, `{p}`,
 `{stars}`
 
 ## Pie Chart Nodes
 
-<img src="man/figures/pie_example.png" width="450" />
-
 ``` r
-set.seed(42)
+set.seed(1)
 # Each node gets a vector of pie segment values
 pie_vals <- lapply(1:10, function(i) runif(4))
-pie_cols <- c("#E63946", "#457B9D", "#2A9D8F", "#F4A261")
+pie_cols <- c("#E41A1C", "#377EB8", "#4DAF4A", "#FF7F00")
 
 splot(mat,
   node_shape = "pie",
   pie_values = pie_vals,
   pie_colors = pie_cols,
-  pie_border_width = 0,  # no segment divider lines
   layout = "circle"
 )
+```
+
+<img src="man/figures/README-unnamed-chunk-11-1.png" alt="" width="100%" />
+
+``` r
 
 # Per-node color palettes
 pie_cols_multi <- list(
@@ -257,43 +416,9 @@ splot(mat,
 )
 ```
 
+<img src="man/figures/README-unnamed-chunk-11-2.png" alt="" width="100%" />
+
 ## Donut Nodes
-
-**Segmented donuts:**
-
-<img src="man/figures/donut_example.png" width="450" />
-
-``` r
-# Segmented donuts with multiple colors
-donut_vals <- lapply(1:10, function(i) runif(4))
-donut_cols <- c("#E63946", "#457B9D", "#2A9D8F", "#F4A261")
-splot(mat,
-  donut_values = donut_vals,
-  donut_colors = list(donut_cols),
-  donut_inner_ratio = 0.65,
-  layout = "circle"
-)
-```
-
-**Donut + Pie combined** (outer donut ring with inner pie segments):
-
-<img src="man/figures/donut_pie_example.png" width="450" />
-
-``` r
-# Combined: donut ring + pie inside
-splot(mat,
-  node_shape = "donut",
-  donut_fill = runif(10, 0.5, 0.95),
-  donut_color = "steelblue",
-  donut_inner_ratio = 0.55,
-  pie_values = pie_vals,
-  pie_colors = pie_cols,
-  pie_border_width = 0,
-  layout = "circle"
-)
-```
-
-**Simple donut with fill proportion:**
 
 ``` r
 # Simple donut: fill proportion per node (0 to 1)
@@ -304,6 +429,26 @@ splot(mat,
   donut_color = "steelblue",
   layout = "circle"
 )
+```
+
+<img src="man/figures/README-unnamed-chunk-12-1.png" alt="" width="100%" />
+
+``` r
+
+# Segmented donuts with multiple colors
+donut_vals <- lapply(1:10, function(i) runif(3))
+donut_cols <- list(c("#E63946", "#457B9D", "#2A9D8F"))
+splot(mat,
+  donut_values = donut_vals,
+  donut_colors = donut_cols,
+  donut_inner_ratio = 0.6,
+  node_size = 6
+)
+```
+
+<img src="man/figures/README-unnamed-chunk-12-2.png" alt="" width="100%" />
+
+``` r
 
 # Per-node donut color palettes
 donut_cols_multi <- list(
@@ -324,6 +469,11 @@ splot(mat,
   donut_inner_ratio = 0.55,
   node_size = 6
 )
+```
+
+<img src="man/figures/README-unnamed-chunk-12-3.png" alt="" width="100%" />
+
+``` r
 
 # Polygon donut shapes
 splot(mat,
@@ -333,6 +483,11 @@ splot(mat,
                   "pentagon", "circle", "hexagon", "square", "diamond"),
   donut_color = palette_viridis(10)
 )
+```
+
+<img src="man/figures/README-unnamed-chunk-12-4.png" alt="" width="100%" />
+
+``` r
 
 # Show value in center
 splot(mat,
@@ -342,6 +497,11 @@ splot(mat,
   donut_value_digits = 0,
   donut_value_suffix = "%"
 )
+```
+
+<img src="man/figures/README-unnamed-chunk-12-5.png" alt="" width="100%" />
+
+``` r
 
 # Donut + Pie combo: outer donut ring with inner pie segments
 splot(mat,
@@ -351,6 +511,11 @@ splot(mat,
   pie_values = lapply(1:10, function(i) runif(3)),
   pie_colors = c("#E41A1C", "#377EB8", "#4DAF4A")
 )
+```
+
+<img src="man/figures/README-unnamed-chunk-12-6.png" alt="" width="100%" />
+
+``` r
 
 # Double donut: two concentric rings
 splot(mat,
@@ -362,24 +527,49 @@ splot(mat,
 )
 ```
 
+<img src="man/figures/README-unnamed-chunk-12-7.png" alt="" width="100%" />
+
 ## Weight Handling
 
 ``` r
 # Round weights to 1 digit
 splot(mat, weight_digits = 1)
+```
+
+<img src="man/figures/README-unnamed-chunk-13-1.png" alt="" width="100%" />
+
+``` r
 
 # Filter edges below threshold
 splot(mat, threshold = 0.1)
+```
+
+<img src="man/figures/README-unnamed-chunk-13-2.png" alt="" width="100%" />
+
+``` r
 
 # Set maximum for scaling
 splot(mat, maximum = 1.0)
+```
+
+<img src="man/figures/README-unnamed-chunk-13-3.png" alt="" width="100%" />
+
+``` r
 
 # Disable two-tier cutoff
-splot(mat, edge_cutoff = 0)
+splot(mat, cut = 0)
+#> Warning: 'cut' is deprecated, use 'edge_cutoff' instead.
+```
+
+<img src="man/figures/README-unnamed-chunk-13-4.png" alt="" width="100%" />
+
+``` r
 
 # Logarithmic edge scaling
 splot(mat, edge_scale_mode = "log")
 ```
+
+<img src="man/figures/README-unnamed-chunk-13-5.png" alt="" width="100%" />
 
 ## Themes
 
@@ -387,222 +577,160 @@ Seven built-in themes:
 
 ``` r
 splot(mat, theme = "classic")
+```
+
+<img src="man/figures/README-unnamed-chunk-14-1.png" alt="" width="100%" />
+
+``` r
 splot(mat, theme = "dark")
+```
+
+<img src="man/figures/README-unnamed-chunk-14-2.png" alt="" width="100%" />
+
+``` r
 splot(mat, theme = "colorblind")
+```
+
+<img src="man/figures/README-unnamed-chunk-14-3.png" alt="" width="100%" />
+
+``` r
 splot(mat, theme = "gray")
+```
+
+<img src="man/figures/README-unnamed-chunk-14-4.png" alt="" width="100%" />
+
+``` r
 splot(mat, theme = "minimal")
+```
+
+<img src="man/figures/README-unnamed-chunk-14-5.png" alt="" width="100%" />
+
+``` r
 splot(mat, theme = "viridis")
+```
+
+<img src="man/figures/README-unnamed-chunk-14-6.png" alt="" width="100%" />
+
+``` r
 splot(mat, theme = "nature")
 ```
+
+<img src="man/figures/README-unnamed-chunk-14-7.png" alt="" width="100%" />
 
 ## Color Palettes
 
 ``` r
 splot(mat, node_fill = palette_rainbow(10))
+```
+
+<img src="man/figures/README-unnamed-chunk-15-1.png" alt="" width="100%" />
+
+``` r
 splot(mat, node_fill = palette_colorblind(10))
+```
+
+<img src="man/figures/README-unnamed-chunk-15-2.png" alt="" width="100%" />
+
+``` r
 splot(mat, node_fill = palette_pastel(10))
+```
+
+<img src="man/figures/README-unnamed-chunk-15-3.png" alt="" width="100%" />
+
+``` r
 splot(mat, node_fill = palette_viridis(10))
+```
+
+<img src="man/figures/README-unnamed-chunk-15-4.png" alt="" width="100%" />
+
+``` r
 splot(mat, node_fill = palette_blues(10))
+```
+
+<img src="man/figures/README-unnamed-chunk-15-5.png" alt="" width="100%" />
+
+``` r
 splot(mat, node_fill = palette_reds(10))
+```
+
+<img src="man/figures/README-unnamed-chunk-15-6.png" alt="" width="100%" />
+
+``` r
 splot(mat, node_fill = palette_diverging(10))
 ```
+
+<img src="man/figures/README-unnamed-chunk-15-7.png" alt="" width="100%" />
+
+## Converters: from_tna() and from_qgraph()
+
+``` r
+# Convert a tna object (requires tna package)
+library(tna)
+tna_obj <- tna(group_regulation)
+from_tna(tna_obj)
+```
+
+<img src="man/figures/README-unnamed-chunk-16-1.png" alt="" width="100%" />
+
+``` r
+
+# Override parameters during conversion
+from_tna(tna_obj, theme = "dark", layout = "circle")
+```
+
+<img src="man/figures/README-unnamed-chunk-16-2.png" alt="" width="100%" />
+
+## ggplot2 Integration
+
+``` r
+library(ggplot2)
+#> 
+#> Attaching package: 'ggplot2'
+#> The following object is masked from 'package:cograph':
+#> 
+#>     get_theme
+
+p <- cograph(mat) |>
+  sn_nodes(fill = "steelblue") |>
+  sn_theme("minimal") |>
+  sn_ggplot()
+
+p + labs(title = "My Network") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+<img src="man/figures/README-unnamed-chunk-17-1.png" alt="" width="100%" />
 
 ## Saving Plots
 
 ``` r
-# Save splot output to file
-pdf("network.pdf", width = 8, height = 8)
-splot(mat, theme = "minimal", node_fill = palette_pastel(10))
-dev.off()
+net <- cograph(mat) |>
+  sn_nodes(fill = palette_pastel(10)) |>
+  sn_theme("minimal")
 
-png("network.png", width = 800, height = 800)
-splot(mat, theme = "minimal")
-dev.off()
+sn_save(net, "network.pdf", width = 8, height = 8)
+sn_save(net, "network.png", width = 8, height = 8, dpi = 300)
+sn_save(net, "network.svg", width = 8, height = 8)
 ```
-
-## Specialized TNA Visualization
-
-These functions provide specialized layouts for transition network analysis (TNA)
-and related network types.
-
-### plot_tna() - qgraph-Compatible Interface
-
-`plot_tna()` provides a qgraph-compatible interface for TNA network visualization,
-making migration from qgraph straightforward.
-
-``` r
-# Simple usage
-m <- matrix(runif(25), 5, 5)
-plot_tna(m)
-
-# With qgraph-style parameters
-plot_tna(m, vsize = 15, edge.label.cex = 2, layout = "circle")
-
-# With pie/donut nodes (qgraph-style)
-plot_tna(m, pie = runif(5), pieColor = rainbow(5))
-```
-
-> **Alias**: `tplot()` is available as a shorthand for `plot_tna()`.
-
-### plot_htna() - Heterogeneous Multi-Group Networks
-
-`plot_htna()` creates multi-group network layouts where node groups are
-arranged in geometric patterns (bipartite, triangle, rectangle, polygon,
-or circular).
-
-**Polygon layout** (groups along polygon edges):
-
-<img src="man/figures/htna_polygon_example.png" width="500" />
-
-**Circular layout** (groups along circle arcs):
-
-<img src="man/figures/htna_circular_example.png" width="500" />
-
-``` r
-# Create network with 3 groups
-set.seed(42)
-nodes <- paste0("N", 1:15)
-m <- matrix(runif(225, 0, 0.3), 15, 15)
-diag(m) <- 0
-colnames(m) <- rownames(m) <- nodes
-
-node_types <- list(
-  Teacher = paste0("N", 1:5),
-  Student = paste0("N", 6:10),
-  System = paste0("N", 11:15)
-)
-
-# Polygon layout (triangle for 3 groups)
-plot_htna(m, node_types, layout = "polygon", minimum = 0.15)
-
-# Circular layout (groups as arcs)
-plot_htna(m, node_types, layout = "circular", minimum = 0.15)
-
-# Rectangle layout for 4 groups
-node_types_4 <- list(
-  Input = c("Click", "Type", "Scroll"),
-  Process = c("Validate", "Transform"),
-  Output = c("Display", "Alert"),
-  Storage = c("Save", "Load", "Cache")
-)
-plot_htna(mat, node_types_4)  # Auto-detects rectangle layout
-```
-
-### plot_mtna() - Multi-Cluster Networks
-
-`plot_mtna()` visualizes multiple network clusters with summary edges between
-clusters and individual edges within clusters. Each cluster is displayed
-as a shape (circle, square, diamond, triangle) containing its nodes.
-
-<img src="man/figures/mtna_example.png" width="600" />
-
-``` r
-# Create network with 6 clusters
-set.seed(42)
-nodes <- paste0("N", 1:30)
-m <- matrix(runif(900, 0, 0.3), 30, 30)
-diag(m) <- 0
-colnames(m) <- rownames(m) <- nodes
-
-clusters <- list(
-  Alpha = paste0("N", 1:5),
-  Beta = paste0("N", 6:10),
-  Gamma = paste0("N", 11:15),
-  Delta = paste0("N", 16:20),
-  Epsilon = paste0("N", 21:25),
-  Zeta = paste0("N", 26:30)
-)
-
-# Summary edges between clusters + individual edges within
-plot_mtna(m, clusters)
-
-# Control spacing and sizes
-plot_mtna(m, clusters,
-     spacing = 4,         # inter-cluster distance
-     shape_size = 1.3,    # shell size
-     node_spacing = 0.6,  # nodes at 60% of shape radius
-     minimum = 0.15)      # edge weight threshold
-
-# Different layouts
-plot_mtna(m, clusters, layout = "grid")
-plot_mtna(m, clusters, layout = "horizontal")
-plot_mtna(m, clusters, layout = "vertical")
-```
-
-Key parameters:
-- `spacing`: Distance between cluster centers
-- `shape_size`: Size of cluster shells
-- `node_spacing`: Node placement within shapes (0-1)
-- `shapes`: Vector of shapes per cluster ("circle", "square", "diamond", "triangle")
-- `summary_edges`: Show aggregated between-cluster edges (default TRUE)
-- `within_edges`: Show individual within-cluster edges (default TRUE)
-
-> **Alias**: `mtna()` is available as a shorthand for `plot_mtna()`.
-
-### plot_mlna() - Multilevel 3D Networks
-
-`plot_mlna()` visualizes multilevel/multiplex networks where multiple layers are
-stacked in a 3D perspective view. Each layer contains nodes connected by
-solid edges (within-layer), while dashed lines connect nodes between adjacent
-layers (inter-layer edges).
-
-<img src="man/figures/mlna_example.png" width="600" />
-
-``` r
-# Create multilevel network
-set.seed(42)
-nodes <- paste0("N", 1:21)
-m <- matrix(runif(441, 0, 0.3), 21, 21)
-diag(m) <- 0
-colnames(m) <- rownames(m) <- nodes
-
-# Define 3 layers
-layers <- list(
-  Macro = paste0("N", 1:7),
-  Meso = paste0("N", 8:14),
-  Micro = paste0("N", 15:21)
-)
-
-# Basic usage with spring layout
-plot_mlna(m, layers, layout = "spring", minimum = 0.18)
-
-# Customize layer dimensions and spacing
-plot_mlna(m, layers,
-     layout = "spring",
-     layer_width = 6,       # horizontal width
-     layer_depth = 3,       # depth (3D effect)
-     layer_spacing = 4,     # vertical distance between layers
-     skew_angle = 25,       # perspective angle
-     node_spacing = 0.95,   # spread of nodes (0-1)
-     node_size = 3.5,
-     minimum = 0.18)
-```
-
-Key parameters:
-- `layout`: Node arrangement within layers ("horizontal", "circle", "spring")
-- `layer_spacing`: Vertical distance between layers
-- `layer_width`: Horizontal width of each layer
-- `layer_depth`: Depth of layer (controls 3D effect)
-- `skew_angle`: Perspective angle in degrees
-- `node_spacing`: How spread out nodes are within layers (0-1)
-- `between_style`: Line style for inter-layer edges (1=solid, 2=dashed, 3=dotted)
-
-> **Alias**: `mlna()` is available as a shorthand for `plot_mlna()`.
 
 ## Function Reference
 
 | Function | Purpose |
-|----------|---------|
-| `splot()` | Universal network plotting (base R graphics) |
-| `soplot()` | Universal network plotting (grid graphics) |
-| `plot_tna()` | qgraph-compatible TNA plotting (alias: `tplot()`) |
-| `plot_htna()` | Heterogeneous multi-group layouts |
-| `plot_mtna()` | Multi-cluster visualization (alias: `mtna()`) |
-| `plot_mlna()` | Multilevel 3D visualization (alias: `mlna()`) |
-| `from_tna()` | Convert tna object with parameter overrides |
-| `from_qgraph()` | Convert qgraph object with parameter overrides |
-| `palette_*()` | Color palettes (rainbow, colorblind, pastel, viridis, blues, reds, diverging) |
+|----|----|
+| `cograph()` | Create network from matrix, edge list, igraph, network, qgraph, or tna |
+| `splot()` | Render with base R graphics |
+| `soplot()` | Render with grid graphics |
+| `sn_nodes()` | Set node aesthetics |
+| `sn_edges()` | Set edge aesthetics |
+| `sn_layout()` | Apply layout algorithm |
+| `sn_theme()` | Apply visual theme |
+| `sn_palette()` | Apply color palette |
+| `sn_render()` | Render to current device |
+| `sn_ggplot()` | Convert to ggplot2 object |
+| `sn_save()` | Save to file |
+| `from_tna()` | Convert tna object |
+| `from_qgraph()` | Convert qgraph object |
 
 ## License
 
-MIT License. See [LICENSE.md](LICENSE.md) for details.
+MIT License. See [LICENSE](LICENSE) for details.

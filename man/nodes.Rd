@@ -24,3 +24,4 @@ nodes(net)  # Deprecated, use get_nodes(net) instead
 \seealso{
 \code{\link{get_nodes}}, \code{\link{as_cograph}}, \code{\link{n_nodes}}
 }
+\keyword{internal}

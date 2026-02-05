@@ -1,4 +1,5 @@
 #' @title Circular Layout
+#' @keywords internal
 #' @description Arrange nodes in a circle.
 #' @name layout-circle
 NULL

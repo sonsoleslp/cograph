@@ -2,7 +2,7 @@
 title: "Pie & Donut Nodes in cograph"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Basic example}
+  %\VignetteIndexEntry{Pie & Donut Nodes in cograph}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
   fig.width = 8,
   fig.height = 6,
   out.width = "100%",
+  background = "white",
   dev = "jpeg",
   dpi = 100,
   comment = "#>"
@@ -26,11 +27,11 @@ options(max.print = 30)
 options(width = 83)
 ```
 
-# Introduction {#introduction}
+## Introduction {#introduction}
 
 Network visualizations become dramatically more informative when nodes can display data beyond simple labels. **cograph** provides powerful pie chart and donut (ring) node capabilities that let you encode multiple data dimensions directly into each node.
 
-## What Are Pie and Donut Nodes?
+### What Are Pie and Donut Nodes?
 
 **Pie Nodes** divide a circular node into colored segments, showing proportional data (like category distributions or composition breakdowns).
 
@@ -39,7 +40,7 @@ Network visualizations become dramatically more informative when nodes can displ
 - **Segmented data** (multiple proportions in a ring)
 - **Layered information** (outer donut + inner pie)
 
-## When to Use Each Type
+### When to Use Each Type
 
 | Use Case | Recommended Type |
 |----------|------------------|
@@ -49,7 +50,7 @@ Network visualizations become dramatically more informative when nodes can displ
 | Comparing ratios | Segmented Donut |
 | Three+ data layers | Donut + Pie combo |
 
-## Visual Comparison
+### Visual Comparison
 
 ```{r comparison, fig.height=4, fig.width=10}
 # Create a simple 3-node network for comparison
@@ -95,11 +96,11 @@ par(mfrow = c(1, 1))
 
 ---
 
-# Pie Chart Nodes {#pie-nodes}
+## Pie Chart Nodes {#pie-nodes}
 
 Pie chart nodes divide the node area into colored segments proportional to your data values.
 
-## Basic Pie Nodes
+### Basic Pie Nodes
 
 Use `pie_values` to specify the proportions for each node. Values are automatically normalized to sum to 1.
 
@@ -122,7 +123,7 @@ splot(adj,
       title = "Basic Pie Nodes with Different Segment Counts")
 ```
 
-## Customizing Pie Colors
+### Customizing Pie Colors
 
 Use `pie_colors` to specify custom colors for each segment.
 
@@ -149,7 +150,7 @@ splot(adj,
       title = "Pie Nodes with Custom Colors")
 ```
 
-## Styling Pie Borders
+### Styling Pie Borders
 
 Customize the border around pie charts using `pie_border_width` and node border parameters.
 
@@ -177,7 +178,7 @@ splot(adj,
 par(mfrow = c(1, 1))
 ```
 
-## Real-World Example: Category Distributions
+### Real-World Example: Category Distributions
 
 ```{r pie-realworld, fig.width=9}
 # Social network with interest categories
@@ -212,11 +213,11 @@ splot(adj,
 
 ---
 
-# Simple Donut Nodes (Progress Rings) {#simple-donuts}
+## Simple Donut Nodes (Progress Rings) {#simple-donuts}
 
 Simple donuts display a single value (0-1) as a filled ring, perfect for showing progress or completion.
 
-## Basic Progress Donuts
+### Basic Progress Donuts
 
 Use `donut_fill` with values between 0 and 1 to show progress.
 
@@ -238,7 +239,7 @@ splot(adj, layout = layout,
       title = "Task Completion Status")
 ```
 
-## Customizing Donut Colors
+### Customizing Donut Colors
 
 ```{r donut-colors}
 # Color by completion level
@@ -252,7 +253,7 @@ splot(adj, layout = layout,
       title = "Completion with Status Colors")
 ```
 
-## Showing Values in Center
+### Showing Values in Center
 
 Enable `donut_show_value = TRUE` to display the numeric value inside the donut.
 
@@ -265,7 +266,7 @@ splot(adj, layout = layout,
       title = "Progress Rings with Values")
 ```
 
-## Formatting Displayed Values
+### Formatting Displayed Values
 
 Customize value display with prefix, suffix, and digit precision.
 
@@ -301,11 +302,11 @@ splot(adj, layout = layout,
 par(mfrow = c(1, 1))
 ```
 
----
+ 
 
-# Donut Customization {#donut-customization}
+## Donut Customization {#donut-customization}
 
-## Controlling Hole Size with `donut_inner_ratio`
+### Controlling Hole Size with `donut_inner_ratio`
 
 The `donut_inner_ratio` parameter controls the size of the inner hole (0 = no hole, 1 = all hole).
 
@@ -323,7 +324,7 @@ for (ratio in c(0.3, 0.5, 0.7, 0.85)) {
 par(mfrow = c(1, 1))
 ```
 
-## Background Color for Unfilled Portions
+### Background Color for Unfilled Portions
 
 Use `donut_bg_color` to change the color of unfilled donut sections.
 
@@ -351,7 +352,7 @@ splot(adj, layout = layout,
 par(mfrow = c(1, 1))
 ```
 
-## Polygon Shapes with `donut_shape`
+### Polygon Shapes with `donut_shape`
 
 Transform donuts into polygons: hexagon, square, diamond, triangle, or pentagon.
 
@@ -372,13 +373,12 @@ for (shape in shapes) {
 par(mfrow = c(1, 1))
 ```
 
----
 
-# Border Styling (Advanced) {#border-styling}
+## Border Styling (Advanced) {#border-styling}
 
 cograph provides extensive border customization options for donut nodes, including double borders and line type patterns.
 
-## Single Border Customization
+### Single Border Customization
 
 Use `donut_border_color` to set the border color.
 
@@ -407,7 +407,7 @@ splot(adj, layout = layout,
 par(mfrow = c(1, 1))
 ```
 
-## Double Borders with `donut_outer_border_color`
+### Double Borders with `donut_outer_border_color`
 
 Create a double-border effect by specifying both inner and outer border colors.
 
@@ -441,7 +441,7 @@ splot(adj, layout = layout,
 par(mfrow = c(1, 1))
 ```
 
-## Line Types with `donut_border_lty`
+### Line Types with `donut_border_lty`
 
 The `donut_border_lty` parameter accepts R's standard line type values:
 
@@ -473,7 +473,7 @@ for (i in seq_along(lty_values)) {
 par(mfrow = c(1, 1))
 ```
 
-## Per-Node Line Types
+### Per-Node Line Types
 
 Assign different line types to individual nodes.
 
@@ -503,7 +503,7 @@ splot(adj5,
       title = "Per-Node Line Types")
 ```
 
-## Combining Double Borders with Line Types
+### Combining Double Borders with Line Types
 
 ```{r double-border-lty, fig.width=10}
 par(mfrow = c(1, 2))
@@ -529,13 +529,12 @@ splot(adj, layout = layout,
 par(mfrow = c(1, 1))
 ```
 
----
 
-# Donut + Pie Combinations {#combinations}
+## Donut + Pie Combinations {#combinations}
 
 For truly data-rich visualizations, combine donut rings with inner pie charts or use multiple donut layers.
 
-## Outer Donut Ring with Inner Pie Chart
+### Outer Donut Ring with Inner Pie Chart
 
 Use both `donut_fill` AND `pie_values` together.
 
@@ -566,7 +565,7 @@ splot(adj3, layout = layout3,
       title = "Donut (Progress) + Pie (Categories)")
 ```
 
-## Double Donut Configuration
+### Double Donut Configuration
 
 Layer two donut rings by using both segmented donuts and progress donuts creatively.
 
@@ -591,11 +590,10 @@ splot(adj3, layout = layout3,
       title = "Segmented Donut + Inner Pie")
 ```
 
----
 
-# Real-World Examples {#real-world}
+## Real-World Examples {#real-world}
 
-## Example 1: Project Completion Dashboard
+### Example 1: Project Completion Dashboard
 
 ```{r realworld-projects, fig.width=10}
 # Project dependency network
@@ -637,7 +635,7 @@ splot(proj_adj, layout = proj_layout,
       title = "Project Completion Dashboard")
 ```
 
-## Example 2: Team Skills Network
+### Example 2: Team Skills Network
 
 ```{r realworld-skills, fig.width=10}
 # Team collaboration network
@@ -671,7 +669,7 @@ splot(team_adj,
       title = "Team Skills Distribution")
 ```
 
-## Example 3: Multi-Metric Node Visualization
+### Example 3: Multi-Metric Node Visualization
 
 ```{r realworld-multi, fig.width=10}
 # 3-node comparison
@@ -701,11 +699,9 @@ splot(comp_adj, layout = comp_layout,
       title = "Product Comparison: Overall Score + Breakdown")
 ```
 
----
+## Parameter Reference {#reference}
 
-# Parameter Reference {#reference}
-
-## Pie Chart Parameters
+### Pie Chart Parameters
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -713,7 +709,7 @@ splot(comp_adj, layout = comp_layout,
 | `pie_colors` | list/vector | Default palette | Colors for pie segments |
 | `pie_border_width` | numeric | NULL | Border width for pie slice dividers |
 
-## Donut Parameters
+### Donut Parameters
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -728,7 +724,7 @@ splot(comp_adj, layout = comp_layout,
 | `donut_value_digits` | integer | 2 | Decimal places for displayed value |
 | `donut_empty` | logical | TRUE | Render empty rings for NA values |
 
-## Donut Border Parameters
+### Donut Border Parameters
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -737,7 +733,7 @@ splot(comp_adj, layout = comp_layout,
 | `donut_outer_border_color` | character | NULL | Outer border color (enables double border) |
 | `donut_border_lty` | numeric/character | 1 | Line type: 0-6 or "blank", "solid", etc. |
 
-## Double Donut Parameters
+### Double Donut Parameters
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -745,9 +741,8 @@ splot(comp_adj, layout = comp_layout,
 | `donut2_colors` | list | NULL | Colors for inner donut ring |
 | `donut2_inner_ratio` | numeric | 0.4 | Inner radius ratio for inner donut |
 
----
 
-# Conclusion
+## Conclusion
 
 cograph's pie and donut node features transform simple network diagrams into rich, multi-dimensional visualizations. Whether you need to show completion status, category breakdowns, or multiple metrics per node, these tools provide the flexibility to create exactly the visualization you need.
 
@@ -760,7 +755,4 @@ Key takeaways:
 - **Custom shapes** (hexagon, square, etc.) provide visual variety
 
 For more examples and advanced usage, see the package documentation with `?splot` or visit the cograph GitHub repository.
-
----
-
-*Generated by cograph package v`r packageVersion("cograph")`*
+ 

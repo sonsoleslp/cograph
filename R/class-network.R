@@ -1,5 +1,5 @@
 #' @title CographNetwork R6 Class
-#'
+#' @keywords internal
 #' @description
 #' Core class representing a network for visualization. Stores nodes, edges,
 #' layout coordinates, and aesthetic mappings.
@@ -733,7 +733,7 @@ as_cograph <- function(x, directed = NULL, ...) {
 #' @return A data frame with columns: id, label, name, x, y (and possibly others).
 #'
 #' @seealso \code{\link{get_nodes}}, \code{\link{as_cograph}}, \code{\link{n_nodes}}
-#'
+#' @keywords internal
 #' @export
 #'
 #' @examples
@@ -749,7 +749,7 @@ nodes <- function(x) {
 #' Check if Network is Directed
 #'
 #' Checks whether a cograph_network is directed.
-#'
+#' @keywords internal
 #' @param x A cograph_network object.
 #' @return Logical: TRUE if directed, FALSE if undirected.
 #'

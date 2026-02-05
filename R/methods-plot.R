@@ -1,4 +1,5 @@
 #' @title Plot Methods
+#' @keywords internal
 #' @description S3 plot methods for Cograph objects.
 #' @name methods-plot
 NULL
@@ -7,6 +8,7 @@ NULL
 #'
 #' @param x A cograph_network object.
 #' @param ... Additional arguments passed to sn_render.
+#' @keywords internal
 #' @return Invisible x.
 #' @export
 #'
@@ -22,6 +24,7 @@ plot.cograph_network <- function(x, ...) {
 #' Summary of cograph_network Object
 #'
 #' @param object A cograph_network object.
+#' @keywords internal
 #' @param ... Ignored.
 #' @return A list with network summary information (invisibly).
 #' @export

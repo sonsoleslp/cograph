@@ -1,5 +1,6 @@
 #' @title Grid Rendering
 #' @description Main grid-based rendering functions.
+#' @keywords internal
 #' @name render-grid
 NULL
 

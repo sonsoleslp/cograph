@@ -1,4 +1,5 @@
 #' @title igraph Input Parsing
+#' @keywords internal
 #' @description Functions for parsing igraph objects.
 #' @name input-igraph
 NULL

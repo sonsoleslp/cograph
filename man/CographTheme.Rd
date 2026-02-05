@@ -14,6 +14,7 @@ theme <- CographTheme$new(
   edge_color = "gray60"
 )
 }
+\keyword{internal}
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{

@@ -17,3 +17,4 @@ Invisible x.
 \description{
 Print cograph_network Object
 }
+\keyword{internal}

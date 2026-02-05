@@ -29,3 +29,4 @@ is_directed(net2)  # TRUE
 \seealso{
 \code{\link{as_cograph}}
 }
+\keyword{internal}

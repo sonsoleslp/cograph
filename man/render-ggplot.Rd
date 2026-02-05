@@ -6,3 +6,4 @@
 \description{
 Convert Cograph network to ggplot2 object.
 }
+\keyword{internal}

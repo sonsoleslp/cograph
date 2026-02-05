@@ -1,4 +1,5 @@
 #' @title ggplot2 Conversion
+#' @keywords internal
 #' @description Convert Cograph network to ggplot2 object.
 #' @name render-ggplot
 NULL

@@ -17,6 +17,7 @@ net$n_nodes
 net$n_edges
 net$is_directed
 }
+\keyword{internal}
 \section{Active bindings}{
 \if{html}{\out{<div class="r6-active-bindings">}}
 \describe{

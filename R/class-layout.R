@@ -1,5 +1,5 @@
 #' @title CographLayout R6 Class
-#'
+#' @keywords internal
 #' @description
 #' Class for managing layout algorithms and computing node positions.
 #'

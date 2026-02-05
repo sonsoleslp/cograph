@@ -17,3 +17,4 @@ A list with network summary information (invisibly).
 \description{
 Summary of cograph_network Object
 }
+\keyword{internal}

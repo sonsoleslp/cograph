@@ -1,4 +1,5 @@
 #' @title Matrix Input Parsing
+#' @keywords internal
 #' @description Functions for parsing adjacency/weight matrices.
 #' @name input-matrix
 NULL

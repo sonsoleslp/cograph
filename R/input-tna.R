@@ -1,4 +1,5 @@
 #' @title tna Input Parsing
+#' @keywords internal
 #' @description Functions for parsing tna objects.
 #' @name input-tna
 NULL

@@ -6,3 +6,4 @@
 \description{
 Pre-defined themes for network visualization.
 }
+\keyword{internal}

@@ -1,5 +1,5 @@
 #' @title CographTheme R6 Class
-#'
+#' @keywords internal
 #' @description
 #' Class for managing visual themes for network plots.
 #'

@@ -50,6 +50,7 @@ Built-in themes include:
 Useful links:
 \itemize{
   \item \url{https://github.com/mohsaqr/cograph}
+  \item \url{http://sonsoles.me/cograph/}
   \item Report bugs at \url{https://github.com/mohsaqr/cograph/issues}
 }
 
@@ -58,3 +59,4 @@ Useful links:
 \strong{Maintainer}: Mohammed Saqr \email{mohammed.saqr@uef.fi}
 
 }
+\keyword{internal}

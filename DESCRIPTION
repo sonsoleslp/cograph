@@ -1,16 +1,20 @@
 Package: cograph
 Title: Modern Network Visualization for R
 Version: 1.5.2
-Authors@R:
-    person("Mohammed", "Saqr", , "mohammed.saqr@uef.fi", role = c("aut", "cre"))
+Authors@R: c(
+    person("Mohammed", "Saqr", role = "aut"),
+    person("Sonsoles", "L\u00f3pez-Pernas", 
+           email = "sonsoles.lopez@uef.fi", role = c("aut", "cre")),
+    person("Santtu", "Tikka", role = "aut")
+  )
 Description: Provides high-quality static and interactive network plots. As a
     modern, extensible network visualization package, `cograph` accepts adjacency
     matrices, edge lists, or igraph objects and offers customizable layouts,
     node shapes, edge styles, and themes. Designed for publication-ready
     visualizations with a pipe-friendly API.
 License: MIT + file LICENSE
-URL: https://github.com/mohsaqr/cograph
-BugReports: https://github.com/mohsaqr/cograph/issues
+URL: http://sonsoles.me/cograph/
+BugReports: https://github.com/sonsoleslp/cograph/issues
 Depends:
     R (>= 4.4.0)
 Imports:
@@ -38,4 +42,4 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

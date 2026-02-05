@@ -1,5 +1,6 @@
 #' @title Built-in Themes
 #' @description Pre-defined themes for network visualization.
+#' @keywords internal
 #' @name themes-builtin
 NULL
 

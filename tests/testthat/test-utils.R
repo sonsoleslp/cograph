@@ -42,41 +42,21 @@ test_that("adjust_alpha handles invalid colors gracefully", {
 })
 
 test_that("adjust_brightness lightens colors", {
-  # Skip if function has internal issues - this is testing internal utility
-  skip_if_not(exists("adjust_brightness", envir = asNamespace("cograph")))
-
   original <- "blue"
 
-  # Test that function doesn't error
-  result <- tryCatch(
-    cograph:::adjust_brightness(original, 0.3),
-    error = function(e) NA
-  )
+  result <- cograph:::adjust_brightness(original, 0.3)
 
-  # If function works, check result
-  if (!is.na(result)) {
-    expect_true(is.character(result))
-    expect_true(nchar(result) > 0)
-  }
+  expect_true(is.character(result))
+  expect_true(nchar(result) > 0)
 })
 
 test_that("adjust_brightness darkens colors", {
-  # Skip if function has internal issues - this is testing internal utility
-  skip_if_not(exists("adjust_brightness", envir = asNamespace("cograph")))
-
   original <- "yellow"
 
-  # Test that function doesn't error
-  result <- tryCatch(
-    cograph:::adjust_brightness(original, -0.3),
-    error = function(e) NA
-  )
+  result <- cograph:::adjust_brightness(original, -0.3)
 
-  # If function works, check result
-  if (!is.na(result)) {
-    expect_true(is.character(result))
-    expect_true(nchar(result) > 0)
-  }
+  expect_true(is.character(result))
+  expect_true(nchar(result) > 0)
 })
 
 test_that("adjust_brightness handles NA", {

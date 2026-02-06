@@ -82,8 +82,9 @@ test_that("registered SVG shape can be used in soplot", {
 
   # May or may not work depending on SVG rendering support
   # Just check it doesn't crash
+  # Suppress warning about grImport2 not being installed
   result <- tryCatch({
-    with_temp_png(soplot(mat, node_shape = "test_svg_circle", layout = "circle"))
+    suppressWarnings(with_temp_png(soplot(mat, node_shape = "test_svg_circle", layout = "circle")))
     TRUE
   }, error = function(e) FALSE)
 
@@ -99,9 +100,10 @@ test_that("SVG shape handles fill color", {
 
   mat <- create_test_matrix(3)
 
+  # Suppress warning about grImport2 not being installed
   result <- tryCatch({
-    with_temp_png(soplot(mat, node_shape = "test_svg_fill",
-                         node_fill = "red", layout = "circle"))
+    suppressWarnings(with_temp_png(soplot(mat, node_shape = "test_svg_fill",
+                         node_fill = "red", layout = "circle")))
     TRUE
   }, error = function(e) FALSE)
 
@@ -124,8 +126,9 @@ test_that("draw_svg_shape handles errors gracefully", {
   mat <- create_test_matrix(3)
 
   # Should either work or fail gracefully, not crash
+  # Suppress warning about grImport2 not being installed
   result <- tryCatch({
-    with_temp_png(soplot(mat, node_shape = "test_invalid_svg", layout = "circle"))
+    suppressWarnings(with_temp_png(soplot(mat, node_shape = "test_invalid_svg", layout = "circle")))
     "success"
   }, error = function(e) "error")
 

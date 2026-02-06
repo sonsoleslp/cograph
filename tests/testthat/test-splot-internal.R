@@ -482,7 +482,11 @@ test_that("splot renders edges with esize scaling", {
   mat <- create_test_matrix(4, weighted = TRUE)
 
   result <- tryCatch({
-    with_temp_plot(splot(mat, esize = 10))
+    # esize is deprecated, expect the warning
+    expect_warning(
+      with_temp_plot(splot(mat, esize = 10)),
+      "deprecated"
+    )
     TRUE
   }, error = function(e) FALSE)
 
@@ -515,7 +519,11 @@ test_that("splot renders edges with cut threshold", {
   mat <- create_test_matrix(4, weighted = TRUE)
 
   result <- tryCatch({
-    with_temp_plot(splot(mat, cut = 0.2))
+    # cut is deprecated, expect the warning
+    expect_warning(
+      with_temp_plot(splot(mat, cut = 0.2)),
+      "deprecated"
+    )
     TRUE
   }, error = function(e) FALSE)
 

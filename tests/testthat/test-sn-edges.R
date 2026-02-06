@@ -212,9 +212,13 @@ test_that("sn_edges() deprecated positive_color and negative_color work with war
   adj <- create_test_matrix(4, weighted = TRUE)
   net <- cograph(adj)
 
+  # Both parameters are deprecated, so expect two warnings
   expect_warning(
-    result <- sn_edges(net, positive_color = "darkgreen", negative_color = "darkred"),
-    "deprecated"
+    expect_warning(
+      result <- sn_edges(net, positive_color = "darkgreen", negative_color = "darkred"),
+      "positive_color.*deprecated"
+    ),
+    "negative_color.*deprecated"
   )
   aes <- result$network$get_edge_aes()
   expect_equal(aes$positive_color, "darkgreen")

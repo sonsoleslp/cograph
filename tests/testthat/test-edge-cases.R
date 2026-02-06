@@ -438,7 +438,8 @@ test_that("splot() handles custom layout with Inf values gracefully", {
   layout <- matrix(c(0, Inf, 1, 0.5, 1, 0.5), ncol = 2)
 
   result <- tryCatch({
-    with_temp_png(splot(adj, layout = layout))
+    # Suppress warnings about min/max of Inf values
+    suppressWarnings(with_temp_png(splot(adj, layout = layout)))
     "success"
   }, error = function(e) "error")
 

@@ -80,7 +80,8 @@ test_that("sn_save() creates TIFF file", {
   tmp <- tempfile(fileext = ".tiff")
   on.exit(unlink(tmp), add = TRUE)
 
-  expect_message(sn_save(net, tmp), "Saved")
+  # Suppress platform-specific TIFF compression warnings
+  suppressWarnings(expect_message(sn_save(net, tmp), "Saved"))
   expect_file_created(tmp)
   expect_file_size(tmp, 1000)
 })
@@ -94,8 +95,9 @@ test_that("sn_save() creates EPS file", {
   on.exit(unlink(tmp), add = TRUE)
 
   # PostScript devices can fail with font family issues
+  # Suppress semi-transparency warnings on PostScript devices
   result <- tryCatch({
-    sn_save(net, tmp)
+    suppressWarnings(sn_save(net, tmp))
     TRUE
   }, error = function(e) {
     if (grepl("font|family|postscript", conditionMessage(e), ignore.case = TRUE)) {
@@ -118,8 +120,9 @@ test_that("sn_save() creates PS file", {
   on.exit(unlink(tmp), add = TRUE)
 
   # PostScript devices can fail with font family issues
+  # Suppress semi-transparency warnings on PostScript devices
   result <- tryCatch({
-    sn_save(net, tmp)
+    suppressWarnings(sn_save(net, tmp))
     TRUE
   }, error = function(e) {
     if (grepl("font|family|postscript", conditionMessage(e), ignore.case = TRUE)) {

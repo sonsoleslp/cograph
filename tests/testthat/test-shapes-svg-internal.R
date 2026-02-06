@@ -166,7 +166,8 @@ test_that("draw_svg_shape falls back to circle without grImport2", {
     parsed = NULL
   )
 
-  result <- with_temp_png({
+  # Suppress warning about grImport2 not being installed
+  result <- suppressWarnings(with_temp_png({
     grob <- draw_svg_shape(
       x = 0.5, y = 0.5, size = 0.1,
       svg_data = svg_data,
@@ -174,7 +175,7 @@ test_that("draw_svg_shape falls back to circle without grImport2", {
       alpha = 1, preserve_aspect = TRUE
     )
     TRUE
-  })
+  }))
 
   expect_true(result)
 })
@@ -186,7 +187,8 @@ test_that("draw_svg_shape handles alpha parameter", {
     parsed = NULL
   )
 
-  result <- with_temp_png({
+  # Suppress warning about grImport2 not being installed
+  result <- suppressWarnings(with_temp_png({
     grob <- draw_svg_shape(
       x = 0.5, y = 0.5, size = 0.1,
       svg_data = svg_data,
@@ -194,7 +196,7 @@ test_that("draw_svg_shape handles alpha parameter", {
       alpha = 0.5, preserve_aspect = TRUE
     )
     TRUE
-  })
+  }))
 
   expect_true(result)
 })
@@ -258,8 +260,9 @@ test_that("soplot can use custom SVG shapes", {
   mat <- create_test_matrix(4)
 
   # Note: This may fall back to circle if grImport2 is not installed
+  # Suppress warning about grImport2 not being installed
   result <- tryCatch({
-    with_temp_png(soplot(mat, node_shape = "test_plot_shape", layout = "circle"))
+    suppressWarnings(with_temp_png(soplot(mat, node_shape = "test_plot_shape", layout = "circle")))
     TRUE
   }, error = function(e) {
     # Shape might not be fully registered for soplot, but that's OK

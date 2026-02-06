@@ -421,7 +421,11 @@ test_that("soplot renders edges with esize parameter", {
   mat <- create_test_matrix(4, weighted = TRUE)
 
   result <- tryCatch({
-    with_temp_png(soplot(mat, esize = 8, layout = "circle"))
+    # esize is deprecated, expect the warning
+    expect_warning(
+      with_temp_png(soplot(mat, esize = 8, layout = "circle")),
+      "deprecated"
+    )
     TRUE
   }, error = function(e) FALSE)
 

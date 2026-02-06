@@ -9,7 +9,6 @@ NULL
 #' @param x A cograph_network object.
 #' @param ... Ignored.
 #' @keywords internal
-
 #' @return Invisible x.
 #' @export
 print.cograph_network <- function(x, ...) {

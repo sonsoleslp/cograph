@@ -8,7 +8,7 @@ Authors@R: c(
     person("Santtu", "Tikka", role = "aut")
   )
 Description: Provides high-quality static and interactive network plots. As a
-    modern, extensible network visualization package, `cograph` accepts adjacency
+    modern, extensible network visualization package. It accepts adjacency
     matrices, edge lists, or igraph objects and offers customizable layouts,
     node shapes, edge styles, and themes. Designed for publication-ready
     visualizations with a pipe-friendly API.

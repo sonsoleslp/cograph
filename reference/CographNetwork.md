@@ -75,7 +75,7 @@ edges, layout coordinates, and aesthetic mappings.
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new CographNetwork object.
 
@@ -229,7 +229,7 @@ Set edge aesthetics.
 
 ------------------------------------------------------------------------
 
-### Method [`set_theme()`](https://ggplot2.tidyverse.org/reference/get_theme.html)
+### Method `set_theme()`
 
 Set theme.
 

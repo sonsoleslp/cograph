@@ -58,12 +58,16 @@ Built-in themes include:
 
 Useful links:
 
-- <https://github.com/mohsaqr/cograph>
-
 - <http://sonsoles.me/cograph/>
 
-- Report bugs at <https://github.com/mohsaqr/cograph/issues>
+- Report bugs at <https://github.com/sonsoleslp/cograph/issues>
 
 ## Author
 
-**Maintainer**: Mohammed Saqr <mohammed.saqr@uef.fi>
+**Maintainer**: Sonsoles López-Pernas <sonsoles.lopez@uef.fi>
+
+Authors:
+
+- Mohammed Saqr
+
+- Santtu Tikka

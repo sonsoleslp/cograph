@@ -30,7 +30,7 @@ Class for managing visual themes for network plots.
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new CographTheme object.
 

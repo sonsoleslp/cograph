@@ -22,7 +22,7 @@ Class for managing layout algorithms and computing node positions.
 
 ------------------------------------------------------------------------
 
-### Method [`new()`](https://rdrr.io/r/methods/new.html)
+### Method `new()`
 
 Create a new CographLayout object.
 

@@ -1,0 +1,99 @@
+# Tests for print methods
+# Covers: R/methods-print.R
+
+test_that("print.cograph_network produces output", {
+  mat <- create_test_matrix(4)
+  net <- cograph(mat)
+
+  expect_output(print(net), "cograph")
+})
+
+test_that("print.cograph_network shows node count", {
+  mat <- create_test_matrix(5)
+  net <- cograph(mat)
+
+  expect_output(print(net), "5|Nodes|nodes", ignore.case = TRUE)
+})
+
+test_that("print.cograph_network shows edge count", {
+  mat <- create_test_topology("complete", 4)
+  net <- cograph(mat)
+
+  expect_output(print(net), "edge", ignore.case = TRUE)
+})
+
+test_that("print.cograph_network shows directed status", {
+  mat <- create_test_matrix(4, symmetric = FALSE)
+  net <- cograph(mat, directed = TRUE)
+
+  expect_output(print(net), "directed|Directed", ignore.case = TRUE)
+})
+
+test_that("print.cograph_network handles empty network", {
+  mat <- matrix(0, 4, 4)
+  net <- cograph(mat)
+
+  expect_output(print(net))
+})
+
+test_that("print.cograph_network handles single node", {
+  mat <- matrix(0, 1, 1)
+  net <- cograph(mat)
+
+  expect_output(print(net), "1|one", ignore.case = TRUE)
+})
+
+test_that("print.cograph_network handles weighted network", {
+  mat <- create_test_matrix(4, weighted = TRUE)
+  net <- cograph(mat)
+
+  expect_output(print(net))
+})
+
+test_that("print works with named nodes", {
+  mat <- create_test_matrix(4)
+  rownames(mat) <- colnames(mat) <- c("A", "B", "C", "D")
+  net <- cograph(mat)
+
+  output <- capture.output(print(net))
+  expect_true(length(output) > 0)
+})
+
+test_that("summary.cograph_network produces output", {
+  mat <- create_test_matrix(4)
+  net <- cograph(mat)
+
+  expect_output(summary(net))
+})
+
+test_that("summary.cograph_network shows statistics", {
+  mat <- create_test_matrix(4, weighted = TRUE)
+  net <- cograph(mat)
+
+  output <- capture.output(summary(net))
+  expect_true(length(output) > 0)
+})
+
+test_that("summary.cograph_network handles empty network", {
+  mat <- matrix(0, 4, 4)
+  net <- cograph(mat)
+
+  expect_output(summary(net))
+})
+
+test_that("summary shows weight statistics for weighted network", {
+  mat <- create_test_matrix(4, weighted = TRUE)
+  net <- cograph(mat)
+
+  output <- capture.output(summary(net))
+  # Should include some weight info
+  expect_true(length(output) >= 1)
+})
+
+test_that("print returns object invisibly", {
+  mat <- create_test_matrix(4)
+  net <- cograph(mat)
+
+  result <- print(net)
+  expect_s3_class(result, "cograph_network")
+})

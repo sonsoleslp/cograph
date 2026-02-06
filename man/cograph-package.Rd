@@ -49,14 +49,19 @@ Built-in themes include:
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/mohsaqr/cograph}
   \item \url{http://sonsoles.me/cograph/}
-  \item Report bugs at \url{https://github.com/mohsaqr/cograph/issues}
+  \item Report bugs at \url{https://github.com/sonsoleslp/cograph/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Mohammed Saqr \email{mohammed.saqr@uef.fi}
+\strong{Maintainer}: Sonsoles López-Pernas \email{sonsoles.lopez@uef.fi}
+
+Authors:
+\itemize{
+  \item Mohammed Saqr
+  \item Santtu Tikka
+}
 
 }
 \keyword{internal}

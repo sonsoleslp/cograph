@@ -6,6 +6,9 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
+  dev = "jpeg",
+  background = "white",
+  dpi = 300,
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
@@ -45,11 +48,21 @@ install.packages("cograph")
 #devtools::install_github("sonsoleslp/cograph")
 ```
 
-## Quick Start
 
-```{r}
+```{r, message=FALSE}
 library(cograph)
+```
 
+
+## Plotting Transition Network Analysis
+```{r,fig.height=6,fig.width=7, message=FALSE}
+library(tna)
+tna_obj <- tna(group_regulation)
+splot(tna_obj,layout = "circle")
+```
+
+## Simple network plotting
+```{r}
 # 10-node directed transition matrix (TNA-style)
 set.seed(42)
 states <- c("Explore", "Plan", "Monitor", "Evaluate", "Adapt",
@@ -57,164 +70,24 @@ states <- c("Explore", "Plan", "Monitor", "Evaluate", "Adapt",
 mat <- matrix(runif(100, 0, 0.3), nrow = 10, dimnames = list(states, states))
 diag(mat) <- 0
 mat <- mat / rowSums(mat)  # row-normalize
-
-# Basic plot
-splot(mat)
-
-# Pipe-chain style
-cograph(mat, layout = "spring") |>
-  sn_nodes(size = 0.07, fill = "steelblue", shape = "circle") |>
-  sn_edges(width = "weight", color = "weight") |>
-  sn_theme("minimal") |>
-  sn_render()
 ```
 
-## Input Formats
+### Layouts
 
-cograph accepts six input types:
-
-```{r}
-# 1. Adjacency matrix
-adj <- matrix(c(0,1,1, 1,0,1, 1,1,0), nrow = 3)
-splot(adj)
-
-# 2. Edge list (data.frame with from, to, and optional weight)
-edges <- data.frame(
-  from = c("A", "A", "B"),
-  to   = c("B", "C", "C"),
-  weight = c(0.8, 0.5, 0.3)
-)
-splot(edges)
-
-# 3. igraph object
-library(igraph)
-g <- make_ring(10)
-splot(g)
-
-# 4. statnet network object
-library(network)
-net <- network.initialize(5, directed = FALSE)
-net[1,2] <- net[2,3] <- net[3,4] <- net[4,5] <- net[1,5] <- 1
-splot(net)
-
-# 5. qgraph object
-library(qgraph)
-q <- qgraph(adj)
-splot(q)
-
-# 6. tna object (transition network analysis)
-library(tna)
-tna_obj <- tna(group_regulation)
-splot(tna_obj)
-```
-
-## splot() vs soplot()
-
-`splot()` uses base R graphics; `soplot()` uses grid graphics. Both accept the same parameters.
-
-```{r}
-# Base R (recommended for knitting and file output)
-splot(mat, layout = "circle", theme = "classic")
-
-# Grid-based (useful for sn_ggplot())
-soplot(mat, layout = "circle", theme = "classic")
-```
-
-## Layouts
-
-```{r}
+```{r, echo = -1}
+layout(matrix(1:4,byrow=T, nrow=2))
 # Built-in layouts
+splot(mat)
 splot(mat, layout = "circle")
-splot(mat, layout = "spring")
-
-# Group-based layout
-groups <- rep(1:3, length.out = 10)
-cograph(mat) |> sn_layout("groups", groups = groups) |> sn_render()
-
 # igraph layout codes
 splot(mat, layout = "kk")    # Kamada-Kawai
 splot(mat, layout = "fr")    # Fruchterman-Reingold
-splot(mat, layout = "mds")   # Multidimensional scaling
-
-# Custom coordinates
-coords <- matrix(runif(20), ncol = 2)
-cograph(mat) |> sn_layout(coords) |> sn_render()
 ```
 
-## Node Shapes
 
-All available shapes:
-
-```{r}
-# Shapes: circle, square, triangle, diamond, pentagon, hexagon,
-#         ellipse, heart, star, cross, rectangle
-
-# One shape per node
-shapes <- c("circle", "square", "triangle", "diamond", "pentagon",
-            "hexagon", "ellipse", "heart", "star", "cross")
-splot(mat, node_shape = shapes, node_fill = palette_rainbow(10), layout = "circle")
-```
-
-## Node Aesthetics
+`cograph` supports statistical edge visualization with CI underlays and significance notation.
 
 ```{r}
-splot(mat,
-  node_size = seq(0.04, 0.08, length.out = 10),
-  node_fill = palette_pastel(10),
-  node_border_color = "gray30",
-  node_border_width = 2,
-  node_alpha = 0.85,
-  label_size = 9,
-  label_color = "black",
-  label_position = "center"
-)
-```
-
-## Edge Aesthetics
-
-```{r}
-# Width, color, and style
-splot(mat,
-  positive_color = "#2E7D32",
-  negative_color = "#C62828",
-  edge_style = "solid",
-  curvature = 0.2,
-  arrow_size = 0.015
-)
-```
-
-## Confidence Intervals and P-Values
-
-cograph supports statistical edge visualization with CI underlays and significance notation.
-
-```{r}
-# Confidence interval underlays (uncertainty bands)
-splot(mat,
-  edge_ci = runif(sum(mat > 0), 0.05, 0.2),
-  edge_ci_alpha = 0.15,
-  edge_ci_scale = 2.5,
-  edge_ci_style = 1  # 1=solid, 2=dashed, 3=dotted
-)
-
-# P-values with significance stars (*** p<0.001, ** p<0.01, * p<0.05)
-splot(mat,
-  edge_labels = TRUE,
-  edge_label_p = runif(sum(mat > 0), 0, 0.1),
-  edge_label_stars = TRUE,
-  edge_label_size = 0.5
-)
-
-# Custom template with CI bounds
-splot(mat,
-  edge_label_template = "{est}{stars}\n[{low}, {up}]",
-  edge_ci_lower = runif(sum(mat > 0), 0.1, 0.3),
-  edge_ci_upper = runif(sum(mat > 0), 0.4, 0.6),
-  edge_label_p = runif(sum(mat > 0), 0, 0.1),
-  edge_label_stars = TRUE,
-  edge_label_digits = 2,
-  edge_label_size = 0.45
-)
-
 # Publication-ready with CI underlays and labels
 splot(mat,
   edge_ci = runif(sum(mat > 0), 0.05, 0.2),
@@ -229,9 +102,10 @@ splot(mat,
 
 Template placeholders: `{est}`, `{low}`, `{up}`, `{range}`, `{p}`, `{stars}`
 
-## Pie Chart Nodes
+### Pie Chart Nodes
 
-```{r}
+```{r, echo = -1}
+layout(t(1:2))
 set.seed(1)
 # Each node gets a vector of pie segment values
 pie_vals <- lapply(1:10, function(i) runif(4))
@@ -266,9 +140,11 @@ splot(mat,
 )
 ```
 
-## Donut Nodes
+### Donut Nodes
 
-```{r}
+```{r,fig.width=8,fig.height=12, echo = -1}
+layout(matrix(1:6,byrow=T, nrow=3));par(mar=c(0,0,0,0))
+
 # Simple donut: fill proportion per node (0 to 1)
 fills <- runif(10, 0.3, 0.95)
 splot(mat,
@@ -335,117 +211,138 @@ splot(mat,
   pie_colors = c("#E41A1C", "#377EB8", "#4DAF4A")
 )
 
-# Double donut: two concentric rings
-splot(mat,
-  node_shape = "donut",
-  donut_fill = fills,
-  donut_color = "steelblue",
-  donut2_values = runif(10, 0.2, 0.8),
-  donut2_colors = "coral"
+ 
+```
+
+## Specialized TNA Visualization
+
+These functions provide specialized layouts for transition network analysis (TNA)
+and related network types.
+
+### plot_tna() - qgraph-Compatible Interface
+
+`plot_tna()` provides a qgraph-compatible interface for TNA network visualization,
+making migration from qgraph straightforward.
+
+```{r,fig.width=15,fig.height=5}
+layout(t(1:3))
+# Simple usage
+m <- matrix(runif(25), 5, 5)
+plot_tna(m)
+
+# With qgraph-style parameters
+plot_tna(m, vsize = 6, edge.label.cex = 2, layout = "circle")
+
+# With pie/donut nodes (qgraph-style)
+plot_tna(m, pie = runif(5), pieColor = rainbow(5))
+```
+
+> **Alias**: `tplot()` is available as a shorthand for `plot_tna()`.
+
+### plot_htna() - Heterogeneous Multi-Group Networks
+
+`plot_htna()` creates multi-group network layouts where node groups are
+arranged in geometric patterns (bipartite, triangle, rectangle, polygon,
+or circular).
+
+ 
+```{r}
+layout(t(1:2)); par(mar=c(0,0,0,0))
+# Create network with 3 groups
+set.seed(42)
+nodes <- paste0("N", 1:15)
+m <- matrix(runif(225, 0, 0.3), 15, 15)
+diag(m) <- 0
+colnames(m) <- rownames(m) <- nodes
+
+node_types <- list(
+  Teacher = paste0("N", 1:5),
+  Student = paste0("N", 6:10),
+  System = paste0("N", 11:15)
+)
+
+# Polygon layout (triangle for 3 groups)
+plot_htna(m, node_types, layout = "polygon", minimum = 0.15)
+
+# Circular layout (groups as arcs)
+plot_htna(m, node_types, layout = "circular", minimum = 0.15)
+
+# Rectangle layout for 4 groups
+node_types_4 <- list(
+  Input = c("Click", "Type", "Scroll"),
+  Process = c("Validate", "Transform"),
+  Output = c("Display", "Alert"),
+  Storage = c("Save", "Load", "Cache")
 )
 ```
 
-## Weight Handling
+### plot_mtna() - Multi-Cluster Networks
 
-```{r}
-# Round weights to 1 digit
-splot(mat, weight_digits = 1)
+`plot_mtna()` visualizes multiple network clusters with summary edges between
+clusters and individual edges within clusters. Each cluster is displayed
+as a shape (circle, square, diamond, triangle) containing its nodes.
 
-# Filter edges below threshold
-splot(mat, threshold = 0.1)
+ 
+```{r,fig.width=8,fig.height=8, fig.dpi=300, dpi = 300}
+par(mar=c(0,0,0,0))
+# Create network with 6 clusters
+set.seed(42)
+nodes <- paste0("N", 1:30)
+m <- matrix(runif(900, 0, 0.3), 30, 30)
+diag(m) <- 0
+colnames(m) <- rownames(m) <- nodes
 
-# Set maximum for scaling
-splot(mat, maximum = 1.0)
+clusters <- list(
+  Alpha = paste0("N", 1:5),
+  Beta = paste0("N", 6:10),
+  Gamma = paste0("N", 11:15),
+  Delta = paste0("N", 16:20),
+  Epsilon = paste0("N", 21:25),
+  Zeta = paste0("N", 26:30)
+)
 
-# Disable two-tier cutoff
-splot(mat, cut = 0)
-
-# Logarithmic edge scaling
-splot(mat, edge_scale_mode = "log")
+# Summary edges between clusters + individual edges within
+plot_mtna(m, clusters)
 ```
 
-## Themes
+Key parameters:
+- `spacing`: Distance between cluster centers
+- `shape_size`: Size of cluster shells
+- `node_spacing`: Node placement within shapes (0-1)
+- `shapes`: Vector of shapes per cluster ("circle", "square", "diamond", "triangle")
+- `summary_edges`: Show aggregated between-cluster edges (default TRUE)
+- `within_edges`: Show individual within-cluster edges (default TRUE)
 
-Seven built-in themes:
+> **Alias**: `mtna()` is available as a shorthand for `plot_mtna()`.
 
-```{r}
-splot(mat, theme = "classic")
-splot(mat, theme = "dark")
-splot(mat, theme = "colorblind")
-splot(mat, theme = "gray")
-splot(mat, theme = "minimal")
-splot(mat, theme = "viridis")
-splot(mat, theme = "nature")
+### plot_mlna() - Multilevel 3D Networks
+
+`plot_mlna()` visualizes multilevel/multiplex networks where multiple layers are
+stacked in a 3D perspective view. Each layer contains nodes connected by
+solid edges (within-layer), while dashed lines connect nodes between adjacent
+layers (inter-layer edges).
+
+ 
+```{r,fig.width=5,fig.height=5, fig.dpi=300, dpi = 300}
+par(mar=c(0,0,0,0))
+# Create multilevel network
+set.seed(42)
+nodes <- paste0("N", 1:21)
+m <- matrix(runif(441, 0, 0.3), 21, 21)
+diag(m) <- 0
+colnames(m) <- rownames(m) <- nodes
+
+# Define 3 layers
+layers <- list(
+  Macro = paste0("N", 1:7),
+  Meso = paste0("N", 8:14),
+  Micro = paste0("N", 15:21)
+)
+
+# Basic usage with spring layout
+plot_mlna(m, layers, layout = "spring", minimum = 0.18 )
 ```
-
-## Color Palettes
-
-```{r}
-splot(mat, node_fill = palette_rainbow(10))
-splot(mat, node_fill = palette_colorblind(10))
-splot(mat, node_fill = palette_pastel(10))
-splot(mat, node_fill = palette_viridis(10))
-splot(mat, node_fill = palette_blues(10))
-splot(mat, node_fill = palette_reds(10))
-splot(mat, node_fill = palette_diverging(10))
-```
-
-## Converters: from_tna() and from_qgraph()
-
-```{r}
-# Convert a tna object (requires tna package)
-library(tna)
-tna_obj <- tna(group_regulation)
-from_tna(tna_obj)
-
-# Override parameters during conversion
-from_tna(tna_obj, theme = "dark", layout = "circle")
-```
-
-## ggplot2 Integration
-
-```{r}
-library(ggplot2)
-
-p <- cograph(mat) |>
-  sn_nodes(fill = "steelblue") |>
-  sn_theme("minimal") |>
-  sn_ggplot()
-
-p + labs(title = "My Network") +
-  theme(plot.title = element_text(hjust = 0.5))
-```
-
-## Saving Plots
-
-```{r, eval = F}
-net <- cograph(mat) |>
-  sn_nodes(fill = palette_pastel(10)) |>
-  sn_theme("minimal")
-
-sn_save(net, "network.pdf", width = 8, height = 8)
-sn_save(net, "network.png", width = 8, height = 8, dpi = 300)
-sn_save(net, "network.svg", width = 8, height = 8)
-```
-
-## Function Reference
-
-| Function | Purpose |
-|----------|---------|
-| `cograph()` | Create network from matrix, edge list, igraph, network, qgraph, or tna |
-| `splot()` | Render with base R graphics |
-| `soplot()` | Render with grid graphics |
-| `sn_nodes()` | Set node aesthetics |
-| `sn_edges()` | Set edge aesthetics |
-| `sn_layout()` | Apply layout algorithm |
-| `sn_theme()` | Apply visual theme |
-| `sn_palette()` | Apply color palette |
-| `sn_render()` | Render to current device |
-| `sn_ggplot()` | Convert to ggplot2 object |
-| `sn_save()` | Save to file |
-| `from_tna()` | Convert tna object |
-| `from_qgraph()` | Convert qgraph object |
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License. See [LICENSE.md](LICENSE.md) for details.

@@ -1,42 +1,5 @@
 # Package index
 
-## Network functions
-
-- [`cograph()`](http://sonsoles.me/cograph/reference/cograph.md) :
-  Create a Network Visualization
-- [`as_cograph()`](http://sonsoles.me/cograph/reference/as_cograph.md) :
-  Convert to Cograph Network
-- [`n_nodes()`](http://sonsoles.me/cograph/reference/n_nodes.md) : Get
-  Number of Nodes
-- [`n_edges()`](http://sonsoles.me/cograph/reference/n_edges.md) : Get
-  Number of Edges
-- [`get_edges()`](http://sonsoles.me/cograph/reference/get_edges.md) :
-  Get Edges from Cograph Network
-- [`get_labels()`](http://sonsoles.me/cograph/reference/get_labels.md) :
-  Get Labels from Cograph Network
-- [`get_nodes()`](http://sonsoles.me/cograph/reference/get_nodes.md) :
-  Get Nodes from Cograph Network
-- [`set_edges()`](http://sonsoles.me/cograph/reference/set_edges.md) :
-  Set Edges in Cograph Network
-- [`set_nodes()`](http://sonsoles.me/cograph/reference/set_nodes.md) :
-  Set Nodes in Cograph Network
-- [`sn_edges()`](http://sonsoles.me/cograph/reference/sn_edges.md) : Set
-  Edge Aesthetics
-- [`sn_ggplot()`](http://sonsoles.me/cograph/reference/sn_ggplot.md) :
-  Convert Network to ggplot2
-- [`sn_nodes()`](http://sonsoles.me/cograph/reference/sn_nodes.md) : Set
-  Node Aesthetics
-- [`sn_save()`](http://sonsoles.me/cograph/reference/sn_save.md) : Save
-  Network Visualization
-- [`aes-nodes`](http://sonsoles.me/cograph/reference/aes-nodes.md) :
-  Node Aesthetics
-- [`aes-edges`](http://sonsoles.me/cograph/reference/aes-edges.md) :
-  Edge Aesthetics
-- [`output-save`](http://sonsoles.me/cograph/reference/output-save.md) :
-  Output and Saving
-- [`from_qgraph()`](http://sonsoles.me/cograph/reference/from_qgraph.md)
-  : Convert a qgraph object to cograph parameters
-
 ## Base R plotting
 
 - [`splot()`](http://sonsoles.me/cograph/reference/splot.md) : Base R
@@ -75,6 +38,43 @@
 - [`plot_mlna()`](http://sonsoles.me/cograph/reference/plot_mlna.md)
   [`mlna()`](http://sonsoles.me/cograph/reference/plot_mlna.md) :
   Multilevel Network Visualization
+
+## Network functions
+
+- [`cograph()`](http://sonsoles.me/cograph/reference/cograph.md) :
+  Create a Network Visualization
+- [`as_cograph()`](http://sonsoles.me/cograph/reference/as_cograph.md) :
+  Convert to Cograph Network
+- [`n_nodes()`](http://sonsoles.me/cograph/reference/n_nodes.md) : Get
+  Number of Nodes
+- [`n_edges()`](http://sonsoles.me/cograph/reference/n_edges.md) : Get
+  Number of Edges
+- [`get_edges()`](http://sonsoles.me/cograph/reference/get_edges.md) :
+  Get Edges from Cograph Network
+- [`get_labels()`](http://sonsoles.me/cograph/reference/get_labels.md) :
+  Get Labels from Cograph Network
+- [`get_nodes()`](http://sonsoles.me/cograph/reference/get_nodes.md) :
+  Get Nodes from Cograph Network
+- [`set_edges()`](http://sonsoles.me/cograph/reference/set_edges.md) :
+  Set Edges in Cograph Network
+- [`set_nodes()`](http://sonsoles.me/cograph/reference/set_nodes.md) :
+  Set Nodes in Cograph Network
+- [`sn_edges()`](http://sonsoles.me/cograph/reference/sn_edges.md) : Set
+  Edge Aesthetics
+- [`sn_ggplot()`](http://sonsoles.me/cograph/reference/sn_ggplot.md) :
+  Convert Network to ggplot2
+- [`sn_nodes()`](http://sonsoles.me/cograph/reference/sn_nodes.md) : Set
+  Node Aesthetics
+- [`sn_save()`](http://sonsoles.me/cograph/reference/sn_save.md) : Save
+  Network Visualization
+- [`aes-nodes`](http://sonsoles.me/cograph/reference/aes-nodes.md) :
+  Node Aesthetics
+- [`aes-edges`](http://sonsoles.me/cograph/reference/aes-edges.md) :
+  Edge Aesthetics
+- [`output-save`](http://sonsoles.me/cograph/reference/output-save.md) :
+  Output and Saving
+- [`from_qgraph()`](http://sonsoles.me/cograph/reference/from_qgraph.md)
+  : Convert a qgraph object to cograph parameters
 
 ## Palettes
 

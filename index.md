@@ -22,7 +22,7 @@ Key features:
 
 ``` r
 # Install from CRAN (when available)
-install.packages("cograph")
+#install.packages("cograph")
 
 # Or install the development version from GitHub
 # install.packages("devtools")
@@ -38,7 +38,7 @@ library(cograph)
 ``` r
 library(tna)
 tna_obj <- tna(group_regulation)
-splot(tna_obj,layout = "circle")
+splot(tna_obj)
 ```
 
 ![](reference/figures/README-unnamed-chunk-4-1.jpeg)
@@ -74,13 +74,11 @@ significance notation.
 ``` r
 # Publication-ready with CI underlays and labels
 splot(mat,
-  edge_ci = runif(sum(mat > 0), 0.05, 0.2),
-  edge_ci_alpha = 0.12,
+  edge_ci = runif(sum(mat > 0), 0.05, 0.2), layout = "oval",
   edge_label_template = "{est}{stars}",
   edge_label_p = runif(sum(mat > 0), 0, 0.1),
-  edge_label_stars = TRUE,
-  edge_label_size = 0.5,
-  theme = "minimal"
+  edge_label_stars = TRUE, edge_label_bg = "transparent", edge_label_color = "maroon", 
+  edge_label_size = 0.5, edge_label_position = 0.6
 )
 ```
 
@@ -89,7 +87,7 @@ splot(mat,
 Template placeholders: `{est}`, `{low}`, `{up}`, `{range}`, `{p}`,
 [stars](https://r-spatial.github.io/stars/)
 
-### Pie Chart Nodes
+### Pie Chart Nodes and shapes
 
 ``` r
 set.seed(1)
@@ -100,7 +98,7 @@ pie_cols <- c("#E41A1C", "#377EB8", "#4DAF4A", "#FF7F00")
 splot(mat,
   node_shape = "pie",
   pie_values = pie_vals,
-  pie_colors = pie_cols,
+  pie_colors = pie_cols,  node_size = 10,
   layout = "circle"
 )
 
@@ -121,7 +119,7 @@ splot(mat,
   node_shape = "pie",
   pie_values = lapply(1:10, function(i) runif(3)),
   pie_colors = pie_cols_multi,
-  node_size = 6,
+  node_size = 10,
   layout = "circle"
 )
 ```
@@ -131,25 +129,7 @@ splot(mat,
 ### Donut Nodes
 
 ``` r
-
-# Simple donut: fill proportion per node (0 to 1)
 fills <- runif(10, 0.3, 0.95)
-splot(mat,
-  node_shape = "donut",
-  donut_fill = fills,
-  donut_color = "steelblue",
-  layout = "circle"
-)
-
-# Segmented donuts with multiple colors
-donut_vals <- lapply(1:10, function(i) runif(3))
-donut_cols <- list(c("#E63946", "#457B9D", "#2A9D8F"))
-splot(mat,
-  donut_values = donut_vals,
-  donut_colors = donut_cols,
-  donut_inner_ratio = 0.6,
-  node_size = 6
-)
 
 # Per-node donut color palettes
 donut_cols_multi <- list(
@@ -168,69 +148,20 @@ splot(mat,
   donut_values = lapply(1:10, function(i) runif(4)),
   donut_colors = donut_cols_multi,
   donut_inner_ratio = 0.55,
-  node_size = 6
+  node_size = 8
 )
 
-# Polygon donut shapes
-splot(mat,
+# Donut + Pie combo: outer donut ring with inner pie segments
+  splot(mat,
   node_shape = "donut",
   donut_fill = fills,
   donut_shape = c("circle", "hexagon", "square", "diamond", "triangle",
                   "pentagon", "circle", "hexagon", "square", "diamond"),
   donut_color = palette_viridis(10)
 )
-
-# Show value in center
-splot(mat,
-  node_shape = "donut",
-  donut_fill = fills,
-  donut_show_value = TRUE,
-  donut_value_digits = 0,
-  donut_value_suffix = "%"
-)
-
-# Donut + Pie combo: outer donut ring with inner pie segments
-splot(mat,
-  node_shape = "donut",
-  donut_fill = fills,
-  donut_color = "steelblue",
-  pie_values = lapply(1:10, function(i) runif(3)),
-  pie_colors = c("#E41A1C", "#377EB8", "#4DAF4A")
-)
 ```
 
 ![](reference/figures/README-unnamed-chunk-9-1.jpeg)
-
-## Specialized TNA Visualization
-
-These functions provide specialized layouts for transition network
-analysis (TNA) and related network types.
-
-### plot_tna() - qgraph-Compatible Interface
-
-[`plot_tna()`](http://sonsoles.me/cograph/reference/plot_tna.md)
-provides a qgraph-compatible interface for TNA network visualization,
-making migration from qgraph straightforward.
-
-``` r
-layout(t(1:3))
-# Simple usage
-m <- matrix(runif(25), 5, 5)
-plot_tna(m)
-
-# With qgraph-style parameters
-plot_tna(m, vsize = 6, edge.label.cex = 2, layout = "circle")
-
-# With pie/donut nodes (qgraph-style)
-plot_tna(m, pie = runif(5), pieColor = rainbow(5))
-```
-
-![](reference/figures/README-unnamed-chunk-10-1.jpeg)
-
-> **Alias**:
-> [`tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md) is
-> available as a shorthand for
-> [`plot_tna()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
 ### plot_htna() - Heterogeneous Multi-Group Networks
 
@@ -261,18 +192,7 @@ plot_htna(m, node_types, layout = "polygon", minimum = 0.15)
 plot_htna(m, node_types, layout = "circular", minimum = 0.15)
 ```
 
-![](reference/figures/README-unnamed-chunk-11-1.jpeg)
-
-``` r
-
-# Rectangle layout for 4 groups
-node_types_4 <- list(
-  Input = c("Click", "Type", "Scroll"),
-  Process = c("Validate", "Transform"),
-  Output = c("Display", "Alert"),
-  Storage = c("Save", "Load", "Cache")
-)
-```
+![](reference/figures/README-unnamed-chunk-10-1.jpeg)
 
 ### plot_mtna() - Multi-Cluster Networks
 
@@ -303,13 +223,13 @@ clusters <- list(
 plot_mtna(m, clusters)
 ```
 
-![](reference/figures/README-unnamed-chunk-12-1.jpeg)
+![](reference/figures/README-unnamed-chunk-11-1.jpeg)
 
-Key parameters: - `spacing`: Distance between cluster centers -
-`shape_size`: Size of cluster shells - `node_spacing`: Node placement
-within shapes (0-1) - `shapes`: Vector of shapes per cluster (“circle”,
-“square”, “diamond”, “triangle”) - `summary_edges`: Show aggregated
-between-cluster edges (default TRUE) - `within_edges`: Show individual
+Key parameters: \* `spacing`: Distance between cluster centers \*
+`shape_size`: Size of cluster shells \* `node_spacing`: Node placement
+within shapes (0-1) \* `shapes`: Vector of shapes per cluster (“circle”,
+“square”, “diamond”, “triangle”) \* `summary_edges`: Show aggregated
+between-cluster edges (default TRUE) \* `within_edges`: Show individual
 within-cluster edges (default TRUE)
 
 > **Alias**:
@@ -342,10 +262,10 @@ layers <- list(
 )
 
 # Basic usage with spring layout
-plot_mlna(m, layers, layout = "spring", minimum = 0.18 )
+plot_mlna(m, layers, layout = "spring", minimum = 0.18, legend = FALSE)
 ```
 
-![](reference/figures/README-unnamed-chunk-13-1.jpeg)
+![](reference/figures/README-unnamed-chunk-12-1.jpeg)
 
 ## License
 

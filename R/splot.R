@@ -17,7 +17,7 @@ NULL
 #'   - A cograph_network object
 #' @param layout Layout algorithm: "circle", "spring", "groups", or a matrix
 #'   of x,y coordinates, or an igraph layout function. Also supports igraph
-#'   two-letter codes: "kk", "fr", "drl", "mds", "ni", etc.
+#'   two-letter codes: "kk", "fr", "drl", "mds", "ni", etc. Default is "oval"
 #' @param directed Logical. Force directed interpretation. NULL for auto-detect.
 #' @param seed Random seed for deterministic layouts. Default 42.
 #' @param theme Theme name: "classic", "dark", "minimal", "colorblind", etc.
@@ -310,7 +310,7 @@ NULL
 #'
 splot <- function(
     x,
-    layout = "spring",
+    layout = "oval",
     directed = NULL,
     seed = 42,
     theme = NULL,

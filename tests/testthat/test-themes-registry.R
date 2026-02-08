@@ -172,3 +172,169 @@ test_that("register_theme works", {
   retrieved <- get_theme("test_dummy_theme")
   expect_true(!is.null(retrieved))
 })
+
+# ============================================
+# Theme Properties Tests
+# ============================================
+
+test_that("classic theme has expected properties", {
+  theme <- get_theme("classic")
+
+  expect_true(!is.null(theme))
+  expect_true(inherits(theme, "CographTheme"))
+})
+
+test_that("colorblind theme has expected properties", {
+  theme <- get_theme("colorblind")
+
+  expect_true(!is.null(theme))
+  expect_true(inherits(theme, "CographTheme"))
+})
+
+test_that("dark theme has expected properties", {
+  theme <- get_theme("dark")
+
+  expect_true(!is.null(theme))
+  expect_true(inherits(theme, "CographTheme"))
+})
+
+test_that("gray and grey are identical themes", {
+  gray_theme <- get_theme("gray")
+  grey_theme <- get_theme("grey")
+
+  expect_true(!is.null(gray_theme))
+  expect_true(!is.null(grey_theme))
+  # They should be the same theme object
+  expect_identical(gray_theme, grey_theme)
+})
+
+test_that("minimal theme has expected properties", {
+  theme <- get_theme("minimal")
+
+  expect_true(!is.null(theme))
+  expect_true(inherits(theme, "CographTheme"))
+})
+
+test_that("viridis theme has expected properties", {
+  theme <- get_theme("viridis")
+
+  expect_true(!is.null(theme))
+  expect_true(inherits(theme, "CographTheme"))
+})
+
+test_that("nature theme has expected properties", {
+  theme <- get_theme("nature")
+
+  expect_true(!is.null(theme))
+  expect_true(inherits(theme, "CographTheme"))
+})
+
+# ============================================
+# list_themes Tests
+# ============================================
+
+test_that("list_themes returns character vector", {
+  themes <- list_themes()
+
+  expect_true(is.character(themes))
+  expect_true(length(themes) > 0)
+})
+
+test_that("list_themes contains expected minimum themes", {
+  themes <- list_themes()
+
+  expected <- c("classic", "colorblind", "gray", "grey",
+                "dark", "minimal", "viridis", "nature")
+
+  for (t in expected) {
+    expect_true(t %in% themes,
+                info = paste("Expected theme", t, "not found"))
+  }
+})
+
+# ============================================
+# Theme Application in splot Tests
+# ============================================
+
+test_that("all registered themes work in splot", {
+  mat <- create_test_matrix(4)
+  # Test only known built-in themes (not test registrations from other tests)
+  builtin_themes <- c("classic", "colorblind", "dark", "gray", "minimal",
+                      "viridis", "nature", "seaborn", "high_contrast")
+
+  for (theme_name in builtin_themes) {
+    theme <- get_theme(theme_name)
+    if (is.null(theme)) next  # Skip if theme not registered
+
+    result <- tryCatch({
+      with_temp_png(splot(mat, theme = theme_name))
+      TRUE
+    }, error = function(e) FALSE)
+
+    expect_true(result, info = paste("Theme", theme_name, "failed in splot"))
+  }
+})
+
+# ============================================
+# Theme with sn_theme Tests
+# ============================================
+
+test_that("sn_theme applies theme to cograph network", {
+  mat <- create_test_matrix(4)
+  net <- cograph(mat)
+
+  result <- sn_theme(net, "dark")
+
+  expect_cograph_network(result)
+})
+
+test_that("sn_theme with all registered themes", {
+  mat <- create_test_matrix(4)
+  themes <- list_themes()
+
+  for (theme_name in themes) {
+    net <- cograph(mat)
+    result <- tryCatch({
+      sn_theme(net, theme_name)
+      TRUE
+    }, error = function(e) FALSE)
+
+    expect_true(result, info = paste("sn_theme failed for", theme_name))
+  }
+})
+
+# ============================================
+# Theme in Pipe Chain Tests
+# ============================================
+
+test_that("theme works in pipe chain with splot", {
+  mat <- create_test_matrix(4)
+
+  result <- tryCatch({
+    with_temp_png({
+      cograph(mat) |>
+        sn_theme("colorblind") |>
+        splot()
+    })
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("theme works in pipe chain with soplot", {
+  skip_if_not_installed("grid")
+
+  mat <- create_test_matrix(4)
+
+  result <- tryCatch({
+    with_temp_png({
+      cograph(mat) |>
+        sn_theme("nature") |>
+        soplot()
+    })
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})

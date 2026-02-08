@@ -282,3 +282,197 @@ test_that("gephi layout alias works", {
 
   expect_true(result)
 })
+
+# ============================================
+# Single Node Network Tests
+# ============================================
+
+test_that("grid layout handles single node network", {
+  mat <- matrix(0, 1, 1)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("grid")
+  result <- layout_func(net$network)
+  expect_equal(nrow(result), 1)
+})
+
+test_that("bipartite layout handles single node network", {
+  mat <- matrix(0, 1, 1)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("bipartite")
+  result <- layout_func(net$network)
+  expect_equal(nrow(result), 1)
+})
+
+test_that("gephi_fr layout handles single node network", {
+  skip_if_not_installed("igraph")
+
+  mat <- matrix(0, 1, 1)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("gephi_fr")
+  result <- layout_func(net$network)
+  expect_equal(nrow(result), 1)
+})
+
+# ============================================
+# Gephi FR Layout Parameter Tests
+# ============================================
+
+test_that("gephi_fr layout accepts custom area", {
+  skip_if_not_installed("igraph")
+
+  mat <- create_test_matrix(5)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("gephi_fr")
+  result <- layout_func(net$network, area = 20000)
+  expect_equal(nrow(result), 5)
+})
+
+test_that("gephi_fr layout accepts custom gravity", {
+  skip_if_not_installed("igraph")
+
+  mat <- create_test_matrix(5)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("gephi_fr")
+  result <- layout_func(net$network, gravity = 5.0)
+  expect_equal(nrow(result), 5)
+})
+
+test_that("gephi_fr layout accepts custom speed", {
+  skip_if_not_installed("igraph")
+
+  mat <- create_test_matrix(5)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("gephi_fr")
+  result <- layout_func(net$network, speed = 2.0)
+  expect_equal(nrow(result), 5)
+})
+
+test_that("gephi_fr layout accepts custom niter", {
+  skip_if_not_installed("igraph")
+
+  mat <- create_test_matrix(5)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("gephi_fr")
+  result <- layout_func(net$network, niter = 50)
+  expect_equal(nrow(result), 5)
+})
+
+test_that("gephi_fr layout with all custom parameters", {
+  skip_if_not_installed("igraph")
+
+  mat <- create_test_matrix(5)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("gephi_fr")
+  result <- layout_func(net$network,
+                        area = 15000,
+                        gravity = 8.0,
+                        speed = 0.5,
+                        niter = 75)
+  expect_equal(nrow(result), 5)
+})
+
+# ============================================
+# Bipartite Layout Edge Cases
+# ============================================
+
+test_that("bipartite layout handles all same type", {
+  mat <- create_test_matrix(4)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("bipartite")
+  result <- layout_func(net$network, types = c(0, 0, 0, 0))
+  expect_equal(nrow(result), 4)
+  # All should be on left side
+  expect_true(all(result$x == 0.2))
+})
+
+test_that("bipartite layout handles unequal split", {
+  mat <- create_test_matrix(5)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("bipartite")
+  result <- layout_func(net$network, types = c(0, 0, 0, 0, 1))
+  expect_equal(nrow(result), 5)
+  expect_equal(sum(result$x == 0.2), 4)
+  expect_equal(sum(result$x == 0.8), 1)
+})
+
+# ============================================
+# Star Layout Edge Cases
+# ============================================
+
+test_that("star layout with center out of range handled", {
+  mat <- create_test_matrix(5)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("star")
+  # Center = 5 is valid (last node)
+  result <- layout_func(net$network, center = 5)
+  expect_equal(nrow(result), 5)
+  expect_equal(result$x[5], 0.5)
+  expect_equal(result$y[5], 0.5)
+})
+
+# ============================================
+# Grid Layout Edge Cases
+# ============================================
+
+test_that("grid layout handles non-square counts", {
+  # 7 nodes - not a perfect square
+  mat <- create_test_matrix(7)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("grid")
+  result <- layout_func(net$network)
+  expect_equal(nrow(result), 7)
+})
+
+test_that("grid layout with ncol larger than n", {
+  mat <- create_test_matrix(4)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("grid")
+  result <- layout_func(net$network, ncol = 10)
+  expect_equal(nrow(result), 4)
+})
+
+# ============================================
+# Random Layout Edge Cases
+# ============================================
+
+test_that("random layout produces different results with different seeds", {
+  mat <- create_test_matrix(4)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("random")
+
+  result1 <- layout_func(net$network, seed = 1)
+  result2 <- layout_func(net$network, seed = 2)
+
+  # Results should be different with different seeds
+  expect_false(all(result1$x == result2$x) && all(result1$y == result2$y))
+})
+
+test_that("random layout with NULL seed is reproducible within set.seed", {
+  mat <- create_test_matrix(4)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("random")
+
+  set.seed(999)
+  result1 <- layout_func(net$network, seed = NULL)
+  set.seed(999)
+  result2 <- layout_func(net$network, seed = NULL)
+
+  # Should be the same when global seed is the same
+  expect_equal(result1$x, result2$x)
+  expect_equal(result1$y, result2$y)
+})

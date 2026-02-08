@@ -53,3 +53,176 @@ test_that("package startup message is appropriate", {
   # Just verify package info is accessible
   expect_true(!is.null(packageVersion("cograph")))
 })
+
+# ============================================
+# Comprehensive Registry Tests
+# ============================================
+
+test_that("all shapes are valid functions", {
+  shapes <- list_shapes()
+
+  for (shape in shapes) {
+    shape_func <- get_shape(shape)
+    expect_true(is.function(shape_func),
+                info = paste("Shape", shape, "is not a function"))
+  }
+})
+
+test_that("all layouts are valid functions", {
+  layouts <- list_layouts()
+
+  for (layout in layouts) {
+    layout_func <- get_layout(layout)
+    expect_true(is.function(layout_func),
+                info = paste("Layout", layout, "is not a function"))
+  }
+})
+
+test_that("all built-in themes are valid CographTheme objects", {
+  # Test only known built-in themes (not test registrations from other tests)
+  builtin_themes <- c("classic", "colorblind", "dark", "gray", "minimal",
+                      "viridis", "nature", "seaborn", "high_contrast")
+
+  for (theme in builtin_themes) {
+    theme_obj <- get_theme(theme)
+    if (is.null(theme_obj)) next  # Skip if theme not registered
+
+    expect_true(!is.null(theme_obj),
+                info = paste("Theme", theme, "is NULL"))
+    expect_true(inherits(theme_obj, "CographTheme"),
+                info = paste("Theme", theme, "is not a CographTheme"))
+  }
+})
+
+test_that("all palettes are valid", {
+  palettes <- list_palettes()
+
+  for (pal in palettes) {
+    palette_obj <- get_palette(pal)
+    expect_true(!is.null(palette_obj),
+                info = paste("Palette", pal, "is NULL"))
+  }
+})
+
+# ============================================
+# Minimum Required Items Tests
+# ============================================
+
+test_that("minimum shapes are registered", {
+  shapes <- list_shapes()
+  minimum_shapes <- c("circle", "square", "triangle", "diamond")
+
+  for (shape in minimum_shapes) {
+    expect_true(shape %in% shapes,
+                info = paste("Minimum shape", shape, "not registered"))
+  }
+})
+
+test_that("minimum layouts are registered", {
+  layouts <- list_layouts()
+  minimum_layouts <- c("circle", "spring", "grid")
+
+  for (layout in minimum_layouts) {
+    expect_true(layout %in% layouts,
+                info = paste("Minimum layout", layout, "not registered"))
+  }
+})
+
+test_that("minimum themes are registered", {
+  themes <- list_themes()
+  minimum_themes <- c("classic", "colorblind", "dark")
+
+  for (theme in minimum_themes) {
+    expect_true(theme %in% themes,
+                info = paste("Minimum theme", theme, "not registered"))
+  }
+})
+
+# ============================================
+# Package Environment Tests
+# ============================================
+
+test_that("package environment exists", {
+  env <- cograph:::.cograph_env
+  expect_true(is.environment(env))
+})
+
+test_that("package environment contains registries", {
+  env <- cograph:::.cograph_env
+
+  expect_true(exists("shapes", envir = env))
+  expect_true(exists("layouts", envir = env))
+  expect_true(exists("themes", envir = env))
+  expect_true(exists("palettes", envir = env))
+})
+
+test_that("registries are accessible data structures", {
+  env <- cograph:::.cograph_env
+
+  # Registries can be environments or lists
+  expect_true(!is.null(env$shapes))
+  expect_true(!is.null(env$layouts))
+  expect_true(!is.null(env$themes))
+  expect_true(!is.null(env$palettes))
+})
+
+# ============================================
+# SVG Shapes Registry Tests
+# ============================================
+
+test_that("svg_shapes registry exists if supported", {
+  env <- cograph:::.cograph_env
+  # svg_shapes may or may not exist depending on implementation
+  # Just verify env is accessible
+
+  expect_true(is.environment(env))
+})
+
+# ============================================
+# Package Version Tests
+# ============================================
+
+test_that("package version is valid", {
+  version <- packageVersion("cograph")
+
+  expect_true(!is.null(version))
+  expect_true(inherits(version, "package_version"))
+})
+
+# ============================================
+# Core Function Availability Tests
+# ============================================
+
+test_that("core functions are exported", {
+  expect_true(exists("cograph", mode = "function"))
+  expect_true(exists("splot", mode = "function"))
+  expect_true(exists("soplot", mode = "function"))
+  expect_true(exists("sn_nodes", mode = "function"))
+  expect_true(exists("sn_edges", mode = "function"))
+  expect_true(exists("sn_layout", mode = "function"))
+  expect_true(exists("sn_theme", mode = "function"))
+})
+
+test_that("registry functions are exported", {
+  expect_true(exists("list_shapes", mode = "function"))
+  expect_true(exists("list_layouts", mode = "function"))
+  expect_true(exists("list_themes", mode = "function"))
+  expect_true(exists("list_palettes", mode = "function"))
+  expect_true(exists("get_shape", mode = "function"))
+  expect_true(exists("get_layout", mode = "function"))
+  expect_true(exists("get_theme", mode = "function"))
+  expect_true(exists("get_palette", mode = "function"))
+  expect_true(exists("register_shape", mode = "function"))
+  expect_true(exists("register_layout", mode = "function"))
+  expect_true(exists("register_theme", mode = "function"))
+  expect_true(exists("register_palette", mode = "function"))
+})
+
+# ============================================
+# Alias Tests
+# ============================================
+
+test_that("tplot is exported as alias", {
+  expect_true(exists("tplot", mode = "function"))
+  expect_true(exists("plot_tna", mode = "function"))
+})

@@ -130,6 +130,7 @@
 <url><loc>http://sonsoles.me/cograph/reference/get_y_scale.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/globals.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/handle_deprecated_param.html</loc></url>
+<url><loc>http://sonsoles.me/cograph/reference/has_package.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/heart_vertices.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/hexagon_vertices.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/in_to_usr_x.html</loc></url>
@@ -153,11 +154,16 @@
 <url><loc>http://sonsoles.me/cograph/reference/layout-oval.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/layout-registry.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/layout-spring.html</loc></url>
+<url><loc>http://sonsoles.me/cograph/reference/layout_bipartite_fn.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/layout_circle.html</loc></url>
+<url><loc>http://sonsoles.me/cograph/reference/layout_custom_fn.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/layout_gephi_fr.html</loc></url>
+<url><loc>http://sonsoles.me/cograph/reference/layout_grid_fn.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/layout_groups.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/layout_oval.html</loc></url>
+<url><loc>http://sonsoles.me/cograph/reference/layout_random_fn.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/layout_spring.html</loc></url>
+<url><loc>http://sonsoles.me/cograph/reference/layout_star_fn.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/list_layouts.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/list_palettes.html</loc></url>
 <url><loc>http://sonsoles.me/cograph/reference/list_shapes.html</loc></url>

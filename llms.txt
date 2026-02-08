@@ -55,6 +55,19 @@ diag(mat) <- 0
 mat <- mat / rowSums(mat)  # row-normalize
 ```
 
+### Layouts
+
+``` r
+# Built-in layouts
+splot(mat)
+splot(mat, layout = "circle")
+# igraph layout codes
+splot(mat, layout = "kk")    # Kamada-Kawai
+splot(mat, layout = "fr")    # Fruchterman-Reingold
+```
+
+![](reference/figures/README-unnamed-chunk-6-1.jpeg)
+
 `cograph` supports statistical edge visualization with CI underlays and
 significance notation.
 
@@ -69,7 +82,7 @@ splot(mat,
 )
 ```
 
-![](reference/figures/README-unnamed-chunk-6-1.jpeg)
+![](reference/figures/README-unnamed-chunk-7-1.jpeg)
 
 Template placeholders: `{est}`, `{low}`, `{up}`, `{range}`, `{p}`,
 [stars](https://r-spatial.github.io/stars/)
@@ -86,7 +99,7 @@ splot(mat,
   node_shape = "pie",
   pie_values = pie_vals,
   pie_colors = pie_cols,  node_size = 10,
-  layout = "oval"
+  layout = "circle"
 )
 
 # Per-node color palettes
@@ -107,11 +120,11 @@ splot(mat,
   pie_values = lapply(1:10, function(i) runif(3)),
   pie_colors = pie_cols_multi,
   node_size = 10,
-  layout = "oval"
+  layout = "circle"
 )
 ```
 
-![](reference/figures/README-unnamed-chunk-7-1.jpeg)
+![](reference/figures/README-unnamed-chunk-8-1.jpeg)
 
 ### Donut Nodes
 
@@ -148,7 +161,7 @@ splot(mat,
 )
 ```
 
-![](reference/figures/README-unnamed-chunk-8-1.jpeg)
+![](reference/figures/README-unnamed-chunk-9-1.jpeg)
 
 ### plot_htna() - Heterogeneous Multi-Group Networks
 
@@ -179,7 +192,7 @@ plot_htna(m, node_types, layout = "polygon", minimum = 0.15)
 plot_htna(m, node_types, layout = "circular", minimum = 0.15)
 ```
 
-![](reference/figures/README-unnamed-chunk-9-1.jpeg)
+![](reference/figures/README-unnamed-chunk-10-1.jpeg)
 
 ### plot_mtna() - Multi-Cluster Networks
 
@@ -210,7 +223,7 @@ clusters <- list(
 plot_mtna(m, clusters)
 ```
 
-![](reference/figures/README-unnamed-chunk-10-1.jpeg)
+![](reference/figures/README-unnamed-chunk-11-1.jpeg)
 
 Key parameters: \* `spacing`: Distance between cluster centers \*
 `shape_size`: Size of cluster shells \* `node_spacing`: Node placement
@@ -252,7 +265,7 @@ layers <- list(
 plot_mlna(m, layers, layout = "spring", minimum = 0.18, legend = FALSE)
 ```
 
-![](reference/figures/README-unnamed-chunk-11-1.jpeg)
+![](reference/figures/README-unnamed-chunk-12-1.jpeg)
 
 ## License
 

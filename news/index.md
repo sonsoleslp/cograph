@@ -25,6 +25,8 @@
 
 - Added qgraph to splot migration guide
   (`vignettes/qgraph-to-splot.Rmd`)
+- Added multi-group, multi-cluster, and multilevel networks vignette
+  (`vignettes/multi_network.Rmd`)
 
 ## cograph 1.5.1
 

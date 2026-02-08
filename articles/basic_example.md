@@ -1,261 +1,141 @@
 # Basic example
 
-This script demonstrates the basic usage of the `cograph` package.
+This vignette demonstrates the basic usage of the `cograph` package
+using a transition probability matrix from a learning analytics study.
 
 ``` r
 library(cograph)
 ```
 
-## Example 1: Simple Network from Adjacency Matrix
+## Create a transition matrix
 
-Create a simple adjacency matrix
+We use a simulated Markov transition matrix representing student
+learning behavior transitions across nine states.
 
 ``` r
-adj <- matrix(c(
-  0, 1, 1, 0, 0,
-  1, 0, 1, 1, 0,
-  1, 1, 0, 1, 1,
-  0, 1, 1, 0, 1,
-  0, 0, 1, 1, 0
-), nrow = 5, byrow = TRUE)
+states <- c("Read", "Watch", "Try", "Ask", "Discuss",
+            "Review", "Search", "Reflect", "Submit")
 
-# Add node labels
-rownames(adj) <- colnames(adj) <- c("A", "B", "C", "D", "E")
-
-# Basic visualization
-cograph(adj)
-#> Cograph Network
-#> ==============
-#> Nodes: 5 
-#> Edges: 7 
-#> Directed: FALSE 
-#> Weighted: FALSE 
-#> Layout: computed 
-#> Theme: classic 
-#> 
-#> Use plot() or sn_render() to visualize
-#> Use sn_ggplot() to convert to ggplot2
+set.seed(42)
+mat <- matrix(c(
+  0.00, 0.25, 0.15, 0.00, 0.10, 0.00, 0.08, 0.00, 0.00,
+  0.10, 0.00, 0.30, 0.00, 0.00, 0.12, 0.00, 0.00, 0.00,
+  0.00, 0.10, 0.00, 0.20, 0.00, 0.00, 0.00, 0.15, 0.25,
+  0.05, 0.00, 0.10, 0.00, 0.30, 0.00, 0.00, 0.00, 0.00,
+  0.00, 0.00, 0.00, 0.15, 0.00, 0.20, 0.00, 0.18, 0.00,
+  0.12, 0.08, 0.00, 0.00, 0.00, 0.00, 0.10, 0.00, 0.20,
+  0.00, 0.00, 0.15, 0.00, 0.00, 0.10, 0.00, 0.00, 0.12,
+  0.00, 0.00, 0.10, 0.00, 0.12, 0.00, 0.00, 0.00, 0.28,
+  0.00, 0.00, 0.00, 0.00, 0.00, 0.10, 0.00, 0.05, 0.00
+), nrow = 9, byrow = TRUE)
+rownames(mat) <- colnames(mat) <- states
 ```
 
-## Example 2: Customized Network
+## Example 1: Default plot
 
 ``` r
-adj |>
-  cograph(layout = "circle") |>
-  sn_nodes(
-    size = 0.08,
-    fill = "steelblue",
-    border_color = "navy",
-    border_width = 2
-  ) |>
-  sn_edges(
-    width = 1.5,
-    color = "gray50"
-  ) |>
-  sn_render(title = "My Network")
+splot(mat, node_size = 9)
 ```
 
 ![](basic_example_files/figure-html/unnamed-chunk-4-1.png)
 
-## Example 3: Weighted Network with Positive/Negative Edges
+## Example 2: Circle layout
 
 ``` r
-weighted_adj <- matrix(c(
-  0, 0.8, -0.5, 0, 0,
-  0.8, 0, 0.3, -0.7, 0,
-  -0.5, 0.3, 0, 0.6, -0.4,
-  0, -0.7, 0.6, 0, 0.9,
-  0, 0, -0.4, 0.9, 0
-), nrow = 5, byrow = TRUE)
-
-weighted_adj |>
-  cograph(layout = "spring", seed = 42) |>
-  sn_edges(
-    width = "weight",
-    color = "weight",
-    positive_color = "#2E7D32",
-    negative_color = "#C62828"
-  ) |>
-  sn_nodes(size = 0.06, fill = "gray90") |>
-  sn_render(title = "Weighted Network")
-#> Warning: 'positive_color' is deprecated, use 'edge_positive_color' instead.
-#> Warning: 'negative_color' is deprecated, use 'edge_negative_color' instead.
+splot(mat, layout = "circle", node_size = 9)
 ```
 
 ![](basic_example_files/figure-html/unnamed-chunk-5-1.png)
 
-## Example 4: Group-Based Layout
+## Example 3: With edge labels
 
 ``` r
-# Create a larger network
-n <- 12
-group_adj <- matrix(0, n, n)
-# Create connections within groups
-for (g in list(1:4, 5:8, 9:12)) {
-  for (i in g) {
-    for (j in g) {
-      if (i < j && runif(1) > 0.3) {
-        group_adj[i, j] <- group_adj[j, i] <- 1
-      }
-    }
-  }
-}
+splot(mat, layout = "circle", node_size = 9, edge_labels = TRUE)
 ```
 
-Add some connections between groups
+![](basic_example_files/figure-html/unnamed-chunk-6-1.png)
+
+## Example 4: Themes
 
 ``` r
-group_adj[4, 5] <- group_adj[5, 4] <- 1
-group_adj[8, 9] <- group_adj[9, 8] <- 1
-
-groups <- rep(c("Group A", "Group B", "Group C"), each = 4)
-
-group_adj |>
-  cograph() |>
-  sn_layout("groups", groups = groups) |>
-  sn_nodes(
-    fill = c(rep("#E69F00", 4), rep("#56B4E9", 4), rep("#009E73", 4)),
-    size = 0.05
-  ) |>
-  sn_theme("minimal") |>
-  sn_render(title = "Grouped Network")
+splot(mat, node_size = 9, theme = "dark", title = "Dark")
 ```
 
 ![](basic_example_files/figure-html/unnamed-chunk-7-1.png)
 
-## Example 5: Different Themes
+``` r
+splot(mat, node_size = 9, theme = "minimal", title = "Minimal")
+```
+
+![](basic_example_files/figure-html/unnamed-chunk-7-2.png)
 
 ``` r
-# Classic theme
-cograph(adj) |> sn_theme("classic") |> sn_render(title = "Classic Theme")
+splot(mat, node_size = 9, theme = "colorblind", title = "Colorblind")
+```
+
+![](basic_example_files/figure-html/unnamed-chunk-7-3.png)
+
+## Example 5: Custom node colors
+
+``` r
+splot(mat, layout = "circle", node_size = 9,
+      node_fill = palette_pastel(9))
 ```
 
 ![](basic_example_files/figure-html/unnamed-chunk-8-1.png)
 
-``` r
-
-# Dark theme
-cograph(adj) |> sn_theme("dark") |> sn_render(title = "Dark Theme")
-```
-
-![](basic_example_files/figure-html/unnamed-chunk-8-2.png)
+## Example 6: Node shapes
 
 ``` r
-
-# Minimal theme
-cograph(adj) |> sn_theme("minimal") |> sn_render(title = "Minimal Theme")
-```
-
-![](basic_example_files/figure-html/unnamed-chunk-8-3.png)
-
-``` r
-
-# Colorblind-friendly theme
-cograph(adj) |> sn_theme("colorblind") |> sn_render(title = "Colorblind Theme")
-```
-
-![](basic_example_files/figure-html/unnamed-chunk-8-4.png)
-
-## Example 6: Different Node Shapes
-
-``` r
-shapes <- c("circle", "square", "triangle", "diamond", "star")
-
-adj |>
-  cograph(layout = "circle") |>
-  sn_nodes(
-    shape = shapes,
-    size = 0.08,
-    fill = palette_colorblind(5)
-  ) |>
-  sn_render(title = "Different Node Shapes")
+splot(mat, layout = "circle", node_size = 9,
+      node_shape = c("circle", "square", "triangle", "diamond",
+                     "star", "pentagon", "hexagon", "heart", "circle"),
+      node_fill = palette_colorblind(9))
 ```
 
 ![](basic_example_files/figure-html/unnamed-chunk-9-1.png)
 
-## Example 7: Convert to ggplot2
+## Example 7: Dotted edges
 
 ``` r
-library(ggplot2)
-#> 
-#> Attaching package: 'ggplot2'
-#> The following object is masked from 'package:cograph':
-#> 
-#>     get_theme
-
-p <- adj |>
-  cograph() |>
-  sn_nodes(fill = "coral", size = 0.07) |>
-  sn_ggplot()
-
-# Add ggplot2 customizations
-p +
-  labs(
-    title = "Network Plot",
-    subtitle = "Created with cograph, customized with ggplot2"
-  ) +
-  theme(
-    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
-    plot.subtitle = element_text(hjust = 0.5, color = "gray50")
-  )
+splot(mat, node_size = 9, edge_style = 3)
 ```
 
 ![](basic_example_files/figure-html/unnamed-chunk-10-1.png)
 
-## Example 8: Directed Network
+## Example 8: Dashed edge start
 
 ``` r
-dir_adj <- matrix(c(
-  0, 1, 1, 0, 0,
-  0, 0, 1, 1, 0,
-  0, 0, 0, 1, 1,
-  0, 0, 0, 0, 1,
-  0, 0, 0, 0, 0
-), nrow = 5, byrow = TRUE)
-
-dir_adj |>
-  cograph(directed = TRUE, layout = "circle") |>
-  sn_edges(
-    curvature = 0.15,
-    arrow_size = 0.02
-  ) |>
-  sn_nodes(fill = "lightblue") |>
-  sn_render(title = "Directed Network")
+splot(mat, node_size = 9, edge_start_style = "dashed")
 ```
 
 ![](basic_example_files/figure-html/unnamed-chunk-11-1.png)
 
-## Example 9: Edge List Input
+## Example 9: Edge labels with donuts
 
 ``` r
-edges <- data.frame(
-  from = c("Alice", "Alice", "Bob", "Bob", "Carol"),
-  to = c("Bob", "Carol", "Carol", "Dave", "Dave"),
-  weight = c(1, 2, 1.5, 3, 0.5)
-)
-
-edges |>
-  cograph(layout = "spring", seed = 123) |>
-  sn_edges(width = "weight") |>
-  sn_nodes(size = 0.06, fill = "mediumpurple") |>
-  sn_render(title = "Network from Edge List")
+splot(mat, node_size = 9, edge_labels = TRUE,
+      edge_label_size = 0.6,
+      edge_positive_color = "#1976D2",
+      edge_negative_color = "#D32F2F",
+      donut_fill = runif(9),
+      donut_color = palette_rainbow(9),
+      theme = "minimal")
 ```
 
 ![](basic_example_files/figure-html/unnamed-chunk-12-1.png)
 
-## Example 10: Save to File
+## Example 10: Grid graphics with soplot
 
 ``` r
-# Uncomment to save:
-# net <- cograph(adj) |>
-#   sn_nodes(fill = "steelblue") |>
-#   sn_theme("minimal")
-#
-# sn_save(net, "network.pdf", width = 8, height = 8)
-# sn_save(net, "network.png", width = 8, height = 8, dpi = 300)
-# sn_save(net, "network.svg", width = 8, height = 8)
+soplot(mat, node_size = 9, layout = "oval")
+```
 
-cat("\ncograph examples completed successfully!\n")
-#> 
-#> cograph examples completed successfully!
+![](basic_example_files/figure-html/unnamed-chunk-13-1.png)
+
+## Example 11: Saving
+
+``` r
+splot(mat, node_size = 9, filetype = "png",
+      filename = "network", width = 8, height = 8)
 ```

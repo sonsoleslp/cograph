@@ -12,7 +12,7 @@ Key features:
   [`soplot()`](http://sonsoles.me/cograph/reference/soplot.md)
 - **Pipe-friendly API**:
   `cograph() |> sn_nodes() |> sn_edges() |> sn_theme()`
-- **12+ node shapes** including pie charts and donut rings
+- **25+ node shapes** including pie charts and donut rings
 - **7 built-in themes** and multiple color palettes
 - **Confidence interval underlays**, edge label templates, weight
   scaling

@@ -558,7 +558,6 @@ get_edge_label_position <- function(x1, y1, x2, y2, position = 0.5,
   # Add additional offset in the direction of the curve bulge
   # This moves the label to the convex side of the curve
   curve_direction <- sign(curve)
-  if (curve_direction == 0) curve_direction <- 1
 
   list(
     x = curve_x + label_offset * curve_direction * px,

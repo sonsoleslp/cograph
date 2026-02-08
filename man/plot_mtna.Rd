@@ -24,6 +24,7 @@ plot_mtna(
   legend_position = "topright",
   curvature = 0.3,
   node_size = 2,
+  scale = 1,
   ...
 )
 
@@ -46,6 +47,7 @@ mtna(
   legend_position = "topright",
   curvature = 0.3,
   node_size = 2,
+  scale = 1,
   ...
 )
 }

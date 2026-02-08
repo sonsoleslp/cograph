@@ -14,7 +14,7 @@ NULL
 #' @noRd
 parse_igraph <- function(g, directed = NULL) {
   # Check if igraph is available
- if (!requireNamespace("igraph", quietly = TRUE)) {
+ if (!has_package("igraph")) {
     stop("Package 'igraph' is required for igraph input. ",
          "Please install it with: install.packages('igraph')",
          call. = FALSE)
@@ -89,7 +89,7 @@ parse_igraph <- function(g, directed = NULL) {
 #' @return Data frame with x, y coordinates.
 #' @noRd
 apply_igraph_layout <- function(network, layout_fn, ...) {
-  if (!requireNamespace("igraph", quietly = TRUE)) {
+  if (!has_package("igraph")) {
     stop("Package 'igraph' is required for igraph layouts. ",
          "Please install it with: install.packages('igraph')",
          call. = FALSE)
@@ -118,7 +118,7 @@ apply_igraph_layout <- function(network, layout_fn, ...) {
 #' @return Data frame with x, y coordinates.
 #' @noRd
 apply_igraph_layout_by_name <- function(network, layout_name, seed = 42, ...) {
-  if (!requireNamespace("igraph", quietly = TRUE)) {
+  if (!has_package("igraph")) {
     stop("Package 'igraph' is required for igraph layouts. ",
          "Please install it with: install.packages('igraph')",
          call. = FALSE)

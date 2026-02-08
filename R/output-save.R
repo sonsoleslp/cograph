@@ -60,8 +60,8 @@ sn_save <- function(network, filename, width = 7, height = 7, dpi = 300,
       device_opened <- TRUE
     },
     svg = {
-      grDevices::svg(filename, width = width, height = height, ...)
-      device_opened <- TRUE
+      grDevices::svg(filename, width = width, height = height, ...) # nocov
+      device_opened <- TRUE # nocov
     },
     jpeg = ,
     jpg = {

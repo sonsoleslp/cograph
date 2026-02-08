@@ -30,6 +30,7 @@ plot_mlna(
   curvature = 0.15,
   node_size = 3,
   minimum = 0,
+  scale = 1,
   ...
 )
 
@@ -54,6 +55,7 @@ mlna(
   curvature = 0.15,
   node_size = 3,
   minimum = 0,
+  scale = 1,
   ...
 )
 ```

@@ -273,20 +273,6 @@ plot_mlna(m21, layers, minimum = 0.2,
 
 ![](multi_network_files/figure-html/unnamed-chunk-18-1.png)
 
-### Example 16: Compact multilevel plot
-
-A small-format version suitable for side panels or multi-figure layouts.
-
-``` r
-par(mar = c(0, 0, 0, 0))
-plot_mlna(m21, layers, minimum = 0.2,
-          layer_width = 3, layer_depth = 1.5,
-          layer_spacing = 1.8, node_size = 2,
-          legend = FALSE)
-```
-
-![](multi_network_files/figure-html/unnamed-chunk-19-1.png)
-
 ## Parameter reference
 
 ### plot_htna

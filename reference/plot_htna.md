@@ -36,6 +36,7 @@ plot_htna(
   legend = TRUE,
   legend_position = "topright",
   extend_lines = FALSE,
+  scale = 1,
   ...
 )
 ```

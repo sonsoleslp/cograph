@@ -626,3 +626,88 @@ test_that("sn_nodes() donut customizations render in splot()", {
   result <- safe_plot(splot(net))
   expect_true(result$success, info = result$error)
 })
+
+# ============================================
+# SVG NODE SHAPE TESTS
+# ============================================
+
+test_that("sn_nodes() handles node_svg parameter", {
+  skip_if_not_installed("digest")
+
+  adj <- create_test_matrix(3)
+  svg_content <- '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40"/></svg>'
+
+  net <- cograph(adj) |>
+    sn_nodes(node_svg = svg_content)
+
+  expect_cograph_network(net)
+
+  # Verify SVG shape was registered
+  aes <- net$network$get_node_aes()
+  expect_true(grepl("_temp_svg_", aes$shape))
+})
+
+test_that("sn_nodes() handles svg_preserve_aspect parameter", {
+  adj <- create_test_matrix(3)
+
+  net <- cograph(adj) |>
+    sn_nodes(svg_preserve_aspect = TRUE)
+
+  aes <- net$network$get_node_aes()
+  expect_true(aes$svg_preserve_aspect)
+})
+
+test_that("sn_nodes() handles node_svg with invalid content", {
+  skip_if_not_installed("digest")
+
+  adj <- create_test_matrix(3)
+
+  # Should warn but not error
+  net <- suppressWarnings(cograph(adj) |>
+    sn_nodes(node_svg = "not valid svg"))
+
+  expect_cograph_network(net)
+})
+
+# ============================================
+# DONUT ADDITIONAL PARAMETERS
+# ============================================
+
+test_that("sn_nodes() handles donut_shape parameter", {
+  adj <- create_test_matrix(3)
+
+  net <- cograph(adj) |>
+    sn_nodes(
+      donut_values = list(0.3, 0.6, 0.9),
+      donut_shape = "square"
+    )
+
+  result <- safe_plot(splot(net))
+  expect_true(result$success, info = result$error)
+})
+
+# ============================================
+# LABEL CUSTOMIZATION TESTS
+# ============================================
+
+test_that("sn_nodes() handles label_fontface parameter", {
+  adj <- create_test_matrix(3)
+
+  for (face in c("plain", "bold", "italic", "bold.italic")) {
+    net <- cograph(adj) |>
+      sn_nodes(label_fontface = face)
+
+    result <- safe_plot(splot(net, labels = TRUE))
+    expect_true(result$success, info = paste("fontface:", face))
+  }
+})
+
+test_that("sn_nodes() handles label_fontfamily parameter", {
+  adj <- create_test_matrix(3)
+
+  net <- cograph(adj) |>
+    sn_nodes(label_fontfamily = "serif")
+
+  result <- safe_plot(splot(net, labels = TRUE))
+  expect_true(result$success, info = result$error)
+})

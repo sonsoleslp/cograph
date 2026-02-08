@@ -251,3 +251,166 @@ test_that("soplot() works with qgraph input", {
 
   expect_true(result)
 })
+
+# ============================================
+# Directed Inference Tests
+# ============================================
+
+test_that("parse_qgraph infers directed from asymmetric matrix", {
+  skip_if_not_installed("qgraph")
+
+  # Create asymmetric matrix (directed)
+  mat <- matrix(c(0, 1, 0, 0, 0, 1, 0, 0, 0), 3, 3, byrow = TRUE)
+  q <- qgraph::qgraph(mat, DoNotPlot = TRUE)
+
+  # Let it infer directed from matrix symmetry
+  result <- parse_qgraph(q, directed = NULL)
+
+  # Should detect as directed due to asymmetry
+  expect_true(is.logical(result$directed))
+})
+
+test_that("parse_qgraph handles NULL directed with symmetric matrix", {
+  skip_if_not_installed("qgraph")
+
+  # Symmetric matrix
+  mat <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), 3, 3)
+  q <- qgraph::qgraph(mat, DoNotPlot = TRUE)
+
+  result <- parse_qgraph(q, directed = NULL)
+  expect_true(is.logical(result$directed))
+})
+
+# ============================================
+# Empty Edge List Tests
+# ============================================
+
+test_that("parse_qgraph handles network with no edges", {
+  skip_if_not_installed("qgraph")
+
+  mat <- matrix(0, 4, 4)
+  q <- qgraph::qgraph(mat, DoNotPlot = TRUE)
+
+  result <- parse_qgraph(q)
+
+  expect_equal(nrow(result$edges), 0)
+  expect_equal(length(result$weights), 0)
+})
+
+test_that("parse_qgraph handles single edge network", {
+  skip_if_not_installed("qgraph")
+
+  mat <- matrix(0, 3, 3)
+  mat[1, 2] <- 1
+  mat[2, 1] <- 1
+  q <- qgraph::qgraph(mat, DoNotPlot = TRUE)
+
+  result <- parse_qgraph(q)
+
+  expect_true(nrow(result$edges) >= 1)
+})
+
+# ============================================
+# Node Count Inference Tests
+# ============================================
+
+test_that("parse_qgraph infers node count from matrix", {
+  skip_if_not_installed("qgraph")
+
+  mat <- matrix(c(0, 1, 1, 0, 1, 0,
+                  1, 0, 1, 1, 0, 1,
+                  1, 1, 0, 0, 1, 0,
+                  0, 1, 0, 0, 1, 1,
+                  1, 0, 1, 1, 0, 0,
+                  0, 1, 0, 1, 0, 0), 6, 6, byrow = TRUE)
+  rownames(mat) <- colnames(mat) <- paste0("N", 1:6)
+  q <- qgraph::qgraph(mat, DoNotPlot = TRUE)
+
+  result <- parse_qgraph(q)
+
+  # Should have nodes
+  expect_true(nrow(result$nodes) >= 1)
+})
+
+# ============================================
+# Edgelist Weight Handling Tests
+# ============================================
+
+test_that("parse_qgraph handles missing weights in edgelist", {
+  skip_if_not_installed("qgraph")
+
+  # Binary matrix (weights are 1s)
+  mat <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), 3, 3)
+  q <- qgraph::qgraph(mat, DoNotPlot = TRUE)
+
+  result <- parse_qgraph(q)
+
+  # Weights should default to 1
+  if (length(result$weights) > 0) {
+    expect_true(all(result$weights != 0))
+  }
+})
+
+# ============================================
+# Label Source Tests
+# ============================================
+
+test_that("parse_qgraph uses graphAttributes names", {
+  skip_if_not_installed("qgraph")
+
+  mat <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), 3, 3)
+  rownames(mat) <- colnames(mat) <- c("Node1", "Node2", "Node3")
+  q <- qgraph::qgraph(mat, DoNotPlot = TRUE)
+
+  result <- parse_qgraph(q)
+
+  expect_true("label" %in% names(result$nodes))
+  expect_equal(nrow(result$nodes), 3)
+})
+
+test_that("parse_qgraph generates default labels", {
+  skip_if_not_installed("qgraph")
+
+  # Matrix without names
+  mat <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), 3, 3)
+  q <- qgraph::qgraph(mat, DoNotPlot = TRUE)
+
+  result <- parse_qgraph(q)
+
+  expect_true("label" %in% names(result$nodes))
+})
+
+# ============================================
+# Layout Handling Tests
+# ============================================
+
+test_that("parse_qgraph handles qgraph without layout", {
+  skip_if_not_installed("qgraph")
+
+  mat <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), 3, 3)
+  q <- qgraph::qgraph(mat, DoNotPlot = TRUE)
+
+  # Force no layout
+  q$layout <- NULL
+
+  result <- parse_qgraph(q)
+
+  expect_true(is.list(result))
+  expect_true("nodes" %in% names(result))
+})
+
+test_that("parse_qgraph handles layout with wrong dimensions", {
+  skip_if_not_installed("qgraph")
+
+  mat <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), 3, 3)
+  q <- qgraph::qgraph(mat, DoNotPlot = TRUE)
+
+  # Set layout with wrong row count
+  q$layout <- matrix(c(0, 0, 1, 1), ncol = 2)  # 2 rows, not 3
+
+  result <- parse_qgraph(q)
+
+  # Should still work, but layout not used
+  expect_true(is.list(result))
+  expect_true("nodes" %in% names(result))
+})

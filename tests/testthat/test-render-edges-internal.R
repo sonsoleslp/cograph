@@ -1102,3 +1102,232 @@ test_that("soplot renders edges with maximum weight parameter", {
 
   expect_true(result)
 })
+
+# ============================================
+# CI Underlay with Curved Edges Tests
+# ============================================
+
+test_that("soplot renders curved edges with CI underlays", {
+  mat <- create_test_matrix(4, weighted = TRUE)
+  net <- cograph(mat) |>
+    sn_edges(ci = 0.3, curvature = 0.3)
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders CI underlay with custom style", {
+  mat <- create_test_matrix(4, weighted = TRUE)
+  net <- cograph(mat) |>
+    sn_edges(ci = 0.2, ci_style = 3)
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders CI underlay with arrows", {
+  mat <- create_test_matrix(4, symmetric = FALSE)
+  net <- cograph(mat, directed = TRUE) |>
+    sn_edges(ci = 0.2, ci_arrows = TRUE)
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+# ============================================
+# Edge Cut Threshold Tests
+# ============================================
+
+test_that("soplot renders edges with cut threshold fading", {
+  mat <- matrix(c(0, 0.1, 0.5, 0.8,
+                  0.1, 0, 0.2, 0.3,
+                  0.5, 0.2, 0, 0.6,
+                  0.8, 0.3, 0.6, 0), 4, 4)
+  net <- cograph(mat) |>
+    sn_edges(cut = 0.4)
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders edges with all weights below cut", {
+  mat <- matrix(c(0, 0.1, 0.1, 0.1, 0, 0.2, 0.1, 0.2, 0), 3, 3)
+  net <- cograph(mat) |>
+    sn_edges(cut = 0.5)
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+# ============================================
+# Self-loop with Arrow/Label Tests
+# ============================================
+
+test_that("soplot renders self-loops in directed network", {
+  mat <- create_test_matrix(3, symmetric = FALSE)
+  diag(mat) <- 1
+  net <- cograph(mat, directed = TRUE)
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders self-loops with edge labels", {
+  mat <- create_test_matrix(3)
+  diag(mat) <- c(0.5, 0.7, 0.3)
+
+  result <- tryCatch({
+    with_temp_png(soplot(mat, edge_labels = TRUE, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+# ============================================
+# Aspect Ratio Correction Tests
+# ============================================
+
+test_that("soplot renders edges with non-square aspect ratio", {
+  mat <- create_test_matrix(4)
+
+  result <- tryCatch({
+    png(tempfile(fileext = ".png"), width = 800, height = 400)
+    on.exit(dev.off())
+    soplot(mat, layout = "circle")
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+# ============================================
+# Curve Shape and Pivot Tests
+# ============================================
+
+test_that("soplot renders curved edges with curve_shape", {
+  mat <- create_test_matrix(4, symmetric = FALSE)
+  net <- cograph(mat, directed = TRUE) |>
+    sn_edges(curvature = 0.3, curve_shape = 0.5)
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders edges with loop rotation per edge", {
+  mat <- create_test_matrix(4)
+  diag(mat) <- 1
+  net <- cograph(mat) |>
+    sn_edges(loop_rotation = c(0, pi/4, pi/2, pi))
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+# ============================================
+# Weight-Based Scaling Tests
+# ============================================
+
+test_that("soplot renders edges with weight-based scaling", {
+  mat <- matrix(c(0, 0.2, 0.8, 0.2, 0, 0.5, 0.8, 0.5, 0), 3, 3)
+  net <- cograph(mat)
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders edges with explicit edge_scale_mode", {
+  mat <- matrix(c(0, 0.2, 0.8, 0.2, 0, 0.5, 0.8, 0.5, 0), 3, 3)
+  net <- cograph(mat) |>
+    sn_edges(edge_scale_mode = "sqrt")
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders edges with explicit maximum", {
+  mat <- matrix(c(0, 0.2, 0.8, 0.2, 0, 0.5, 0.8, 0.5, 0), 3, 3)
+  net <- cograph(mat) |>
+    sn_edges(maximum = 1.0)
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+# ============================================
+# Color Resolution Tests
+# ============================================
+
+test_that("soplot renders edges with positive/negative colors from aes", {
+  mat <- matrix(c(0, 0.5, -0.3, 0.5, 0, -0.7, -0.3, -0.7, 0), 3, 3)
+  net <- cograph(mat) |>
+    sn_edges(positive_color = "green", negative_color = "red")
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders edges without weights using default color", {
+  mat <- create_test_matrix(4, weighted = FALSE)
+  net <- cograph(mat)
+
+  # Remove weights from edges
+  edges <- net$network$get_edges()
+  edges$weight <- NULL
+  net$network$set_edges(edges)
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})

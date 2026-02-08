@@ -476,3 +476,117 @@ test_that("random layout with NULL seed is reproducible within set.seed", {
   expect_equal(result1$x, result2$x)
   expect_equal(result1$y, result2$y)
 })
+
+# ============================================
+# Direct Registration Function Tests
+# ============================================
+
+test_that("register_builtin_layouts registers all layouts", {
+  # Call the registration function directly to cover it
+  cograph:::register_builtin_layouts()
+
+  # Verify all expected layouts are registered
+  layouts <- list_layouts()
+  expected <- c("circle", "oval", "ellipse", "spring", "fr",
+                "fruchterman-reingold", "groups", "grid", "random",
+                "star", "bipartite", "custom", "gephi_fr", "gephi")
+  for (layout_name in expected) {
+    expect_true(layout_name %in% layouts,
+                info = paste("Layout", layout_name, "not registered"))
+  }
+})
+
+# ============================================
+# Gephi FR No Edges Tests
+# ============================================
+
+test_that("gephi_fr layout handles network with no edges", {
+  skip_if_not_installed("igraph")
+
+  # Create network with nodes but no edges
+  mat <- matrix(0, 4, 4)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("gephi_fr")
+  result <- layout_func(net$network)
+  expect_equal(nrow(result), 4)
+  expect_true("x" %in% names(result))
+  expect_true("y" %in% names(result))
+})
+
+test_that("gephi_fr layout handles displacement limiting", {
+  skip_if_not_installed("igraph")
+
+  # Dense network with many iterations to trigger displacement limiting
+  mat <- matrix(1, 6, 6)
+  diag(mat) <- 0
+  net <- cograph(mat)
+
+  layout_func <- get_layout("gephi_fr")
+  result <- layout_func(net$network, niter = 200, speed = 5.0)
+  expect_equal(nrow(result), 6)
+})
+
+# ============================================
+# Star Layout n_others Branch Tests
+# ============================================
+
+test_that("star layout with 3 nodes positions peripheral correctly", {
+  mat <- matrix(c(0, 1, 1, 1, 0, 0, 1, 0, 0), 3, 3)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("star")
+  result <- layout_func(net$network, center = 1)
+  expect_equal(nrow(result), 3)
+  # Center should be at (0.5, 0.5)
+  expect_equal(result$x[1], 0.5)
+  expect_equal(result$y[1], 0.5)
+  # Others should be around the center
+  expect_true(result$x[2] != 0.5 || result$y[2] != 0.5)
+  expect_true(result$x[3] != 0.5 || result$y[3] != 0.5)
+})
+
+# ============================================
+# Bipartite Layout Edge Cases
+# ============================================
+
+test_that("bipartite layout with NULL types uses alternating", {
+  mat <- create_test_matrix(4)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("bipartite")
+  result <- layout_func(net$network, types = NULL)
+  expect_equal(nrow(result), 4)
+  # Should have nodes on both sides
+  expect_true(0.2 %in% result$x)
+  expect_true(0.8 %in% result$x)
+})
+
+test_that("bipartite layout with only type2 nodes", {
+  mat <- create_test_matrix(3)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("bipartite")
+  # All nodes as type 1 (none as type 0)
+  result <- layout_func(net$network, types = c(1, 1, 1))
+  expect_equal(nrow(result), 3)
+})
+
+# ============================================
+# Custom Layout Matrix Conversion
+# ============================================
+
+test_that("custom layout converts matrix columns to x and y", {
+  mat <- create_test_matrix(3)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("custom")
+  # Matrix without column names
+  custom_coords <- matrix(c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6), ncol = 2)
+  result <- layout_func(net$network, coords = custom_coords)
+
+  expect_equal(names(result)[1], "x")
+  expect_equal(names(result)[2], "y")
+  expect_equal(result$x, c(0.1, 0.2, 0.3))
+  expect_equal(result$y, c(0.4, 0.5, 0.6))
+})

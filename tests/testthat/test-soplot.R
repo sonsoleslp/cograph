@@ -370,3 +370,88 @@ test_that("soplot() with same seed produces consistent results", {
   expect_true(result1$success)
   expect_true(result2$success)
 })
+
+# ============================================
+# DUPLICATE EDGE HANDLING
+# ============================================
+
+test_that("soplot() handles edge_duplicates parameter", {
+  skip_if_not_installed("grid")
+
+  # Use matrix input which is handled more consistently
+  adj <- create_test_matrix(4)
+
+  # Test with edge_duplicates parameter (should not error)
+  result <- safe_plot(soplot(adj, edge_duplicates = "sum"))
+  expect_true(result$success, info = result$error)
+})
+
+# ============================================
+# DONUT COLOR VARIATIONS
+# ============================================
+
+test_that("soplot() handles donut_fill as list", {
+  skip_if_not_installed("grid")
+
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(soplot(adj, donut_fill = as.list(c(0.3, 0.6, 0.9))))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("soplot() handles donut_color with two colors (fill + bg)", {
+  skip_if_not_installed("grid")
+
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(soplot(adj,
+    donut_fill = c(0.5, 0.7, 0.3),
+    donut_color = c("blue", "lightgray")
+  ))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("soplot() handles donut_color with single color", {
+  skip_if_not_installed("grid")
+
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(soplot(adj,
+    donut_fill = c(0.5, 0.7, 0.3),
+    donut_color = "red"
+  ))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("soplot() handles donut_color with multiple colors", {
+  skip_if_not_installed("grid")
+
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(soplot(adj,
+    donut_fill = c(0.5, 0.7, 0.3),
+    donut_color = c("red", "blue", "green")
+  ))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("soplot() handles deprecated donut_colors parameter", {
+  skip_if_not_installed("grid")
+
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(soplot(adj,
+    donut_fill = c(0.5, 0.7, 0.3),
+    donut_colors = as.list(c("orange", "purple", "cyan"))
+  ))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("soplot() handles node_shape donut without explicit fill", {
+  skip_if_not_installed("grid")
+
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(soplot(adj, node_shape = "donut"))
+  expect_true(result$success, info = result$error)
+})

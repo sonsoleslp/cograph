@@ -429,3 +429,165 @@ test_that("sn_layout() works with igraph layout_ prefix names", {
 
   expect_s3_class(net2, "cograph_network")
 })
+
+# ============================================
+# ensure_cograph_network Extended Tests
+# ============================================
+
+test_that("ensure_cograph_network handles cograph_network without layout", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- cograph(adj)
+
+  # Clear the layout coordinates
+  nodes <- net$network$get_nodes()
+  nodes$x <- NA
+  nodes$y <- NA
+  net$network$set_nodes(nodes)
+
+  # ensure_cograph_network should recompute layout
+  result <- cograph:::ensure_cograph_network(net)
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("ensure_cograph_network handles igraph input", {
+  skip_if_not_installed("igraph")
+
+  g <- igraph::make_ring(5)
+  result <- cograph:::ensure_cograph_network(g)
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("ensure_cograph_network handles network/statnet input", {
+  skip_if_not_installed("network")
+
+  net_statnet <- network::network(matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), 3, 3))
+  result <- cograph:::ensure_cograph_network(net_statnet)
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("ensure_cograph_network handles qgraph input", {
+  skip_if_not_installed("qgraph")
+
+  mat <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), 3, 3)
+  q <- qgraph::qgraph(mat, DoNotPlot = TRUE)
+  result <- cograph:::ensure_cograph_network(q)
+  expect_s3_class(result, "cograph_network")
+})
+
+# ============================================
+# compute_layout_for_cograph Tests
+# ============================================
+
+test_that("compute_layout_for_cograph handles function layout", {
+  skip_if_not_installed("igraph")
+
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- cograph(adj)
+
+  # Clear layout
+  nodes <- net$network$get_nodes()
+  nodes$x <- NA
+  nodes$y <- NA
+  net$network$set_nodes(nodes)
+
+  # Use ensure_cograph_network with a function layout
+  result <- cograph:::ensure_cograph_network(net, layout = igraph::layout_in_circle)
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph handles igraph code layout", {
+  skip_if_not_installed("igraph")
+
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- cograph(adj)
+
+  # Clear layout
+  nodes <- net$network$get_nodes()
+  nodes$x <- NA
+  nodes$y <- NA
+  net$network$set_nodes(nodes)
+
+  # Use ensure_cograph_network with igraph code layout
+  result <- cograph:::ensure_cograph_network(net, layout = "fr")
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph handles matrix layout", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- cograph(adj)
+
+  # Clear layout
+  nodes <- net$network$get_nodes()
+  nodes$x <- NA
+  nodes$y <- NA
+  net$network$set_nodes(nodes)
+
+  # Use ensure_cograph_network with matrix layout
+  custom_coords <- matrix(c(0, 1, 0.5, 0, 0, 1), ncol = 2)
+  result <- cograph:::ensure_cograph_network(net, layout = custom_coords)
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph handles NULL seed", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- cograph(adj, seed = NULL)
+
+  # Clear layout
+  nodes <- net$network$get_nodes()
+  nodes$x <- NA
+  nodes$y <- NA
+  net$network$set_nodes(nodes)
+
+  # Use ensure_cograph_network
+  result <- cograph:::ensure_cograph_network(net, seed = NULL)
+  expect_s3_class(result, "cograph_network")
+})
+
+# ============================================
+# Edge List Input Tests
+# ============================================
+
+test_that("cograph() handles weighted edge list", {
+  edges <- data.frame(
+    from = c("A", "B", "C"),
+    to = c("B", "C", "A"),
+    weight = c(0.5, 0.8, 0.3)
+  )
+  net <- cograph(edges)
+
+  expect_s3_class(net, "cograph_network")
+  expect_equal(net$network$n_nodes, 3)
+})
+
+test_that("cograph() handles edge list with extra columns", {
+  edges <- data.frame(
+    from = c("A", "B"),
+    to = c("B", "C"),
+    weight = c(1, 2),
+    color = c("red", "blue")
+  )
+  net <- cograph(edges)
+
+  expect_s3_class(net, "cograph_network")
+})
+
+# ============================================
+# Additional Validation Tests
+# ============================================
+
+test_that("cograph() handles asymmetric matrix as directed", {
+  adj <- matrix(c(0, 1, 0, 0, 0, 1, 0, 0, 0), nrow = 3)
+  net <- cograph(adj, directed = TRUE)
+
+  expect_true(net$network$is_directed)
+})
+
+test_that("cograph() normalizes node coordinates", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- cograph(adj)
+
+  layout <- net$network$get_layout()
+  # Coordinates should be in a reasonable range
+  expect_true(all(layout$x >= 0 & layout$x <= 1))
+  expect_true(all(layout$y >= 0 & layout$y <= 1))
+})

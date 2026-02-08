@@ -338,3 +338,36 @@ test_that("theme works in pipe chain with soplot", {
 
   expect_true(result)
 })
+
+# ============================================
+# Direct Registration Function Tests
+# ============================================
+
+test_that("register_builtin_themes registers all themes", {
+  # Call the registration function directly to ensure it's covered
+  cograph:::register_builtin_themes()
+
+  # Check all expected themes are registered
+  themes <- list_themes()
+
+  expect_true("classic" %in% themes)
+  expect_true("colorblind" %in% themes)
+  expect_true("gray" %in% themes)
+  expect_true("grey" %in% themes)  # Alias for gray
+
+  expect_true("dark" %in% themes)
+  expect_true("minimal" %in% themes)
+  expect_true("viridis" %in% themes)
+  expect_true("nature" %in% themes)
+})
+
+test_that("register_builtin_themes creates valid CographTheme objects", {
+  cograph:::register_builtin_themes()
+
+  # All registered themes should be CographTheme objects
+  for (theme_name in c("classic", "colorblind", "gray", "dark", "minimal", "viridis", "nature")) {
+    theme <- get_theme(theme_name)
+    expect_true(inherits(theme, "CographTheme"),
+                info = paste("Theme", theme_name, "is not a CographTheme"))
+  }
+})

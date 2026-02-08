@@ -880,3 +880,115 @@ test_that("print shows layout status when not set", {
 
   expect_output(print(net), "none|Layout")
 })
+
+# ============================================
+# Layout Coords Edge Cases
+# ============================================
+
+test_that("set_layout_coords handles matrix without names", {
+  mat <- create_test_matrix(4)
+  net <- CographNetwork$new(mat)
+
+  # Create matrix without column names
+  coords <- matrix(c(0, 1, 0.5, 0.5, 0, 0, 1, 0.5), ncol = 2)
+
+  net$set_layout_coords(coords)
+
+  # Verify the layout was set (may have different column names)
+  layout <- net$get_layout()
+  expect_equal(nrow(layout), 4)
+  expect_true(ncol(layout) >= 2)
+})
+
+test_that("set_layout_coords updates node positions", {
+  mat <- create_test_matrix(4)
+  net <- CographNetwork$new(mat)
+
+  coords <- data.frame(x = c(0, 1, 0.5, 0.5), y = c(0, 0, 1, 0.5))
+  net$set_layout_coords(coords)
+
+  nodes <- net$get_nodes()
+  expect_equal(nodes$x, coords$x)
+  expect_equal(nodes$y, coords$y)
+})
+
+# ============================================
+# Edge Case Tests
+# ============================================
+
+test_that("n_edges returns 0 for empty network", {
+  net <- CographNetwork$new()
+
+  expect_equal(net$n_edges, 0)
+})
+
+test_that("n_nodes returns 0 for empty network", {
+  net <- CographNetwork$new()
+
+  expect_equal(net$n_nodes, 0)
+})
+
+test_that("get_edges returns NULL for network without edges", {
+  net <- CographNetwork$new()
+
+  expect_null(net$get_edges())
+})
+
+test_that("get_nodes returns NULL for empty network", {
+  net <- CographNetwork$new()
+
+  expect_null(net$get_nodes())
+})
+
+# ============================================
+# Theme Tests
+# ============================================
+
+test_that("set_theme and get_theme work", {
+  mat <- create_test_matrix(3)
+  net <- CographNetwork$new(mat)
+
+  theme <- CographTheme$new(node_fill = "blue")
+  net$set_theme(theme)
+
+  result <- net$get_theme()
+  expect_true(inherits(result, "CographTheme"))
+  expect_equal(result$get("node_fill"), "blue")
+})
+
+# ============================================
+# Layout Object Tests
+# ============================================
+
+test_that("set_layout with layout name computes coordinates", {
+  mat <- create_test_matrix(4)
+  net <- CographNetwork$new(mat)
+
+  # Use the set_layout_coords method directly
+  layout_func <- get_layout("circle")
+  coords <- layout_func(net)
+  net$set_layout_coords(coords)
+
+  layout <- net$get_layout()
+  expect_equal(nrow(layout), 4)
+})
+
+# ============================================
+# Node/Edge Count Active Bindings
+# ============================================
+
+test_that("n_nodes active binding handles NULL nodes", {
+  net <- CographNetwork$new()
+  # Set nodes to NULL explicitly
+  net$set_nodes(NULL)
+
+  expect_equal(net$n_nodes, 0)
+})
+
+test_that("n_edges active binding handles NULL edges", {
+  net <- CographNetwork$new()
+  # Set edges to NULL explicitly
+  net$set_edges(NULL)
+
+  expect_equal(net$n_edges, 0)
+})

@@ -754,3 +754,133 @@ test_that("splot() with same seed produces consistent layouts", {
   expect_equal(layout1$x, layout2$x)
   expect_equal(layout1$y, layout2$y)
 })
+
+# ============================================
+# DUPLICATE EDGE HANDLING
+# ============================================
+
+test_that("splot() errors on duplicate edges without handler", {
+  edges <- data.frame(
+    from = c("A", "B", "A", "C"),
+    to = c("B", "C", "B", "A"),
+    weight = c(1, 2, 3, 4)
+  )
+
+  expect_error(
+    with_temp_png(splot(edges, directed = FALSE)),
+    "duplicate edge"
+  )
+})
+
+test_that("splot() handles duplicates with sum strategy", {
+  edges <- data.frame(
+    from = c("A", "B", "A"),
+    to = c("B", "C", "B"),
+    weight = c(1, 2, 3)
+  )
+
+  result <- with_temp_png(splot(edges, directed = FALSE, edge_duplicates = "sum"))
+  expect_cograph_network(result)
+})
+
+test_that("splot() handles duplicates with mean strategy", {
+  edges <- data.frame(
+    from = c("A", "B", "A"),
+    to = c("B", "C", "B"),
+    weight = c(1, 2, 3)
+  )
+
+  result <- with_temp_png(splot(edges, directed = FALSE, edge_duplicates = "mean"))
+  expect_cograph_network(result)
+})
+
+test_that("splot() handles duplicates with first strategy", {
+  edges <- data.frame(
+    from = c("A", "B", "A"),
+    to = c("B", "C", "B"),
+    weight = c(1, 2, 3)
+  )
+
+  result <- with_temp_png(splot(edges, directed = FALSE, edge_duplicates = "first"))
+  expect_cograph_network(result)
+})
+
+test_that("splot() handles duplicates with max strategy", {
+  edges <- data.frame(
+    from = c("A", "B", "A"),
+    to = c("B", "C", "B"),
+    weight = c(1, 2, 3)
+  )
+
+  result <- with_temp_png(splot(edges, directed = FALSE, edge_duplicates = "max"))
+  expect_cograph_network(result)
+})
+
+test_that("splot() handles duplicates with min strategy", {
+  edges <- data.frame(
+    from = c("A", "B", "A"),
+    to = c("B", "C", "B"),
+    weight = c(1, 2, 3)
+  )
+
+  result <- with_temp_png(splot(edges, directed = FALSE, edge_duplicates = "min"))
+  expect_cograph_network(result)
+})
+
+# ============================================
+# THEME APPLICATION
+# ============================================
+
+test_that("splot() applies theme background color", {
+  adj <- create_test_matrix(4)
+
+  result <- safe_plot(splot(adj, theme = "dark"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() applies theme colors when defaults are used", {
+  adj <- create_test_matrix(4)
+
+  result <- safe_plot(splot(adj, theme = "colorblind"))
+  expect_true(result$success, info = result$error)
+})
+
+# ============================================
+# LAYOUT SCALE HANDLING
+# ============================================
+
+test_that("splot() handles layout_scale auto mode", {
+  adj <- create_test_matrix(5)
+
+  result <- safe_plot(splot(adj, layout_scale = "auto"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles layout_scale with large network", {
+  adj <- create_test_matrix(50)
+
+  result <- safe_plot(splot(adj, layout_scale = "auto", layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+# ============================================
+# DEPRECATED PARAMETER HANDLING
+# ============================================
+
+test_that("splot() warns on deprecated usePCH parameter", {
+  adj <- create_test_matrix(4)
+
+  expect_warning(
+    with_temp_png(splot(adj, usePCH = TRUE)),
+    "deprecated"
+  )
+})
+
+test_that("splot() warns on deprecated donut_border_lty parameter", {
+  adj <- create_test_matrix(4)
+
+  expect_warning(
+    with_temp_png(splot(adj, donut_border_lty = 2)),
+    "deprecated"
+  )
+})

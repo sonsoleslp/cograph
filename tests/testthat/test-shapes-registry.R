@@ -372,3 +372,166 @@ test_that("list_shapes contains expected minimum shapes", {
                 info = paste("Expected shape", shape, "not found"))
   }
 })
+
+# ============================================
+# Direct Registration Function Tests
+# ============================================
+
+test_that("register_builtin_shapes registers all shapes", {
+  # Call the registration function directly to ensure it's covered
+
+  cograph:::register_builtin_shapes()
+
+  # Check all expected shapes are registered
+  shapes <- list_shapes()
+
+  # Basic shapes
+  expect_true("circle" %in% shapes)
+  expect_true("square" %in% shapes)
+  expect_true("triangle" %in% shapes)
+  expect_true("diamond" %in% shapes)
+  expect_true("pentagon" %in% shapes)
+  expect_true("hexagon" %in% shapes)
+
+  # Special shapes
+  expect_true("ellipse" %in% shapes)
+  expect_true("heart" %in% shapes)
+  expect_true("star" %in% shapes)
+  expect_true("pie" %in% shapes)
+  expect_true("donut" %in% shapes)
+  expect_true("polygon_donut" %in% shapes)
+  expect_true("donut_pie" %in% shapes)
+  expect_true("double_donut_pie" %in% shapes)
+  expect_true("cross" %in% shapes)
+  expect_true("plus" %in% shapes)
+
+  # AI-themed shapes
+  expect_true("neural" %in% shapes)
+  expect_true("chip" %in% shapes)
+  expect_true("robot" %in% shapes)
+  expect_true("brain" %in% shapes)
+  expect_true("network" %in% shapes)
+  expect_true("database" %in% shapes)
+  expect_true("cloud" %in% shapes)
+  expect_true("gear" %in% shapes)
+
+  # Inline-defined shapes
+  expect_true("rectangle" %in% shapes)
+  expect_true("none" %in% shapes)
+})
+
+# ============================================
+# Rectangle Inline Function Tests
+# ============================================
+
+test_that("rectangle shape function creates rectGrob with default parameters", {
+  skip_if_not_installed("grid")
+
+  shape_func <- get_shape("rectangle")
+  grob <- shape_func(0.5, 0.5, 0.1, "blue", "black", 1)
+
+  expect_true(inherits(grob, "grob"))
+  expect_true(inherits(grob, "rect"))
+})
+
+test_that("rectangle shape function handles alpha parameter", {
+  skip_if_not_installed("grid")
+
+  shape_func <- get_shape("rectangle")
+
+  # Test with alpha = 0.5
+  grob1 <- shape_func(0.5, 0.5, 0.1, "red", "black", 1, alpha = 0.5)
+  expect_true(inherits(grob1, "rect"))
+
+  # Test with alpha = 1 (default)
+  grob2 <- shape_func(0.5, 0.5, 0.1, "red", "black", 1, alpha = 1)
+  expect_true(inherits(grob2, "rect"))
+
+  # Test with alpha = 0 (fully transparent)
+  grob3 <- shape_func(0.5, 0.5, 0.1, "red", "black", 1, alpha = 0)
+  expect_true(inherits(grob3, "rect"))
+})
+
+test_that("rectangle shape function handles aspect parameter", {
+  skip_if_not_installed("grid")
+
+  shape_func <- get_shape("rectangle")
+
+  # Test with aspect = 1.5 (default)
+  grob1 <- shape_func(0.5, 0.5, 0.1, "green", "black", 1, aspect = 1.5)
+  expect_true(inherits(grob1, "rect"))
+
+  # Test with aspect = 1 (square-like)
+  grob2 <- shape_func(0.5, 0.5, 0.1, "green", "black", 1, aspect = 1)
+  expect_true(inherits(grob2, "rect"))
+
+  # Test with aspect = 2 (wider)
+  grob3 <- shape_func(0.5, 0.5, 0.1, "green", "black", 1, aspect = 2)
+  expect_true(inherits(grob3, "rect"))
+
+  # Test with aspect = 0.5 (taller than wide)
+  grob4 <- shape_func(0.5, 0.5, 0.1, "green", "black", 1, aspect = 0.5)
+  expect_true(inherits(grob4, "rect"))
+})
+
+test_that("rectangle shape function handles both alpha and aspect", {
+  skip_if_not_installed("grid")
+
+  shape_func <- get_shape("rectangle")
+
+  # Combined parameters
+  grob <- shape_func(0.5, 0.5, 0.1, "purple", "gray", 2, alpha = 0.7, aspect = 2.5)
+  expect_true(inherits(grob, "rect"))
+})
+
+test_that("rectangle shape function handles border_width parameter", {
+  skip_if_not_installed("grid")
+
+  shape_func <- get_shape("rectangle")
+
+  # Different border widths
+  grob1 <- shape_func(0.5, 0.5, 0.1, "blue", "black", 0)
+  expect_true(inherits(grob1, "rect"))
+
+  grob2 <- shape_func(0.5, 0.5, 0.1, "blue", "black", 5)
+  expect_true(inherits(grob2, "rect"))
+})
+
+# ============================================
+# None Inline Function Tests
+# ============================================
+
+test_that("none shape function returns nullGrob", {
+  skip_if_not_installed("grid")
+
+  shape_func <- get_shape("none")
+  grob <- shape_func(0.5, 0.5, 0.1, "red", "black", 1)
+
+  expect_true(inherits(grob, "grob"))
+  expect_true(inherits(grob, "null"))
+})
+
+test_that("none shape function ignores all parameters", {
+  skip_if_not_installed("grid")
+
+  shape_func <- get_shape("none")
+
+  # Regardless of parameters, should return nullGrob
+  grob1 <- shape_func(0, 0, 0, "red", "black", 0)
+  grob2 <- shape_func(1, 1, 1, "blue", "white", 10)
+  grob3 <- shape_func(0.5, 0.5, 0.5, "green", "gray", 5, alpha = 0.5)
+
+  expect_true(inherits(grob1, "null"))
+  expect_true(inherits(grob2, "null"))
+  expect_true(inherits(grob3, "null"))
+})
+
+test_that("none shape function handles extra ... arguments", {
+  skip_if_not_installed("grid")
+
+  shape_func <- get_shape("none")
+
+  # Should not error with extra arguments
+  grob <- shape_func(0.5, 0.5, 0.1, "red", "black", 1, extra_arg = "ignored")
+  expect_true(inherits(grob, "null"))
+})

@@ -1107,3 +1107,176 @@ test_that("splot handles network with only self-loops", {
 
   expect_true(result)
 })
+
+# ============================================
+# find_curve_split_index Zero Length Tests
+# ============================================
+
+test_that("find_curve_split_index handles zero length curve", {
+  # All points at same location
+  x <- c(0.5, 0.5, 0.5)
+  y <- c(0.5, 0.5, 0.5)
+
+  result <- find_curve_split_index(x, y, 0.5)
+  expect_equal(result, 1)
+})
+
+test_that("find_curve_split_index handles near-zero length curve", {
+  # Points very close together
+  x <- c(0.5, 0.5 + 1e-12, 0.5 + 2e-12)
+  y <- c(0.5, 0.5 + 1e-12, 0.5 + 2e-12)
+
+  result <- find_curve_split_index(x, y, 0.5)
+  expect_equal(result, 1)
+})
+
+# ============================================
+# get_edge_label_position Tests
+# ============================================
+
+test_that("get_edge_label_position handles curved edge with offset", {
+  result <- cograph:::get_edge_label_position(
+    0.2, 0.5, 0.8, 0.5,
+    position = 0.5, curve = 0.3, label_offset = 0.05
+  )
+
+  expect_true(!is.null(result$x))
+  expect_true(!is.null(result$y))
+})
+
+test_that("get_edge_label_position handles curve with curvePivot", {
+  result <- cograph:::get_edge_label_position(
+    0.2, 0.5, 0.8, 0.5,
+    position = 0.3, curve = 0.3, curvePivot = 0.3
+  )
+
+  expect_true(!is.null(result$x))
+  expect_true(!is.null(result$y))
+})
+
+test_that("get_edge_label_position handles curve with small offset adjustment", {
+  result <- cograph:::get_edge_label_position(
+    0.2, 0.5, 0.21, 0.5,  # Very short edge
+    position = 0.5, curve = 0.1
+  )
+
+  expect_true(!is.null(result$x))
+  expect_true(!is.null(result$y))
+})
+
+test_that("get_edge_label_position handles zero curve", {
+  result <- cograph:::get_edge_label_position(
+    0.2, 0.5, 0.8, 0.5,
+    position = 0.5, curve = 0
+  )
+
+  expect_true(!is.null(result$x))
+  expect_true(!is.null(result$y))
+})
+
+# ============================================
+# render_edges_base Integration Tests
+# ============================================
+
+test_that("splot renders edges with loop rotation vector", {
+  mat <- create_test_matrix(3)
+  diag(mat) <- 1
+
+  result <- with_temp_png({
+    splot(mat, loop_rotation = c(0, pi/2, pi), layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot renders edges with curved edges and labels", {
+  mat <- create_test_matrix(4, weighted = TRUE)
+
+  result <- with_temp_png({
+    splot(mat, curvature = 0.3, edge_labels = TRUE, layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot renders bidirectional straight edges", {
+  mat <- create_test_matrix(3, symmetric = FALSE)
+  net <- cograph(mat, directed = TRUE)
+
+  result <- with_temp_png({
+    splot(net, bidirectional = TRUE, curves = FALSE, layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot renders curved edges with curvePivot", {
+  mat <- create_test_matrix(4, symmetric = FALSE)
+  net <- cograph(mat, directed = TRUE)
+
+  result <- with_temp_png({
+    splot(net, curvature = 0.3, curve_pivot = 0.3, layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot renders self-loops with labels", {
+  mat <- create_test_matrix(3, weighted = TRUE)
+  diag(mat) <- c(0.5, 0.7, 0.3)
+
+  result <- with_temp_png({
+    splot(mat, edge_labels = TRUE, layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot handles network center calculation for curves", {
+  mat <- create_test_matrix(5, symmetric = FALSE)
+  net <- cograph(mat, directed = TRUE)
+
+  result <- with_temp_png({
+    splot(net, curves = TRUE, layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+# ============================================
+# Edge Parameter Vectorization Tests
+# ============================================
+
+test_that("splot handles vectorized edge parameters", {
+  mat <- create_test_matrix(4)
+
+  result <- with_temp_png({
+    splot(mat,
+          edge_color = c("red", "blue", "green", "orange", "purple", "cyan"),
+          edge_width = c(1, 2, 3, 1, 2, 3),
+          layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot handles vectorized arrow parameters", {
+  mat <- create_test_matrix(3, symmetric = FALSE)
+  net <- cograph(mat, directed = TRUE)
+
+  result <- with_temp_png({
+    splot(net,
+          arrow_size = c(0.5, 1, 1.5),
+          layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})

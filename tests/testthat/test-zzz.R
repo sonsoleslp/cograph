@@ -226,3 +226,68 @@ test_that("tplot is exported as alias", {
   expect_true(exists("tplot", mode = "function"))
   expect_true(exists("plot_tna", mode = "function"))
 })
+
+# ============================================
+# .onAttach Startup Message Tests
+# ============================================
+
+test_that(".onAttach produces startup message", {
+  msg <- capture.output(type = "message", {
+    cograph:::.onAttach(NULL, "cograph")
+  })
+
+  # Should contain package name and version
+  msg_text <- paste(msg, collapse = " ")
+  expect_true(grepl("cograph", msg_text, ignore.case = TRUE))
+  expect_true(grepl("Version", msg_text))
+})
+
+test_that(".onAttach message includes version number", {
+  msg <- capture.output(type = "message", {
+    cograph:::.onAttach(NULL, "cograph")
+  })
+
+  msg_text <- paste(msg, collapse = " ")
+  # Should contain a version number pattern (e.g., 1.5.2)
+  expect_true(grepl("\\d+\\.\\d+", msg_text))
+})
+
+test_that(".onAttach message includes help hint", {
+  msg <- capture.output(type = "message", {
+    cograph:::.onAttach(NULL, "cograph")
+  })
+
+  msg_text <- paste(msg, collapse = " ")
+  expect_true(grepl("help", msg_text, ignore.case = TRUE))
+})
+
+# ============================================
+# .onLoad Tests
+# ============================================
+
+test_that(".onLoad registers all components", {
+  # The onLoad function has already run. Verify its effects.
+
+  # All built-in shapes should be registered
+  expect_true(length(list_shapes()) >= 20)
+
+  # All built-in layouts should be registered
+  expect_true(length(list_layouts()) >= 8)
+
+  # All built-in themes should be registered
+  expect_true(length(list_themes()) >= 5)
+
+  # All built-in palettes should be registered
+  expect_true(length(list_palettes()) >= 1)
+})
+
+test_that("init_registries is called during package load", {
+  # The registries should exist
+  env <- cograph:::.cograph_env
+
+  expect_true(is.environment(env))
+  expect_true(is.environment(env$shapes) || is.list(env$shapes))
+  expect_true(is.environment(env$layouts) || is.list(env$layouts))
+  expect_true(is.environment(env$themes) || is.list(env$themes))
+  expect_true(is.environment(env$palettes) || is.list(env$palettes))
+})

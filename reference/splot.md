@@ -12,7 +12,7 @@ parameter names as soplot() for consistency.
 ``` r
 splot(
   x,
-  layout = "spring",
+  layout = "oval",
   directed = NULL,
   seed = 42,
   theme = NULL,
@@ -166,7 +166,8 @@ splot(
 
   Layout algorithm: "circle", "spring", "groups", or a matrix of x,y
   coordinates, or an igraph layout function. Also supports igraph
-  two-letter codes: "kk", "fr", "drl", "mds", "ni", etc.
+  two-letter codes: "kk", "fr", "drl", "mds", "ni", etc. Default is
+  "oval"
 
 - directed:
 

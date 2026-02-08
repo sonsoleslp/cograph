@@ -121,19 +121,8 @@
 <span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">0</span>, <span class="fl">0.3</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">10</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">states</span>, <span class="va">states</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="va">mat</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span>  <span class="co"># row-normalize</span></span></code></pre></div>
-<div class="section level3">
-<h3 id="layouts">Layouts<a class="anchor" aria-label="anchor" href="#layouts"></a>
-</h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Built-in layouts</span></span>
-<span><span class="fu"><a href="reference/splot.html">splot</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/splot.html">splot</a></span><span class="op">(</span><span class="va">mat</span>, layout <span class="op">=</span> <span class="st">"circle"</span><span class="op">)</span></span>
-<span><span class="co"># igraph layout codes</span></span>
-<span><span class="fu"><a href="reference/splot.html">splot</a></span><span class="op">(</span><span class="va">mat</span>, layout <span class="op">=</span> <span class="st">"kk"</span><span class="op">)</span>    <span class="co"># Kamada-Kawai</span></span>
-<span><span class="fu"><a href="reference/splot.html">splot</a></span><span class="op">(</span><span class="va">mat</span>, layout <span class="op">=</span> <span class="st">"fr"</span><span class="op">)</span>    <span class="co"># Fruchterman-Reingold</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-6-1.jpeg" alt="" width="100%"></p>
 <p><code>cograph</code> supports statistical edge visualization with CI underlays and significance notation.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Publication-ready with CI underlays and labels</span></span>
 <span><span class="fu"><a href="reference/splot.html">splot</a></span><span class="op">(</span><span class="va">mat</span>,</span>
 <span>  edge_ci <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">mat</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span>, <span class="fl">0.05</span>, <span class="fl">0.2</span><span class="op">)</span>, layout <span class="op">=</span> <span class="st">"oval"</span>,</span>
@@ -142,13 +131,12 @@
 <span>  edge_label_stars <span class="op">=</span> <span class="cn">TRUE</span>, edge_label_bg <span class="op">=</span> <span class="st">"transparent"</span>, edge_label_color <span class="op">=</span> <span class="st">"maroon"</span>, </span>
 <span>  edge_label_size <span class="op">=</span> <span class="fl">0.5</span>, edge_label_position <span class="op">=</span> <span class="fl">0.6</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-7-1.jpeg" alt="" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-6-1.jpeg" alt="" width="100%"></p>
 <p>Template placeholders: <code>{est}</code>, <code>{low}</code>, <code>{up}</code>, <code>{range}</code>, <code>{p}</code>, <a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></p>
-</div>
 <div class="section level3">
 <h3 id="pie-chart-nodes-and-shapes">Pie Chart Nodes and shapes<a class="anchor" aria-label="anchor" href="#pie-chart-nodes-and-shapes"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co"># Each node gets a vector of pie segment values</span></span>
 <span><span class="va">pie_vals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
@@ -158,7 +146,7 @@
 <span>  node_shape <span class="op">=</span> <span class="st">"pie"</span>,</span>
 <span>  pie_values <span class="op">=</span> <span class="va">pie_vals</span>,</span>
 <span>  pie_colors <span class="op">=</span> <span class="va">pie_cols</span>,  node_size <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  layout <span class="op">=</span> <span class="st">"circle"</span></span>
+<span>  layout <span class="op">=</span> <span class="st">"oval"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Per-node color palettes</span></span>
@@ -179,14 +167,14 @@
 <span>  pie_values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  pie_colors <span class="op">=</span> <span class="va">pie_cols_multi</span>,</span>
 <span>  node_size <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  layout <span class="op">=</span> <span class="st">"circle"</span></span>
+<span>  layout <span class="op">=</span> <span class="st">"oval"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-8-1.jpeg" alt="" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-7-1.jpeg" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="donut-nodes">Donut Nodes<a class="anchor" aria-label="anchor" href="#donut-nodes"></a>
 </h3>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fills</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">0.3</span>, <span class="fl">0.95</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Per-node donut color palettes</span></span>
@@ -217,13 +205,13 @@
 <span>                  <span class="st">"pentagon"</span>, <span class="st">"circle"</span>, <span class="st">"hexagon"</span>, <span class="st">"square"</span>, <span class="st">"diamond"</span><span class="op">)</span>,</span>
 <span>  donut_color <span class="op">=</span> <span class="fu"><a href="reference/palette_viridis.html">palette_viridis</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-1.jpeg" alt="" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-8-1.jpeg" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="plot_htna---heterogeneous-multi-group-networks">plot_htna() - Heterogeneous Multi-Group Networks<a class="anchor" aria-label="anchor" href="#plot_htna---heterogeneous-multi-group-networks"></a>
 </h3>
 <p><code><a href="reference/plot_htna.html">plot_htna()</a></code> creates multi-group network layouts where node groups are arranged in geometric patterns (bipartite, triangle, rectangle, polygon, or circular).</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Create network with 3 groups</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
@@ -243,13 +231,13 @@
 <span></span>
 <span><span class="co"># Circular layout (groups as arcs)</span></span>
 <span><span class="fu"><a href="reference/plot_htna.html">plot_htna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">node_types</span>, layout <span class="op">=</span> <span class="st">"circular"</span>, minimum <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-10-1.jpeg" alt="" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-9-1.jpeg" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="plot_mtna---multi-cluster-networks">plot_mtna() - Multi-Cluster Networks<a class="anchor" aria-label="anchor" href="#plot_mtna---multi-cluster-networks"></a>
 </h3>
 <p><code><a href="reference/plot_mtna.html">plot_mtna()</a></code> visualizes multiple network clusters with summary edges between clusters and individual edges within clusters. Each cluster is displayed as a shape (circle, square, diamond, triangle) containing its nodes.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Create network with 6 clusters</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
@@ -269,7 +257,7 @@
 <span></span>
 <span><span class="co"># Summary edges between clusters + individual edges within</span></span>
 <span><span class="fu"><a href="reference/plot_mtna.html">plot_mtna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">clusters</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-11-1.jpeg" alt="" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-10-1.jpeg" alt="" width="100%"></p>
 <p>Key parameters: * <code>spacing</code>: Distance between cluster centers * <code>shape_size</code>: Size of cluster shells * <code>node_spacing</code>: Node placement within shapes (0-1) * <code>shapes</code>: Vector of shapes per cluster (“circle”, “square”, “diamond”, “triangle”) * <code>summary_edges</code>: Show aggregated between-cluster edges (default TRUE) * <code>within_edges</code>: Show individual within-cluster edges (default TRUE)</p>
 <blockquote>
 <p><strong>Alias</strong>: <code><a href="reference/plot_mtna.html">mtna()</a></code> is available as a shorthand for <code><a href="reference/plot_mtna.html">plot_mtna()</a></code>.</p>
@@ -279,7 +267,7 @@
 <h3 id="plot_mlna---multilevel-3d-networks">plot_mlna() - Multilevel 3D Networks<a class="anchor" aria-label="anchor" href="#plot_mlna---multilevel-3d-networks"></a>
 </h3>
 <p><code><a href="reference/plot_mlna.html">plot_mlna()</a></code> visualizes multilevel/multiplex networks where multiple layers are stacked in a 3D perspective view. Each layer contains nodes connected by solid edges (within-layer), while dashed lines connect nodes between adjacent layers (inter-layer edges).</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Create multilevel network</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
@@ -297,7 +285,7 @@
 <span></span>
 <span><span class="co"># Basic usage with spring layout</span></span>
 <span><span class="fu"><a href="reference/plot_mlna.html">plot_mlna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">layers</span>, layout <span class="op">=</span> <span class="st">"spring"</span>, minimum <span class="op">=</span> <span class="fl">0.18</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-12-1.jpeg" alt="" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-11-1.jpeg" alt="" width="100%"></p>
 </div>
 </div>
 <div class="section level2">

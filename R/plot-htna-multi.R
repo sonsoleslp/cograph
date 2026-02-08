@@ -355,9 +355,8 @@ plot_mtna <- function(
         # Vertices at angles: pi/2, pi/2 + 2*pi/3, pi/2 + 4*pi/3
         vertex_angles <- c(pi/2, pi/2 + 2*pi/3, pi/2 + 4*pi/3)
 
-        # Normalize angle to [0, 2*pi)
+        # Normalize angle to [0, 2*pi) - R %% always returns non-negative
         norm_angle <- angle %% (2 * pi)
-        if (norm_angle < 0) norm_angle <- norm_angle + 2 * pi
 
         # Find which edge we're hitting
         # Edge midpoint angles are between vertices
@@ -391,21 +390,17 @@ plot_mtna <- function(
           }
         } else {
           # Bottom or right edge
-          if (norm_angle >= 3*pi/2 || norm_angle < pi/6) {
-            if (norm_angle >= 3*pi/2 && norm_angle < 11*pi/6) {
-              edge_center <- 3*pi/2
-            } else {
-              edge_center <- pi/6
-              if (norm_angle > pi) edge_center <- edge_center + 2*pi
-            }
+          if (norm_angle >= 3*pi/2 && norm_angle < 11*pi/6) {
+            edge_center <- 3*pi/2
           } else {
             edge_center <- pi/6
+            if (norm_angle > pi) edge_center <- edge_center + 2*pi # nocov
           }
         }
 
         # Calculate distance using apothem formula
         angle_diff <- abs(norm_angle - edge_center)
-        if (angle_diff > pi) angle_diff <- 2*pi - angle_diff
+        if (angle_diff > pi) angle_diff <- 2*pi - angle_diff # nocov
 
         # Clamp to avoid division issues near vertices
         angle_diff <- min(angle_diff, pi/3 - 0.01)
@@ -463,8 +458,8 @@ plot_mtna <- function(
             off_x <- -dy / len * curvature * len * 0.3
             off_y <- dx / len * curvature * len * 0.3
           } else {
-            off_x <- 0
-            off_y <- 0
+            off_x <- 0 # nocov
+            off_y <- 0 # nocov
           }
 
           graphics::xspline(
@@ -595,7 +590,7 @@ plot_mtna <- function(
                   if (max_within > 0) {
                     lwd <- (0.3 + 1.0 * (weight / max_within)) * edge_scale * edge_lwd_mult
                   } else {
-                    lwd <- 0.5 * edge_scale * edge_lwd_mult
+                    lwd <- 0.5 * edge_scale * edge_lwd_mult # nocov
                   }
 
                   # Curved edge

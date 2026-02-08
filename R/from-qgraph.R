@@ -15,25 +15,25 @@ tna_color_palette <- function(n_states) {
   # Check for required packages with fallbacks
   switch(color_group,
     # 1-2 states: Accent palette (first n colors)
-    if (requireNamespace("RColorBrewer", quietly = TRUE)) {
+    if (has_package("RColorBrewer")) {
       RColorBrewer::brewer.pal(n = 3, name = "Accent")[seq_len(n_states)]
     } else {
       grDevices::hcl.colors(n_states, palette = "Set 2")
     },
     # 3-8 states: Full Accent palette
-    if (requireNamespace("RColorBrewer", quietly = TRUE)) {
+    if (has_package("RColorBrewer")) {
       RColorBrewer::brewer.pal(n = n_states, name = "Accent")
     } else {
       grDevices::hcl.colors(n_states, palette = "Set 2")
     },
     # 9-12 states: Set3 palette
-    if (requireNamespace("RColorBrewer", quietly = TRUE)) {
+    if (has_package("RColorBrewer")) {
       RColorBrewer::brewer.pal(n = n_states, name = "Set3")
     } else {
       grDevices::hcl.colors(n_states, palette = "Set 3")
     },
     # 13+ states: colorspace qualitative HCL
-    if (requireNamespace("colorspace", quietly = TRUE)) {
+    if (has_package("colorspace")) {
       colorspace::qualitative_hcl(n = n_states, palette = "Set 3")
     } else {
       grDevices::hcl.colors(n_states, palette = "Set 3")

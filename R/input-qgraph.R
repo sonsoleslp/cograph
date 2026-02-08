@@ -14,7 +14,7 @@ NULL
 #' @noRd
 parse_qgraph <- function(q, directed = NULL) {
  # Check if qgraph is available
-  if (!requireNamespace("qgraph", quietly = TRUE)) {
+  if (!has_package("qgraph")) {
     stop("Package 'qgraph' is required for qgraph input. ",
          "Please install it with: install.packages('qgraph')",
          call. = FALSE)

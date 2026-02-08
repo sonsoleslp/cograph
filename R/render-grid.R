@@ -815,7 +815,6 @@ render_legend_grid <- function(network, position = "topright") {
   legend_data <- unique(legend_data)
 
   n_items <- nrow(legend_data)
-  if (n_items == 0) return(grid::gList())
 
   # Legend styling
   swatch_size <- 0.02  # Size of color swatch

@@ -24,25 +24,6 @@ navbar:
     left:  [intro, reference, articles, news]
     right: [search, github]
 reference:
-  - title: Network functions
-    contents:
-    - cograph
-    - as_cograph
-    - n_nodes
-    - n_edges
-    - get_edges
-    - get_labels
-    - get_nodes
-    - set_edges
-    - set_nodes
-    - sn_edges
-    - sn_ggplot
-    - sn_nodes
-    - sn_save
-    - aes-nodes
-    - aes-edges
-    - output-save
-    - from_qgraph
   - title: Base R plotting
     contents:
     - splot
@@ -67,6 +48,25 @@ reference:
     contents:
     - mlna
     - plot_mlna
+  - title: Network functions
+    contents:
+    - cograph
+    - as_cograph
+    - n_nodes
+    - n_edges
+    - get_edges
+    - get_labels
+    - get_nodes
+    - set_edges
+    - set_nodes
+    - sn_edges
+    - sn_ggplot
+    - sn_nodes
+    - sn_save
+    - aes-nodes
+    - aes-edges
+    - output-save
+    - from_qgraph
   - title: Palettes
     contents:
     - list_palettes

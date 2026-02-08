@@ -10,11 +10,11 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  fig.width = 6,
-  fig.height = 4,
+  fig.width = 7,
+  fig.height = 5,
   out.width = "100%",
-  dev = "jpeg",
   background = "white",
+  dev = "jpeg",
   dpi = 100,
   comment = "#>"
 )
@@ -28,48 +28,57 @@ options(max.print = 30)
 options(width = 83)
 ```
 
-#
+This guide introduces `splot()`, the main plotting function in `cograph`, and helps `qgraph` users transition to it.
 
-This guide helps users transition from `qgraph::qgraph()` to `cograph::splot()` for network visualization.
+# About splot
 
-## Why Switch?
+`splot()` is the primary plotting engine of `cograph`. It renders network graphs using base R graphics and is designed to work across a wide range of use cases: transition networks from learning analytics, correlation networks from psychology, social networks, and any weighted or unweighted graph structure. It accepts adjacency matrices, edge lists, igraph objects, tna objects, and qgraph objects directly, so it fits into existing workflows without requiring format conversion.
 
-| Feature | qgraph | splot |
-|---------|--------|-------|
-| Active development | Limited | Active |
-| Modern R practices | Legacy | snake_case API |
-| TNA integration | Partial | Native |
-| CI visualization | No | Built-in |
-| Publication output | 300 DPI | 600 DPI default |
-| Edge label templates | No | Yes (`{est}`, `{p}`, `{stars}`) |
-| Donut charts | Basic | Advanced (shapes, double donuts) |
+The function is built to be useful at every stage of analysis. A single call like `splot(mat)` produces a clean, readable plot with sensible defaults. But when you need more, the same function supports confidence interval underlays on edges, significance stars derived from p-values, templated edge labels that combine estimates with CI ranges and stars (e.g., `0.25*** [0.12, 0.38]`), pie and donut charts on nodes, and publication-quality export at 600 DPI. The goal is that you should not need to switch tools as your analysis moves from exploration to a final manuscript figure.
 
-## Quick Start
+## Naming conventions
+
+One of the deliberate choices in `splot()` is a consistent, predictable parameter naming system. Every parameter is prefixed by the element it controls -- `node_`, `edge_`, `label_`, `donut_`, `pie_`, `edge_label_`, `edge_ci_` -- followed by the property: `size`, `color`, `fill`, `width`, `alpha`, and so on. So `node_fill` is the node fill color, `edge_label_size` is the edge label font size, `donut_border_color` is the donut border color, and `edge_ci_alpha` is the confidence interval underlay transparency. The naming is designed so that once you learn the pattern, you can guess parameter names without checking the documentation. This contrasts with conventions like `vsize`, `posCol`, `border.width`, `label.cex`, and `pieColor`, where every parameter follows a different convention and needs to be memorized individually.
+
+## Statistical annotations
+
+Network plots in research often need to communicate uncertainty and significance alongside the graph structure itself. `splot()` treats this as a first-class concern rather than an afterthought. Edges can carry confidence interval underlays (`edge_ci`) -- semi-transparent bands behind each edge whose width reflects the uncertainty of the estimate. Edge labels can be built from templates (`edge_label_template`) using placeholders like `{est}`, `{stars}`, `{low}`, `{up}`, `{range}`, and `{p}`, which are filled in from vectors of CI bounds and p-values that you supply. Significance stars are computed automatically from p-values when `edge_label_stars = TRUE`. These features mean that a single `splot()` call can produce a network where every edge shows its weight, its significance level, and its confidence interval -- information that would otherwise require post-processing or manual annotation.
+
+## Inputs and compatibility
+
+`splot()` accepts square adjacency matrices, data frames with edge lists (from, to, weight columns), igraph objects, cograph network objects, tna objects, and qgraph objects. For users migrating from `qgraph`, the `from_qgraph()` function converts a fitted qgraph object into splot parameters, and `tplot()` provides a wrapper that accepts qgraph-style parameter names (`vsize`, `edge.labels`, `posCol`) for a smoother transition.
 
 ```{r}
-# Install cograph
-# devtools::install_github("lamethods/cograph")
-
 library(cograph)
-
-# Basic usage - identical input format
-adj <- matrix(c(0, .5, -.3, .5, 0, .4, .3, .4, 0), 3, 3)
-
-# qgraph style:
-# qgraph::qgraph(adj)
-
-# cograph equivalent:
-splot(adj)
+library(qgraph)
 ```
 
-## Parameter Mapping
+# Create a transition matrix
 
-### Node Parameters
+```{r}
+states <- c("Read", "Watch", "Try", "Ask", "Discuss",
+            "Review", "Search", "Reflect", "Submit")
+
+mat <- matrix(c(
+  0.00, 0.25, 0.15, 0.00, 0.10, 0.00, 0.08, 0.00, 0.00,
+  0.10, 0.00, 0.30, 0.00, 0.00, 0.12, 0.00, 0.00, 0.00,
+  0.00, 0.10, 0.00, 0.20, 0.00, 0.00, 0.00, 0.15, 0.25,
+  0.05, 0.00, 0.10, 0.00, 0.30, 0.00, 0.00, 0.00, 0.00,
+  0.00, 0.00, 0.00, 0.15, 0.00, 0.20, 0.00, 0.18, 0.00,
+  0.12, 0.08, 0.00, 0.00, 0.00, 0.00, 0.10, 0.00, 0.20,
+  0.00, 0.00, 0.15, 0.00, 0.00, 0.10, 0.00, 0.00, 0.12,
+  0.00, 0.00, 0.10, 0.00, 0.12, 0.00, 0.00, 0.00, 0.28,
+  0.00, 0.00, 0.00, 0.00, 0.00, 0.10, 0.00, 0.05, 0.00
+), nrow = 9, byrow = TRUE, dimnames = list(states, states))
+```
+
+# Parameter mapping
+
+## Node parameters
 
 | qgraph | splot | Notes |
 |--------|-------|-------|
 | `vsize` | `node_size` | Same scale |
-| `vsize2` | `node_size2` | For ellipses |
 | `shape` | `node_shape` | "circle", "square", "triangle", etc. |
 | `color` | `node_fill` | Node fill color |
 | `border.color` | `node_border_color` | |
@@ -78,7 +87,7 @@ splot(adj)
 | `label.cex` | `label_size` | |
 | `label.color` | `label_color` | |
 
-### Edge Parameters
+## Edge parameters
 
 | qgraph | splot | Notes |
 |--------|-------|-------|
@@ -86,240 +95,184 @@ splot(adj)
 | `edge.width` | `edge_width` | |
 | `edge.labels` | `edge_labels` | TRUE shows weights |
 | `edge.label.cex` | `edge_label_size` | |
-| `edge.label.color` | `edge_label_color` | |
-| `edge.label.bg` | `edge_label_bg` | Background color |
-| `edge.label.position` | `edge_label_position` | 0-1 along edge |
 | `lty` | `edge_style` | 1=solid, 2=dashed, 3=dotted |
 | `curve` | `curvature` | Curve amount |
-| `curveAll` | `curves = "force"` | Force all edges curved |
 | `asize` | `arrow_size` | Arrow head size |
 | `posCol` | `edge_positive_color` | Positive weight color |
 | `negCol` | `edge_negative_color` | Negative weight color |
 | `minimum` | `threshold` | Min weight to display |
-| `maximum` | `maximum` | Max weight for scaling |
-| `cut` | `edge_cutoff` | Two-tier scaling threshold |
 | `directed` | `directed` | TRUE/FALSE/NULL (auto) |
 
-### Pie/Donut Parameters
-
-| qgraph | splot | Notes |
-|--------|-------|-------|
-| `pie` | `donut_fill` | Single value 0-1 per node |
-| `pie` (list) | `pie_values` | Multiple segments per node |
-| `pieColor` | `donut_color` | Fill color(s) |
-| `pieBorder` | `pie_border_width` | |
-
-### Layout & Display
+## Layout and display
 
 | qgraph | splot | Notes |
 |--------|-------|-------|
 | `layout` | `layout` | "circle", "spring", "fr", "kk", etc. |
 | `groups` | `groups` | For coloring/legend |
 | `legend` | `legend` | TRUE/FALSE |
-| `legend.cex` | `legend_size` | |
 | `title` | `title` | Plot title |
-| `title.cex` | `title_size` | |
-| `mar` | `margins` | c(bottom, left, top, right) |
 | `filetype` | `filetype` | "png", "pdf", "svg", etc. |
-| `filename` | `filename` | Output file name |
-| `width` | `width` | Output width (inches) |
-| `height` | `height` | Output height (inches) |
-| `repulsion` | (use igraph) | Spring layout uses igraph |
 
-## Common Examples
+## Pie and donut
 
-### Basic Network
+| qgraph | splot | Notes |
+|--------|-------|-------|
+| `pie` | `donut_fill` | Single value 0-1 per node |
+| `pie` (list) | `pie_values` | Multiple segments per node |
+| `pieColor` | `donut_color` | Fill color(s) |
+
+# Example 1: Default plot
 
 ```{r}
-# qgraph
-qgraph(adj, layout = "circle", vsize = 10, edge.labels = TRUE)
-
-# splot
-splot(adj, layout = "circle", node_size = 10, edge_labels = TRUE)
+qgraph(mat, layout = "circle", vsize = 9, title = "qgraph")
+splot(mat, node_size = 9, title = "splot")
 ```
 
-### Weighted Network with Colors
+# Example 2: Edge labels
 
 ```{r}
-# qgraph
-qgraph(adj, posCol = "darkgreen", negCol = "red", minimum = 0.1)
-
-# splot
-splot(adj, edge_positive_color = "darkgreen", edge_negative_color = "red", threshold = 0.1)
+qgraph(mat, layout = "circle", vsize = 9, edge.labels = TRUE, title = "qgraph")
+splot(mat, node_size = 9, edge_labels = TRUE, title = "splot")
 ```
 
-### Custom Node Appearance
+# Example 3: Custom edge colors
 
 ```{r}
-# qgraph
-qgraph(adj,
-       shape = "square",
-       color = c("red", "blue", "green"),
-       border.color = "black",
-       border.width = 2,
-       vsize = 15)
-
-# splot
-splot(adj,
-      node_shape = "square",
-      node_fill = c("red", "blue", "green"),
-      node_border_color = "black",
-      node_border_width = 2,
-      node_size = 15)
+qgraph(mat, layout = "circle", vsize = 9, posCol = "maroon", negCol = "red", title = "qgraph")
+splot(mat, node_size = 9, edge_positive_color = "maroon",
+      edge_negative_color = "red", title = "splot")
 ```
 
-### Curved Edges
+# Example 4: Node shapes and colors
 
 ```{r}
-# qgraph
-qgraph(adj, curve = 0.3, curveAll = TRUE)
+cols <- palette_pastel(9)
 
-# splot
-splot(adj, curvature = 0.3, curves = "force")
+qgraph(mat, layout = "circle", vsize = 9, shape = "square", color = cols, title = "qgraph")
+splot(mat, node_size = 9, node_shape = "square", node_fill = cols, title = "splot")
 ```
 
-### Pie/Donut Nodes (e.g., TNA initial probabilities)
+# Example 5: Curved edges
 
 ```{r}
-# qgraph style (single value per node = donut fill)
-qgraph(adj, pie = c(0.2, 0.5, 0.3), pieColor = "steelblue")
-
-# splot equivalent
-splot(adj, donut_fill = c(0.2, 0.5, 0.3), donut_color = "steelblue")
-
-# Multi-segment pie charts
-splot(adj,
-      pie_values = list(c(1, 2, 3), c(2, 2), c(1, 1, 1)),
-      pie_colors = list(c("red", "blue", "green"), c("orange", "purple"), c("pink", "cyan", "yellow")))
+qgraph(mat, layout = "circle", vsize = 9, curve = 0.3, curveAll = TRUE, title = "qgraph")
+splot(mat, node_size = 9, curvature = 0.3, curves = "force", title = "splot")
 ```
 
-### Save to File
+# Example 6: Donut nodes
 
 ```{r}
-# qgraph
-qgraph(adj, filetype = "png", filename = "network_qgraph", width = 7, height = 7)
+fills <- c(0.9, 0.7, 0.5, 0.8, 0.6, 0.95, 0.3, 0.75, 0.4)
 
-# splot (default 600 DPI for publication quality)
-splot(adj, filetype = "png", filename = "network_cograph", width = 7, height = 7, res = 600)
+qgraph(mat, layout = "circle", vsize = 9, pie = fills, pieColor = "steelblue", title = "qgraph")
+splot(mat, node_size = 9, donut_fill = fills, donut_color = "steelblue", title = "splot")
 ```
 
-## Features Unique to splot
+# Example 7: Using qgraph's layout in splot
 
-### 1. Edge CI Underlays (Uncertainty Visualization)
+`splot()` accepts a qgraph object's layout matrix directly.
 
 ```{r}
-# Show confidence intervals as semi-transparent underlays
-splot(adj,
-      edge_ci = c(0.2, 0.5, 0.1, 0.3, 0.4, 0.2),  # CI widths
-      edge_ci_scale = 2,      # Underlay thickness multiplier
-      edge_ci_alpha = 0.15,   # Transparency
-      edge_ci_style = 2)      # Dashed
+q <- qgraph(mat, layout = "spring", vsize = 9, title = "qgraph spring layout")
+splot(mat, layout = q$layout, node_size = 9, title = "splot using qgraph layout")
 ```
 
-### 2. Edge Label Templates
+# Example 8: Converting existing qgraph objects
+
+Use `from_qgraph()` to convert a qgraph object directly.
 
 ```{r}
-# Show estimate with significance stars
-splot(adj,
-      edge_label_template = "{est}{stars}",
-      edge_label_p = c(0.001, 0.02, 0.5, 0.008, 0.04, 0.001))
-
-# Full statistical labels
-splot(adj,
-      edge_label_template = "{est} {range}, {p}",
-      edge_ci_lower = c(0.3, 0.1, 0.5, 0.2, 0.4, 0.1),
-      edge_ci_upper = c(0.7, 0.5, 0.9, 0.6, 0.8, 0.5),
-      edge_label_p = c(0.001, 0.02, 0.5, 0.008, 0.04, 0.001))
-```
-
-### 3. Edge Start Style (Direction Indicator)
-
-```{r}
-# Dotted line at edge start to show direction
-splot(adj,
-      edge_start_style = "dotted",
-      edge_start_length = 0.2)  # 20% of edge
-```
-
-### 4. Polygon Donuts
-
-```{r}
-# Hexagonal donut nodes
-splot(adj,
-      node_shape = "hexagon",
-      donut_fill = c(0.3, 0.7, 0.5),
-      donut_shape = "hexagon")
-```
-
-### 5. Double Donuts
-
-```{r}
-# Two concentric rings per node
-splot(adj,
-      donut_fill = c(0.8, 0.6, 0.9),
-      donut2_values = list(0.5, 0.3, 0.7),
-      donut2_colors = list("orange", "purple", "cyan"))
-```
-
-## Converting Existing qgraph Objects
-
-If you have existing qgraph code, use `from_qgraph()` for automatic conversion:
-
-```{r}
-library(qgraph)
-q <- qgraph(adj, theme = "colorblind", posCol = "blue")
-
-# Convert and plot with splot
+q <- qgraph(mat, layout = "circle", vsize = 9, theme = "colorblind", title = "Original qgraph")
 from_qgraph(q)
+```
 
-# Or extract parameters for manual tweaking
+# Example 9: Extracting and tweaking qgraph parameters
+
+```{r}
 params <- from_qgraph(q, plot = FALSE)
-params$node_fill <- "coral"
+params$node_fill <- palette_rainbow(9)
+params$title <- "Tweaked from qgraph"
 do.call(splot, params)
 ```
 
-## TNA Networks
+# Example 10: tplot for qgraph-style parameter names
 
-For TNA (Transition Network Analysis), splot provides native support:
+`tplot()` accepts qgraph-style parameter names like `vsize`, `edge.labels`, and `posCol`.
 
 ```{r}
-library(tna)
-trans <- tna(adj)
-
-# Direct plotting (recommended)
-splot(trans)
-
-# Or use tplot() for qgraph-compatible parameter names
-tplot(trans, vsize = 10, edge.labels = TRUE)
+tplot(mat, vsize = 9, edge.labels = TRUE)
 ```
 
-## Tips
+# Features unique to splot
 
-1. **Layouts**: splot supports all igraph layouts via two-letter codes: `"kk"` (Kamada-Kawai), `"fr"` (Fruchterman-Reingold), `"drl"`, `"mds"`, etc.
+## CI underlays
 
-2. **Themes**: Use `theme = "dark"`, `"minimal"`, `"colorblind"`, etc. for preset styling.
+```{r}
+net <- cograph(mat)
+ne <- nrow(get_edges(net))
 
-3. **Seed**: Set `seed = 42` (default) for reproducible layouts.
+set.seed(42)
+ci_widths <- runif(ne, 0.1, 0.4)
 
-4. **Auto-detect direction**: Leave `directed = NULL` to auto-detect from matrix symmetry.
+splot(mat, node_size = 9,
+      edge_ci = ci_widths,
+      edge_ci_scale = 5,
+      edge_ci_alpha = 0.3)
+```
 
-5. **Weight rounding**: By default, weights are rounded to 2 decimal places and near-zero edges removed. Control with `weight_digits`.
+## CI range labels
 
-## Troubleshooting
+```{r}
+ci_lower <- runif(ne, 0.01, 0.10)
+ci_upper <- runif(ne, 0.20, 0.50)
 
-### Plot looks different from qgraph
+splot(mat, node_size = 9,
+      edge_label_template = "{est} [{low}, {up}]",
+      edge_ci_lower = ci_lower,
+      edge_ci_upper = ci_upper,
+      edge_label_size = 0.4)
+```
 
-- Check `node_size` scaling - splot matches qgraph's scale
-- Ensure `layout` is the same (qgraph defaults vary)
-- Set `theme = NULL` to disable automatic theming
+## Edge label templates with significance stars
 
-### Edges look faded
+```{r}
+p_values <- round(runif(ne, 0.0001, 0.08), 4)
 
-- Check `edge_alpha` (default 0.8)
-- Check `edge_cutoff` - edges below this get faded
-- Set `edge_cutoff = 0` to disable two-tier scaling
+splot(mat, node_size = 9,
+      edge_label_template = "{est}{stars}",
+      edge_label_p = p_values,
+      edge_label_stars = TRUE)
+```
 
-### Labels not showing
+## Pie chart nodes
 
-- Set `labels = TRUE` (nodes) or `edge_labels = TRUE` (edges)
-- Check `label_size` / `edge_label_size` isn't too small
+```{r}
+set.seed(42)
+pie_vals <- lapply(1:9, function(i) {
+  v <- runif(3)
+  v / sum(v)
+})
+
+splot(mat, node_size = 9,
+      pie_values = pie_vals,
+      pie_colors = rep(list(c("#E41A1C", "#377EB8", "#4DAF4A")), 9))
+```
+
+## Polygon donut shapes
+
+```{r}
+splot(mat, node_size = 9,
+      donut_fill = fills,
+      donut_color = palette_rainbow(9),
+      donut_shape = "hexagon")
+```
+
+## Double donuts
+
+```{r}
+splot(mat, node_size = 9,
+      donut_fill = fills,
+      donut_color = palette_rainbow(9),
+      donut2_values = lapply(1:9, function(i) runif(1)),
+      donut2_colors = lapply(palette_colorblind(9), function(x) x))
+```

@@ -119,8 +119,11 @@ plot_htna <- function(
     legend = TRUE,
     legend_position = "topright",
     extend_lines = FALSE,
+    scale = 1,
     ...
 ) {
+  # Apply scale for high-resolution output
+  size_scale <- sqrt(scale)
 
   # Extended color palette for many groups
   color_palette <- c("#ffd89d", "#a68ba5", "#7eb5d6", "#98d4a2",
@@ -443,8 +446,8 @@ plot_htna <- function(
       pch = pch_values,
       pt.bg = group_colors,
       col = if (!is.null(edge_colors)) edge_colors else "black",
-      pt.cex = 1.5,
-      cex = 0.8,
+      pt.cex = 1.5 / size_scale,
+      cex = 0.8 / size_scale,
       bty = "n",
       title = "Groups"
     )
@@ -462,14 +465,14 @@ plot_htna <- function(
         graphics::segments(
           x0 = x_pos[i], y0 = y_pos[i],
           x1 = x_pos[i] + line_len, y1 = y_pos[i],
-          col = colors[i], lwd = 1
+          col = colors[i], lwd = 1 / size_scale
         )
       }
       for (i in rhs_idx) {
         graphics::segments(
           x0 = x_pos[i], y0 = y_pos[i],
           x1 = x_pos[i] - line_len, y1 = y_pos[i],
-          col = colors[i], lwd = 1
+          col = colors[i], lwd = 1 / size_scale
         )
       }
     } else {
@@ -478,14 +481,14 @@ plot_htna <- function(
         graphics::segments(
           x0 = x_pos[i], y0 = y_pos[i],
           x1 = x_pos[i], y1 = y_pos[i] - line_len,
-          col = colors[i], lwd = 1
+          col = colors[i], lwd = 1 / size_scale
         )
       }
       for (i in rhs_idx) {
         graphics::segments(
           x0 = x_pos[i], y0 = y_pos[i],
           x1 = x_pos[i], y1 = y_pos[i] + line_len,
-          col = colors[i], lwd = 1
+          col = colors[i], lwd = 1 / size_scale
         )
       }
     }

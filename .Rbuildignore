@@ -22,4 +22,4 @@
 ^showcase$
 ^\.DS_Store$
 ^\.\.Rcheck$
-mds
+^mds$

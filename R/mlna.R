@@ -95,8 +95,14 @@ plot_mlna <- function(
     curvature = 0.15,
     node_size = 3,
     minimum = 0,
+    scale = 1,
     ...
 ) {
+  # Apply scale for high-resolution output
+  size_scale <- sqrt(scale)
+  node_size <- node_size / size_scale
+  edge_scale <- 1 / size_scale
+
   # ==========================================================================
   # 1. Input Validation & Setup
   # ==========================================================================
@@ -310,8 +316,8 @@ plot_mlna <- function(
   # Calculate plot dimensions with padding
   all_x <- c(x_pos, unlist(lapply(layer_planes, function(p) p$corners[, 1])))
   all_y <- c(y_pos, unlist(lapply(layer_planes, function(p) p$corners[, 2])))
-  x_range <- range(all_x) + c(-1.5, 2.5)
-  y_range <- range(all_y) + c(-1, 1.5)
+  x_range <- range(all_x) + c(-0.5, 1.5)
+  y_range <- range(all_y) + c(-0.5, 0.8)
 
   # Set up blank plot
   graphics::plot.new()
@@ -341,7 +347,7 @@ plot_mlna <- function(
         for (tgt_idx in idx) {
           weight <- weights[src_idx, tgt_idx]
           if (!is.na(weight) && weight > minimum) {
-            lwd <- 0.5 + 2.5 * (abs(weight) / max_w)
+            lwd <- (0.3 + 1.2 * (abs(weight) / max_w)) * edge_scale
             edge_col <- grDevices::adjustcolor(edge_colors[next_layer], alpha.f = 0.6)
             graphics::segments(
               x0 = x_pos[src_idx], y0 = y_pos[src_idx],
@@ -359,7 +365,7 @@ plot_mlna <- function(
         for (tgt_idx in next_idx) {
           weight <- weights[src_idx, tgt_idx]
           if (!is.na(weight) && weight > minimum) {
-            lwd <- 0.5 + 2.5 * (abs(weight) / max_w)
+            lwd <- (0.3 + 1.2 * (abs(weight) / max_w)) * edge_scale
             edge_col <- grDevices::adjustcolor(edge_colors[i], alpha.f = 0.6)
             graphics::segments(
               x0 = x_pos[src_idx], y0 = y_pos[src_idx],
@@ -383,7 +389,7 @@ plot_mlna <- function(
         y = c(corners[, 2], corners[1, 2]),
         border = border_color,
         col = fill_color,
-        lwd = 2.5
+        lwd = 1.5 * edge_scale
       )
 
       # Layer label on the right
@@ -397,7 +403,7 @@ plot_mlna <- function(
           adj = 0,
           col = layer_colors[i],
           font = 2,
-          cex = 1.1
+          cex = 1.1 / size_scale
         )
       }
     }
@@ -428,7 +434,7 @@ plot_mlna <- function(
                 edge_col <- grDevices::adjustcolor(
                   layer_colors[i], red.f = 0.6, green.f = 0.6, blue.f = 0.6
                 )
-                lwd <- 0.8 + 1.5 * (abs(weight) / max_w)
+                lwd <- (0.3 + 1.0 * (abs(weight) / max_w)) * edge_scale
 
                 graphics::xspline(
                   x = c(x0, mid_x + off_x, x1),
@@ -464,14 +470,14 @@ plot_mlna <- function(
       bg = layer_colors[i],
       col = "gray20",
       cex = node_size,
-      lwd = 1.5
+      lwd = 0.8 * edge_scale
     )
 
     # Node labels
     graphics::text(
       x_pos[idx], y_pos[idx],
       labels = lab[idx],
-      cex = 0.75,
+      cex = 0.75 / size_scale,
       pos = 3,
       offset = 0.6,
       font = 1
@@ -503,8 +509,8 @@ plot_mlna <- function(
       pch = pch_values,
       pt.bg = layer_colors,
       col = edge_colors,
-      pt.cex = 1.5,
-      cex = 0.9,
+      pt.cex = 2.5 / size_scale,
+      cex = 1.4 / size_scale,
       bty = "n",
       title = "Layers"
     )

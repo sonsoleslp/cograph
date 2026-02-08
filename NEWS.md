@@ -14,7 +14,7 @@
 
 ## Documentation
 
-- Added qgraph to splot migration guide (`vignettes/qgraph-to-splot.md`)
+- Added qgraph to splot migration guide (`vignettes/qgraph-to-splot.Rmd`)
 
 # cograph 1.5.1
 

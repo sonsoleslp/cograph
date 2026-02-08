@@ -74,8 +74,17 @@ plot_mtna <- function(
     legend_position = "topright",
     curvature = 0.3,
     node_size = 2,
+    scale = 1,
     ...
 ) {
+  # Apply scale for high-resolution output
+  size_scale <- sqrt(scale)
+  node_size <- node_size / size_scale
+  edge_scale <- 1 / size_scale
+
+  dots <- list(...)
+  edge_lwd_mult <- if (!is.null(dots$edge.lwd)) dots$edge.lwd else 1
+
   # Validate cluster_list
  n_clusters <- length(cluster_list)
   if (!is.list(cluster_list) || n_clusters < 2) {
@@ -440,7 +449,7 @@ plot_mtna <- function(
           # Edge weight determines line width
           weight <- cluster_weights[i, j]
           max_weight <- max(cluster_weights, na.rm = TRUE)
-          lwd <- 1 + 5 * (weight / max_weight)
+          lwd <- (0.5 + 2.5 * (weight / max_weight)) * edge_scale * edge_lwd_mult
 
           # Draw curved line using xspline
           mid_x <- (x0 + x1) / 2
@@ -508,7 +517,7 @@ plot_mtna <- function(
           y = center_y + shell_radius * sin(theta),
           border = shell_color,
           col = fill_color,
-          lwd = 3
+          lwd = 1.5 * edge_scale
         )
       } else if (shape == "square") {
         graphics::rect(
@@ -518,7 +527,7 @@ plot_mtna <- function(
           ytop = center_y + shell_radius,
           border = shell_color,
           col = fill_color,
-          lwd = 3
+          lwd = 1.5 * edge_scale
         )
       } else if (shape == "diamond") {
         graphics::polygon(
@@ -526,7 +535,7 @@ plot_mtna <- function(
           y = center_y + shell_radius * c(1, 0, -1, 0, 1),
           border = shell_color,
           col = fill_color,
-          lwd = 3
+          lwd = 1.5 * edge_scale
         )
       } else if (shape == "triangle") {
         angles <- c(pi/2, pi/2 + 2*pi/3, pi/2 + 4*pi/3, pi/2)
@@ -535,7 +544,7 @@ plot_mtna <- function(
           y = center_y + shell_radius * sin(angles),
           border = shell_color,
           col = fill_color,
-          lwd = 3
+          lwd = 1.5 * edge_scale
         )
       } else {
         theta <- seq(0, 2 * pi, length.out = 100)
@@ -544,7 +553,7 @@ plot_mtna <- function(
           y = center_y + shell_radius * sin(theta),
           border = shell_color,
           col = fill_color,
-          lwd = 3
+          lwd = 1.5 * edge_scale
         )
       }
     }
@@ -584,9 +593,9 @@ plot_mtna <- function(
                   # Edge width based on weight
                   max_within <- max(weights[idx, idx], na.rm = TRUE)
                   if (max_within > 0) {
-                    lwd <- 0.5 + 2 * (weight / max_within)
+                    lwd <- (0.3 + 1.0 * (weight / max_within)) * edge_scale * edge_lwd_mult
                   } else {
-                    lwd <- 1
+                    lwd <- 0.5 * edge_scale * edge_lwd_mult
                   }
 
                   # Curved edge
@@ -669,7 +678,7 @@ plot_mtna <- function(
       if (!is.null(cluster_names)) {
         graphics::text(center_x, center_y - shell_radius - 0.2,
                       labels = cluster_names[i],
-                      cex = 1,
+                      cex = 1 / size_scale,
                       col = shell_color,
                       font = 2)
       }
@@ -709,7 +718,7 @@ plot_mtna <- function(
           y = center_y + border_radius * sin(theta),
           border = cluster_colors[i],
           col = NA,
-          lwd = 2,
+          lwd = 2 * edge_scale,
           lty = 2
         )
       }
@@ -737,8 +746,8 @@ plot_mtna <- function(
       pch = pch_values,
       pt.bg = cluster_colors,
       col = edge_colors,
-      pt.cex = 1.5,
-      cex = 0.8,
+      pt.cex = 1.5 / size_scale,
+      cex = 0.8 / size_scale,
       bty = "n",
       title = "Clusters"
     )

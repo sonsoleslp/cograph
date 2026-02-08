@@ -69,19 +69,6 @@ diag(mat) <- 0
 mat <- mat / rowSums(mat)  # row-normalize
 ```
 
-### Layouts
-
-``` r
-# Built-in layouts
-splot(mat)
-splot(mat, layout = "circle")
-# igraph layout codes
-splot(mat, layout = "kk")    # Kamada-Kawai
-splot(mat, layout = "fr")    # Fruchterman-Reingold
-```
-
-<img src="man/figures/README-unnamed-chunk-6-1.jpeg" alt="" width="100%" />
-
 `cograph` supports statistical edge visualization with CI underlays and
 significance notation.
 
@@ -96,7 +83,7 @@ splot(mat,
 )
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.jpeg" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-6-1.jpeg" alt="" width="100%" />
 
 Template placeholders: `{est}`, `{low}`, `{up}`, `{range}`, `{p}`,
 `{stars}`
@@ -113,7 +100,7 @@ splot(mat,
   node_shape = "pie",
   pie_values = pie_vals,
   pie_colors = pie_cols,  node_size = 10,
-  layout = "circle"
+  layout = "oval"
 )
 
 # Per-node color palettes
@@ -134,11 +121,11 @@ splot(mat,
   pie_values = lapply(1:10, function(i) runif(3)),
   pie_colors = pie_cols_multi,
   node_size = 10,
-  layout = "circle"
+  layout = "oval"
 )
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.jpeg" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-7-1.jpeg" alt="" width="100%" />
 
 ### Donut Nodes
 
@@ -175,7 +162,7 @@ splot(mat,
 )
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.jpeg" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.jpeg" alt="" width="100%" />
 
 ### plot_htna() - Heterogeneous Multi-Group Networks
 
@@ -205,7 +192,7 @@ plot_htna(m, node_types, layout = "polygon", minimum = 0.15)
 plot_htna(m, node_types, layout = "circular", minimum = 0.15)
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.jpeg" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-9-1.jpeg" alt="" width="100%" />
 
 ### plot_mtna() - Multi-Cluster Networks
 
@@ -236,7 +223,7 @@ clusters <- list(
 plot_mtna(m, clusters)
 ```
 
-<img src="man/figures/README-unnamed-chunk-11-1.jpeg" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-10-1.jpeg" alt="" width="100%" />
 
 Key parameters: \* `spacing`: Distance between cluster centers \*
 `shape_size`: Size of cluster shells \* `node_spacing`: Node placement
@@ -274,7 +261,7 @@ layers <- list(
 plot_mlna(m, layers, layout = "spring", minimum = 0.18, legend = FALSE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-12-1.jpeg" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-11-1.jpeg" alt="" width="100%" />
 
 ## License
 

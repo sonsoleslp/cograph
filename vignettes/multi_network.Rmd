@@ -236,17 +236,6 @@ plot_mlna(m21, layers, minimum = 0.2,
           legend = FALSE)
 ```
 
-## Example 16: Compact multilevel plot
-
-A small-format version suitable for side panels or multi-figure layouts.
-
-```{r, fig.width = 4, fig.height = 5}
-par(mar = c(0, 0, 0, 0))
-plot_mlna(m21, layers, minimum = 0.2,
-          layer_width = 3, layer_depth = 1.5,
-          layer_spacing = 1.8, node_size = 2,
-          legend = FALSE)
-```
 
 # Parameter reference
 

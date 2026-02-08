@@ -75,18 +75,9 @@ mat <- mat / rowSums(mat)  # row-normalize
 
 ```
 
-### Layouts
+ 
 
-```{r, echo = -1}
-layout(matrix(1:4,byrow=T, nrow=2))
-# Built-in layouts
-splot(mat)
-splot(mat, layout = "circle")
-# igraph layout codes
-splot(mat, layout = "kk")    # Kamada-Kawai
-splot(mat, layout = "fr")    # Fruchterman-Reingold
-```
-
+ 
 
 `cograph` supports statistical edge visualization with CI underlays and significance notation.
 
@@ -116,7 +107,7 @@ splot(mat,
   node_shape = "pie",
   pie_values = pie_vals,
   pie_colors = pie_cols,  node_size = 10,
-  layout = "circle"
+  layout = "oval"
 )
 
 # Per-node color palettes
@@ -137,7 +128,7 @@ splot(mat,
   pie_values = lapply(1:10, function(i) runif(3)),
   pie_colors = pie_cols_multi,
   node_size = 10,
-  layout = "circle"
+  layout = "oval"
 )
 ```
 
@@ -188,7 +179,7 @@ arranged in geometric patterns (bipartite, triangle, rectangle, polygon,
 or circular).
 
  
-```{r}
+```{r, fig.width=10,fig.height=5}
 layout(t(1:2)); par(mar=c(0,0,0,0))
 # Create network with 3 groups
 set.seed(42)
@@ -257,7 +248,7 @@ solid edges (within-layer), while dashed lines connect nodes between adjacent
 layers (inter-layer edges).
 
  
-```{r,fig.width=12,fig.height=15, fig.dpi=300, dpi = 300}
+```{r,fig.width=12,fig.height=10, fig.dpi=300, dpi = 300}
 par(mar=c(0,0,0,0))
 # Create multilevel network
 set.seed(42)

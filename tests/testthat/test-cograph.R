@@ -544,6 +544,195 @@ test_that("compute_layout_for_cograph handles NULL seed", {
 })
 
 # ============================================
+# compute_layout_for_cograph Extended Tests
+# ============================================
+
+test_that("compute_layout_for_cograph handles builtin layout", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- cograph(adj)
+
+  # Clear layout
+  nodes <- net$network$get_nodes()
+  nodes$x <- NA
+  nodes$y <- NA
+  net$network$set_nodes(nodes)
+
+  # Use ensure_cograph_network with builtin layout
+  result <- cograph:::ensure_cograph_network(net, layout = "circle")
+  expect_s3_class(result, "cograph_network")
+
+  # Verify layout was computed
+  new_nodes <- get_nodes(result)
+  expect_false(all(is.na(new_nodes$x)))
+})
+
+test_that("compute_layout_for_cograph handles data.frame layout", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- cograph(adj)
+
+  # Clear layout
+  nodes <- net$network$get_nodes()
+  nodes$x <- NA
+  nodes$y <- NA
+  net$network$set_nodes(nodes)
+
+  # Use ensure_cograph_network with data.frame layout
+  coords <- data.frame(x = c(0, 1, 0.5), y = c(0, 0, 1))
+  result <- cograph:::ensure_cograph_network(net, layout = coords)
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph handles seed parameter", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- cograph(adj)
+
+  # Clear layout
+  nodes <- net$network$get_nodes()
+  nodes$x <- NA
+  nodes$y <- NA
+  net$network$set_nodes(nodes)
+
+  # Use ensure_cograph_network with specific seed
+  result <- cograph:::ensure_cograph_network(net, layout = "spring", seed = 123)
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph updates network layout info", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- cograph(adj)
+
+  # Clear layout
+  nodes <- net$network$get_nodes()
+  nodes$x <- NA
+  nodes$y <- NA
+  net$network$set_nodes(nodes)
+
+  # Use ensure_cograph_network
+  result <- cograph:::ensure_cograph_network(net, layout = "grid")
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph handles directed network", {
+  adj <- matrix(c(0, 1, 0, 0, 0, 1, 0, 0, 0), nrow = 3)
+  net <- cograph(adj, directed = TRUE)
+
+  # Clear layout
+  nodes <- net$network$get_nodes()
+  nodes$x <- NA
+  nodes$y <- NA
+  net$network$set_nodes(nodes)
+
+  result <- cograph:::ensure_cograph_network(net, layout = "circle")
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph uses edges for layout", {
+  adj <- matrix(c(0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0), nrow = 4)
+  net <- cograph(adj)
+
+  # Clear layout
+  nodes <- net$network$get_nodes()
+  nodes$x <- NA
+  nodes$y <- NA
+  net$network$set_nodes(nodes)
+
+  result <- cograph:::ensure_cograph_network(net, layout = "spring")
+  expect_s3_class(result, "cograph_network")
+
+  # Verify the layout has valid coordinates
+  new_nodes <- get_nodes(result)
+  expect_true(all(!is.na(new_nodes$x)))
+  expect_true(all(!is.na(new_nodes$y)))
+})
+
+# ============================================
+# as_cograph and Lightweight Format Tests
+# ============================================
+
+test_that("as_cograph creates lightweight network without layout", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- as_cograph(adj)
+
+  expect_s3_class(net, "cograph_network")
+  expect_true("nodes" %in% names(net))
+  expect_null(net$layout)
+})
+
+test_that("ensure_cograph_network triggers compute_layout_for_cograph for lightweight format", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- as_cograph(adj)
+
+  # Lightweight format has no x column initially
+  expect_true(!"x" %in% names(net$nodes) || all(is.na(net$nodes$x)))
+
+  # ensure_cograph_network should compute layout
+  result <- cograph:::ensure_cograph_network(net, layout = "circle")
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph handles builtin layout via lightweight format", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- as_cograph(adj)
+
+  # Trigger compute_layout_for_cograph with builtin layout
+  result <- cograph:::ensure_cograph_network(net, layout = "grid")
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph handles spring layout via lightweight format", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- as_cograph(adj)
+
+  result <- cograph:::ensure_cograph_network(net, layout = "spring", seed = 42)
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph handles matrix layout via lightweight format", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- as_cograph(adj)
+
+  coords <- matrix(c(0, 1, 0.5, 0, 0, 1), ncol = 2)
+  result <- cograph:::ensure_cograph_network(net, layout = coords)
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph handles NULL seed via lightweight format", {
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- as_cograph(adj)
+
+  result <- cograph:::ensure_cograph_network(net, layout = "random", seed = NULL)
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph handles function layout via lightweight format", {
+  skip_if_not_installed("igraph")
+
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- as_cograph(adj)
+
+  result <- cograph:::ensure_cograph_network(net, layout = igraph::layout_in_circle)
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph handles igraph code via lightweight format", {
+  skip_if_not_installed("igraph")
+
+  adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+  net <- as_cograph(adj)
+
+  result <- cograph:::ensure_cograph_network(net, layout = "kk")
+  expect_s3_class(result, "cograph_network")
+})
+
+test_that("compute_layout_for_cograph handles directed lightweight network", {
+  adj <- matrix(c(0, 1, 0, 0, 0, 1, 0, 0, 0), nrow = 3)
+  net <- as_cograph(adj, directed = TRUE)
+
+  result <- cograph:::ensure_cograph_network(net, layout = "circle")
+  expect_s3_class(result, "cograph_network")
+})
+
+# ============================================
 # Edge List Input Tests
 # ============================================
 

@@ -408,3 +408,120 @@ test_that("from_qgraph() output can be customized with sn_* functions", {
   # Just verify it completes without error
   expect_true(TRUE)
 })
+
+# ============================================
+# Additional Coverage Tests
+# ============================================
+
+test_that("from_qgraph() uses soplot engine", {
+  skip_if_no_qgraph()
+
+  adj <- matrix(c(0, 1, 1, 0), 2, 2)
+  q <- qgraph::qgraph(adj, DoNotPlot = TRUE)
+
+  result <- with_temp_png({
+    from_qgraph(q, engine = "soplot", plot = TRUE)
+  })
+
+  expect_true(TRUE)
+})
+
+test_that("from_qgraph() handles layout override", {
+  skip_if_no_qgraph()
+
+  adj <- matrix(c(0, 1, 1, 0), 2, 2)
+  q <- qgraph::qgraph(adj, DoNotPlot = TRUE)
+
+  # Override layout removes rescale=FALSE
+  result <- with_temp_png({
+    from_qgraph(q, engine = "splot", plot = TRUE, layout = "circle")
+  })
+
+  expect_true(TRUE)
+})
+
+test_that("from_qgraph() handles pie data from qgraph", {
+  skip_if_no_qgraph()
+
+  adj <- matrix(c(0, 1, 1, 0), 2, 2)
+  # Create qgraph with pie data
+  q <- qgraph::qgraph(adj, pie = c(0.3, 0.7), DoNotPlot = TRUE)
+
+  result <- with_temp_png({
+    from_qgraph(q, engine = "splot", plot = TRUE)
+  })
+
+  expect_true(TRUE)
+})
+
+test_that("from_qgraph() handles posCol and negCol", {
+  skip_if_no_qgraph()
+
+  adj <- matrix(c(0, 0.5, -0.3, 0, 0, 0.7, -0.3, 0.7, 0), 3, 3)
+  q <- qgraph::qgraph(adj, posCol = "green", negCol = "red", DoNotPlot = TRUE)
+
+  result <- with_temp_png({
+    from_qgraph(q, engine = "splot", plot = TRUE)
+  })
+
+  expect_true(TRUE)
+})
+
+test_that("from_qgraph() extracts labels from names if labels not set", {
+  skip_if_no_qgraph()
+
+  adj <- matrix(c(0, 1, 1, 0), 2, 2)
+  rownames(adj) <- colnames(adj) <- c("A", "B")
+  q <- qgraph::qgraph(adj, DoNotPlot = TRUE)
+
+  params <- from_qgraph(q, plot = FALSE)
+
+  # Labels should be extracted
+  expect_true(!is.null(params$labels) || !is.null(params$node_names))
+})
+
+test_that("from_qgraph() with soplot collapses edge scalar params", {
+  skip_if_no_qgraph()
+
+  adj <- matrix(c(0, 1, 1, 0), 2, 2)
+  q <- qgraph::qgraph(adj, DoNotPlot = TRUE)
+
+  result <- with_temp_png({
+    from_qgraph(q, engine = "soplot", plot = TRUE)
+  })
+
+  expect_true(TRUE)
+})
+
+test_that("from_tna() uses soplot engine", {
+  skip_if_no_tna()
+
+  trans_mat <- matrix(c(0, 0.5, 0.5, 0.3, 0, 0.7, 0.4, 0.6, 0), 3, 3, byrow = TRUE)
+  rownames(trans_mat) <- colnames(trans_mat) <- c("A", "B", "C")
+  tna_obj <- tna::tna(trans_mat)
+
+  result <- with_temp_png({
+    from_tna(tna_obj, engine = "soplot", plot = TRUE)
+  })
+
+  expect_true(TRUE)
+})
+
+test_that("tna_color_palette generates correct number of colors", {
+  # Test with different state counts
+  # States 1-2
+  colors_2 <- cograph:::tna_color_palette(2)
+  expect_equal(length(colors_2), 2)
+
+  # States 3-8
+  colors_5 <- cograph:::tna_color_palette(5)
+  expect_equal(length(colors_5), 5)
+
+  # States 9-12
+  colors_10 <- cograph:::tna_color_palette(10)
+  expect_equal(length(colors_10), 10)
+
+  # States 13+
+  colors_15 <- cograph:::tna_color_palette(15)
+  expect_equal(length(colors_15), 15)
+})

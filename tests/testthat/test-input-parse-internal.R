@@ -419,3 +419,76 @@ test_that("parse_input handles asymmetric matrices for directed", {
 
   expect_true(result$directed)
 })
+
+# ============================================
+# igraph Additional Tests
+# ============================================
+
+test_that("parse_igraph handles weighted igraph", {
+  skip_if_not_installed("igraph")
+
+  g <- igraph::make_ring(5)
+  igraph::E(g)$weight <- c(0.5, 0.3, 0.8, 0.6, 0.4)
+
+  result <- cograph:::parse_igraph(g)
+
+  expect_equal(length(result$edges$weight), igraph::ecount(g))
+})
+
+test_that("parse_igraph handles igraph with no vertex names", {
+  skip_if_not_installed("igraph")
+
+  g <- igraph::graph_from_edgelist(matrix(c(1, 2, 2, 3, 3, 1), ncol = 2, byrow = TRUE))
+
+  result <- cograph:::parse_igraph(g)
+
+  expect_true(all(result$nodes$label == c("1", "2", "3")))
+})
+
+test_that("parse_igraph handles directed igraph", {
+  skip_if_not_installed("igraph")
+
+  g <- igraph::graph_from_edgelist(matrix(c(1, 2, 2, 3, 3, 1), ncol = 2, byrow = TRUE),
+                                   directed = TRUE)
+
+  result <- cograph:::parse_igraph(g)
+
+  expect_true(result$directed)
+})
+
+test_that("parse_igraph extracts vertex attributes", {
+  skip_if_not_installed("igraph")
+
+  g <- igraph::make_ring(3)
+  igraph::V(g)$color <- c("red", "blue", "green")
+  igraph::V(g)$size <- c(10, 20, 15)
+
+  result <- cograph:::parse_igraph(g)
+
+  expect_true("color" %in% names(result$nodes))
+  expect_true("size" %in% names(result$nodes))
+})
+
+test_that("parse_igraph extracts edge attributes", {
+  skip_if_not_installed("igraph")
+
+  g <- igraph::make_ring(3)
+  igraph::E(g)$color <- c("red", "blue", "green")
+  igraph::E(g)$width <- c(1, 2, 3)
+
+  result <- cograph:::parse_igraph(g)
+
+  expect_true("color" %in% names(result$edges))
+  expect_true("width" %in% names(result$edges))
+})
+
+test_that("parse_igraph handles empty igraph", {
+  skip_if_not_installed("igraph")
+
+  g <- igraph::make_empty_graph(3)
+
+  result <- cograph:::parse_igraph(g)
+
+  expect_equal(nrow(result$nodes), 3)
+  expect_equal(nrow(result$edges), 0)
+})

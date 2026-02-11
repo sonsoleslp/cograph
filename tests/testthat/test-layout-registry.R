@@ -590,3 +590,67 @@ test_that("custom layout converts matrix columns to x and y", {
   expect_equal(result$x, c(0.1, 0.2, 0.3))
   expect_equal(result$y, c(0.4, 0.5, 0.6))
 })
+
+# ============================================
+# Edge Cases for Empty and Single Node Networks
+# ============================================
+
+test_that("grid layout with single node returns center", {
+  mat <- matrix(0, 1, 1)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("grid")
+  result <- layout_func(net$network)
+
+  expect_equal(nrow(result), 1)
+  expect_equal(result$x[1], 0.5)
+  expect_equal(result$y[1], 0.5)
+})
+
+test_that("star layout with single node returns center", {
+  mat <- matrix(0, 1, 1)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("star")
+  result <- layout_func(net$network)
+
+  expect_equal(nrow(result), 1)
+  expect_equal(result$x[1], 0.5)
+  expect_equal(result$y[1], 0.5)
+})
+
+test_that("random layout uses seed for reproducibility", {
+  mat <- create_test_matrix(5)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("random")
+
+  # Same seed = same result
+  result1 <- layout_func(net$network, seed = 42)
+  result2 <- layout_func(net$network, seed = 42)
+  expect_equal(result1$x, result2$x)
+  expect_equal(result1$y, result2$y)
+
+  # NULL seed = different result (most of the time)
+  result3 <- layout_func(net$network, seed = NULL)
+  result4 <- layout_func(net$network, seed = NULL)
+  # Can't guarantee they're different, but we test that it runs
+  expect_equal(nrow(result3), 5)
+  expect_equal(nrow(result4), 5)
+})
+
+test_that("bipartite layout distributes nodes on two sides", {
+  mat <- create_test_matrix(6)
+  net <- cograph(mat)
+
+  layout_func <- get_layout("bipartite")
+  result <- layout_func(net$network, types = c(0, 1, 0, 1, 0, 1))
+
+  # Type 0 nodes should be on one side (x = 0.2)
+  type0_nodes <- c(1, 3, 5)
+  expect_true(all(result$x[type0_nodes] == 0.2))
+
+  # Type 1 nodes should be on other side (x = 0.8)
+  type1_nodes <- c(2, 4, 6)
+  expect_true(all(result$x[type1_nodes] == 0.8))
+})

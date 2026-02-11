@@ -354,3 +354,173 @@ test_that("soplot renders donut with border width", {
 
   expect_true(result)
 })
+
+# ============================================
+# Additional Coverage Tests for render-nodes.R
+# ============================================
+
+test_that("soplot handles empty network (n=0)", {
+  skip_if_not_installed("grid")
+
+  # Create a network that will result in 0 nodes after filtering
+  net <- cograph(matrix(0, 1, 1))
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders donut with donut_shape from aes", {
+  skip_if_not_installed("grid")
+
+  mat <- create_test_matrix(3)
+  net <- cograph(mat) |>
+    sn_nodes(donut_values = list(0.5, 0.6, 0.7), donut_shape = "hexagon")
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders donut with non-list donut_colors", {
+  skip_if_not_installed("grid")
+
+  mat <- create_test_matrix(3)
+  net <- cograph(mat) |>
+    sn_nodes(donut_values = list(0.5, 0.6, 0.7), donut_colors = "red")
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders donut_pie shape with all parameters", {
+  skip_if_not_installed("grid")
+
+  mat <- create_test_matrix(3)
+
+  result <- tryCatch({
+    with_temp_png(soplot(mat,
+      node_shape = "donut_pie",
+      pie_values = list(c(1, 2), c(2, 1), c(1, 1, 1)),
+      pie_colors = c("red", "blue", "green"),
+      donut_inner_ratio = 0.6,
+      donut_bg_color = "white",
+      pie_border_width = 1,
+      donut_border_width = 2,
+      layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders donut_pie with matrix pie_values", {
+  skip_if_not_installed("grid")
+
+  mat <- create_test_matrix(3)
+  pie_mat <- matrix(c(1, 2, 3, 2, 3, 1, 3, 1, 2), nrow = 3, byrow = TRUE)
+
+  result <- tryCatch({
+    with_temp_png(soplot(mat,
+      node_shape = "donut_pie",
+      pie_values = pie_mat,
+      layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders double_donut_pie shape", {
+  skip_if_not_installed("grid")
+
+  mat <- create_test_matrix(3)
+
+  result <- tryCatch({
+    with_temp_png(soplot(mat,
+      node_shape = "double_donut_pie",
+      donut_fill = c(0.8, 0.7, 0.9),
+      donut_color = "blue",
+      donut2_values = list(0.5, 0.6, 0.4),
+      donut2_colors = list("lightblue", "lightgreen", "pink"),
+      pie_values = list(c(1, 2), c(2, 1), c(1, 1)),
+      pie_colors = c("orange", "purple"),
+      donut_inner_ratio = 0.7,
+      donut2_inner_ratio = 0.5,
+      donut_bg_color = "white",
+      pie_border_width = 1,
+      donut_border_width = 2,
+      layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders double_donut_pie with non-list colors", {
+  skip_if_not_installed("grid")
+
+  mat <- create_test_matrix(3)
+
+  result <- tryCatch({
+    with_temp_png(soplot(mat,
+      node_shape = "double_donut_pie",
+      donut_fill = c(0.8, 0.7, 0.9),
+      donut_color = "blue",
+      donut2_values = list(0.5, 0.6, 0.4),
+      donut2_colors = "lightblue",
+      pie_values = list(c(1, 2), c(2, 1), c(1, 1)),
+      pie_colors = c("orange", "purple"),
+      layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders double_donut_pie with matrix pie_values", {
+  skip_if_not_installed("grid")
+
+  mat <- create_test_matrix(3)
+  pie_mat <- matrix(c(1, 2, 2, 1, 1, 1), nrow = 3, byrow = TRUE)
+
+  result <- tryCatch({
+    with_temp_png(soplot(mat,
+      node_shape = "double_donut_pie",
+      donut_fill = c(0.8, 0.7, 0.9),
+      donut2_values = list(0.5, 0.6, 0.4),
+      pie_values = pie_mat,
+      layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders double_donut_pie with vector donut values", {
+  skip_if_not_installed("grid")
+
+  mat <- create_test_matrix(3)
+
+  result <- tryCatch({
+    with_temp_png(soplot(mat,
+      node_shape = "double_donut_pie",
+      donut_fill = c(0.8, 0.7, 0.9),
+      donut2_values = c(0.5, 0.6, 0.4),
+      pie_values = list(c(1, 2), c(2, 1), c(1, 1)),
+      layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})

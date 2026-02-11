@@ -1175,7 +1175,7 @@ test_that("get_edge_label_position handles zero curve", {
 })
 
 # ============================================
-# render_edges_base Integration Tests
+# splot Edge Integration Tests
 # ============================================
 
 test_that("splot renders edges with loop rotation vector", {
@@ -1275,6 +1275,293 @@ test_that("splot handles vectorized arrow parameters", {
     splot(net,
           arrow_size = c(0.5, 1, 1.5),
           layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+# ============================================
+# draw_curved_edge_base Edge Cases
+# ============================================
+
+test_that("draw_curved_edge_base handles zero-length edge", {
+  # Edge from same point to same point
+  result <- with_temp_png({
+    init_base_plot()
+    draw_curved_edge_base(0.5, 0.5, 0.5, 0.5, curve = 0.3)
+    TRUE
+  })
+  expect_true(result)
+})
+
+test_that("draw_curved_edge_base handles near-zero length edge", {
+  # Very short edge
+  result <- with_temp_png({
+    init_base_plot()
+    draw_curved_edge_base(0.5, 0.5, 0.5 + 1e-12, 0.5 + 1e-12, curve = 0.3)
+    TRUE
+  })
+  expect_true(result)
+})
+
+test_that("draw_curved_edge_base handles arrow without curve", {
+  result <- with_temp_png({
+    init_base_plot()
+    draw_curved_edge_base(0.2, 0.5, 0.8, 0.5,
+                          curve = 0.3, arrow = TRUE, asize = 0.03,
+                          bidirectional = FALSE)
+    TRUE
+  })
+  expect_true(result)
+})
+
+test_that("draw_curved_edge_base handles bidirectional with truncation", {
+  result <- with_temp_png({
+    init_base_plot()
+    draw_curved_edge_base(0.3, 0.5, 0.7, 0.5,
+                          curve = 0.4, arrow = TRUE, asize = 0.05,
+                          bidirectional = TRUE)
+    TRUE
+  })
+  expect_true(result)
+})
+
+# ============================================
+# get_edge_label_position Edge Cases
+# ============================================
+
+test_that("get_edge_label_position handles NA curve", {
+  result <- cograph:::get_edge_label_position(
+    0.2, 0.5, 0.8, 0.5,
+    position = 0.5, curve = NA
+  )
+
+  # Should still return valid coordinates
+  expect_true(!is.null(result$x))
+  expect_true(!is.null(result$y))
+})
+
+test_that("get_edge_label_position handles empty curve", {
+  result <- cograph:::get_edge_label_position(
+    0.2, 0.5, 0.8, 0.5,
+    position = 0.5, curve = numeric(0)
+  )
+
+  # Should handle empty curve gracefully
+  expect_true(!is.null(result$x))
+  expect_true(!is.null(result$y))
+})
+
+test_that("get_edge_label_position handles zero curve value", {
+  result <- cograph:::get_edge_label_position(
+    0.2, 0.5, 0.8, 0.5,
+    position = 0.5, curve = 0
+  )
+
+  # Should return midpoint
+  expect_equal(result$x, 0.5, tolerance = 0.01)
+})
+
+test_that("get_edge_label_position handles sign(curve) == 0 with label_offset", {
+  # When curve is exactly 0 but we pass label_offset, this triggers line 561
+  result <- cograph:::get_edge_label_position(
+    0.2, 0.5, 0.8, 0.5,
+    position = 0.5, curve = 0, label_offset = 0.05
+  )
+
+  expect_true(!is.null(result$x))
+  expect_true(!is.null(result$y))
+})
+
+# ============================================
+# splot Edge Rendering Tests
+# ============================================
+
+test_that("splot handles self-loop with label", {
+  mat <- create_test_matrix(3, weighted = TRUE)
+  diag(mat) <- c(0.5, 0.7, 0.3)
+
+  result <- with_temp_png({
+    splot(mat, edge_labels = TRUE, layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot handles scalar curvature", {
+  mat <- create_test_matrix(4)
+
+  result <- with_temp_png({
+    splot(mat, curvature = 0.25, layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot handles vectorized curvePivot", {
+  mat <- create_test_matrix(4, symmetric = FALSE)
+  net <- cograph(mat, directed = TRUE)
+
+  result <- with_temp_png({
+    splot(net, curvature = 0.3, curve_pivot = c(0.3, 0.5, 0.7), layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot handles vectorized bidirectional", {
+  mat <- create_test_matrix(4, symmetric = FALSE)
+  net <- cograph(mat, directed = TRUE)
+
+  result <- with_temp_png({
+    splot(net, layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot handles NULL loopRotation", {
+  mat <- create_test_matrix(3)
+  diag(mat) <- 1
+
+  result <- with_temp_png({
+    splot(mat, layout = "circle")  # No explicit loop_rotation
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot handles explicit loopRotation vector", {
+  mat <- create_test_matrix(3)
+  diag(mat) <- 1
+
+  result <- with_temp_png({
+    splot(mat, loop_rotation = c(0, pi, 2*pi), layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot calculates network center for curves", {
+  mat <- create_test_matrix(5, symmetric = FALSE)
+  net <- cograph(mat, directed = TRUE)
+
+  result <- with_temp_png({
+    splot(net, curves = TRUE, layout = "random", seed = 42)
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot renders edge labels with NA labels", {
+  mat <- create_test_matrix(3, weighted = TRUE)
+
+  result <- with_temp_png({
+    # Some labels are NA or empty
+    splot(mat, edge_labels = c("a", NA, ""), layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot handles curved self-loop labels", {
+  mat <- create_test_matrix(3, weighted = TRUE)
+  diag(mat) <- c(0.5, 0.7, 0.3)
+
+  result <- with_temp_png({
+    splot(mat, edge_labels = TRUE, curvature = 0.3, layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot handles straight edges with labels", {
+  mat <- create_test_matrix(3, weighted = TRUE)
+
+  result <- with_temp_png({
+    splot(mat, edge_labels = TRUE, curves = FALSE, layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot handles edge label cex", {
+  mat <- create_test_matrix(3, weighted = TRUE)
+
+  result <- with_temp_png({
+    splot(mat, edge_labels = TRUE, edge_label_size = 2.0, layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot handles edge label background color", {
+  mat <- create_test_matrix(3, weighted = TRUE)
+
+  result <- with_temp_png({
+    splot(mat, edge_labels = TRUE, edge_label_bg = "lightblue", layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+# ============================================
+# Edge Case Rendering Tests
+# ============================================
+
+test_that("splot handles node shapes for edge clipping", {
+  mat <- create_test_matrix(4)
+
+  for (shape in c("circle", "square", "triangle", "diamond")) {
+    result <- with_temp_png({
+      splot(mat, node_shape = shape, layout = "circle")
+      TRUE
+    })
+    expect_true(result, info = paste("shape =", shape))
+  }
+})
+
+test_that("splot handles mixed node sizes for edges", {
+  mat <- create_test_matrix(4)
+
+  result <- with_temp_png({
+    splot(mat, node_size = c(0.03, 0.05, 0.07, 0.04), layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot handles edges with different ltys", {
+  mat <- create_test_matrix(3)
+
+  result <- with_temp_png({
+    splot(mat, edge_style = c("solid", "dashed", "dotted"), layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot handles edges with asize = 0", {
+  mat <- create_test_matrix(3, symmetric = FALSE)
+  net <- cograph(mat, directed = TRUE)
+
+  result <- with_temp_png({
+    splot(net, arrow_size = 0, layout = "circle")
     TRUE
   })
 

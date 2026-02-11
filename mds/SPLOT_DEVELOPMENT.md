@@ -71,7 +71,7 @@ if (is_reciprocal[i]) {
   curves_vec[i] <- if (edges$from[i] < edges$to[i]) 0.2 else -0.2
 }
 
-# In splot-edges.R - render_edges_base()
+# In splot.R - render_edges_splot()
 # Positive curve = bend toward center (inward)
 # Negative curve = bend away from center (outward)
 if (curve_i > 0) {
@@ -91,7 +91,7 @@ if (curve_i > 0) {
 
 **Problem**: When `curves="force"` is used, single (non-reciprocal) edges should curve inward toward the network center. Previously, the direction was inconsistent.
 
-**Solution**: The issue was that `render_edges_splot()` in `splot.R` was not applying the inward curve logic that existed in `render_edges_base()`. Fixed by adding the same logic to `render_edges_splot()`:
+**Solution**: Fixed by implementing the inward curve logic in `render_edges_splot()` in `splot.R`:
 1. Calculate network center as mean of all node positions
 2. For each edge with positive curve value, use cross product to determine which side of the edge the center is on
 3. Adjust curve sign: positive (bend left) if center is to the left, negative (bend right) if center is to the right
@@ -294,7 +294,7 @@ For very large networks (>500 nodes), consider:
 ## Code References
 
 - Main curve rendering: `R/splot-edges.R:draw_curved_edge_base()` (line ~86)
-- Inward direction logic: `R/splot-edges.R:render_edges_base()` (line ~380)
+- Inward direction logic: `R/splot.R:render_edges_splot()`
 - Reciprocal detection: `R/splot.R` (line ~340)
 - Perpendicular calculation: `R/splot-edges.R` (line ~105)
 

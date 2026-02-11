@@ -455,3 +455,115 @@ test_that("soplot() handles node_shape donut without explicit fill", {
   result <- safe_plot(soplot(adj, node_shape = "donut"))
   expect_true(result$success, info = result$error)
 })
+
+# ============================================
+# Additional Coverage Tests
+# ============================================
+
+test_that("soplot() handles duplicate edges with edge_duplicates", {
+  skip_if_not_installed("grid")
+
+  # Create edge list with duplicates
+  edges <- data.frame(
+    from = c(1, 1, 2, 2),
+    to = c(2, 2, 3, 3),
+    weight = c(0.5, 0.3, 0.7, 0.2)
+  )
+
+  result <- safe_plot(soplot(edges, edge_duplicates = "sum"))
+  expect_true(result$success, info = result$error)
+
+  result2 <- safe_plot(soplot(edges, edge_duplicates = "mean"))
+  expect_true(result2$success, info = result2$error)
+
+  result3 <- safe_plot(soplot(edges, edge_duplicates = "max"))
+  expect_true(result3$success, info = result3$error)
+})
+
+test_that("soplot() handles create_grid_grob with title", {
+  skip_if_not_installed("grid")
+
+  adj <- create_test_matrix(4)
+  net <- cograph(adj)
+
+  result <- safe_plot(soplot(net, title = "Test Plot"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("soplot() with legend and empty nodes returns gracefully", {
+  skip_if_not_installed("grid")
+
+  # Single node network
+  adj <- matrix(0, 1, 1)
+
+  result <- safe_plot(soplot(adj, legend = TRUE))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("soplot() legend uses node_names aesthetic", {
+  skip_if_not_installed("grid")
+
+  adj <- create_test_matrix(3)
+  net <- cograph(adj) |>
+    sn_nodes(node_names = c("Alpha", "Beta", "Gamma"))
+
+  result <- safe_plot(soplot(net, legend = TRUE))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("soplot() legend positions work", {
+  skip_if_not_installed("grid")
+
+  adj <- create_test_matrix(3)
+
+  for (pos in c("topright", "topleft", "bottomright", "bottomleft")) {
+    result <- safe_plot(soplot(adj, legend = TRUE, legend_position = pos))
+    expect_true(result$success, info = paste(pos, result$error))
+  }
+})
+
+test_that("soplot() legend with invalid position uses default", {
+  skip_if_not_installed("grid")
+
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(soplot(adj, legend = TRUE, legend_position = "invalid"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("soplot() renders with edge width scaling via aes", {
+  skip_if_not_installed("grid")
+
+  mat <- create_test_matrix(4, weighted = TRUE)
+  net <- cograph(mat) |>
+    sn_edges(width = 2)
+
+  result <- safe_plot(soplot(net))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("soplot() renders edges with default width when no weights", {
+  skip_if_not_installed("grid")
+
+  mat <- create_test_matrix(3, weighted = FALSE)
+  net <- cograph(mat)
+
+  # Remove weights from edges
+  edges <- net$network$get_edges()
+  edges$weight <- NULL
+  net$network$set_edges(edges)
+
+  result <- safe_plot(soplot(net))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("soplot() color resolution for positive/negative edges", {
+  skip_if_not_installed("grid")
+
+  mat <- matrix(c(0, 0.5, -0.3, 0.5, 0, -0.7, -0.3, -0.7, 0), 3, 3)
+  net <- cograph(mat) |>
+    sn_edges(positive_color = "darkgreen", negative_color = "darkred")
+
+  result <- safe_plot(soplot(net))
+  expect_true(result$success, info = result$error)
+})

@@ -1331,3 +1331,159 @@ test_that("soplot renders edges without weights using default color", {
 
   expect_true(result)
 })
+
+# ============================================
+# Additional Coverage Tests for render-edges.R
+# ============================================
+
+test_that("soplot renders edges with weight-based width scaling via aes", {
+  mat <- matrix(c(0, 0.2, 0.8, 0.2, 0, 0.5, 0.8, 0.5, 0), 3, 3)
+  net <- cograph(mat) |>
+    sn_edges(
+      esize = 2,
+      edge_scale_mode = "linear",
+      maximum = 1,
+      edge_width_range = c(0.5, 4)
+    )
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders edges with width_scale multiplier", {
+  mat <- create_test_matrix(3, weighted = TRUE)
+  net <- cograph(mat) |>
+    sn_edges(width_scale = 1.5)
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("splot renders self-loops with CI underlay", {
+  mat <- create_test_matrix(3)
+  diag(mat) <- c(0.5, 0.7, 0.3)
+  net <- cograph(mat)
+
+  result <- with_temp_png({
+    splot(net, edge_ci = 0.2, edge_ci_color = "lightblue", layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("splot renders edges with CI underlay on curved edges", {
+  mat <- create_test_matrix(3, symmetric = FALSE, weighted = TRUE)
+  net <- cograph(mat, directed = TRUE)
+
+  result <- with_temp_png({
+    splot(net, curves = TRUE, edge_ci = 0.15, layout = "circle")
+    TRUE
+  })
+
+  expect_true(result)
+})
+
+test_that("soplot renders edges with cut threshold using aes", {
+  mat <- create_test_matrix(4, weighted = TRUE)
+  # Make some edges weak
+  mat[1, 2] <- 0.05
+  mat[2, 1] <- 0.05
+  net <- cograph(mat) |>
+    sn_edges(cut = 0.2)
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders edges without explicit width using theme default", {
+  mat <- create_test_matrix(3)
+  net <- cograph(mat)
+
+  # Remove weights to trigger default width path
+  edges <- net$network$get_edges()
+  edges$weight <- NULL
+  net$network$set_edges(edges)
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+# ============================================
+# Edge Label Tests for soplot
+# ============================================
+
+test_that("soplot renders edge labels with fontface styles", {
+  mat <- create_test_matrix(3, weighted = TRUE)
+  net <- cograph(mat) |>
+    sn_edges(labels = TRUE, label_fontface = "bold")
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders edge labels with italic fontface", {
+  mat <- create_test_matrix(3, weighted = TRUE)
+  net <- cograph(mat) |>
+    sn_edges(labels = TRUE, label_fontface = "italic")
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders edge labels with bold.italic fontface", {
+  mat <- create_test_matrix(3, weighted = TRUE)
+  net <- cograph(mat) |>
+    sn_edges(labels = TRUE, label_fontface = "bold.italic")
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})
+
+test_that("soplot renders edge labels with all styling options", {
+  mat <- create_test_matrix(3, weighted = TRUE)
+  net <- cograph(mat) |>
+    sn_edges(
+      labels = TRUE,
+      label_size = 10,
+      label_color = "blue",
+      label_position = 0.5,
+      label_offset = 0.02,
+      label_bg = "white"
+    )
+
+  result <- tryCatch({
+    with_temp_png(soplot(net, layout = "circle"))
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+})

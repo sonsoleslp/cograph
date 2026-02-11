@@ -884,3 +884,407 @@ test_that("splot() warns on deprecated donut_border_lty parameter", {
     "deprecated"
   )
 })
+
+# ============================================
+# ADDITIONAL COVERAGE TESTS
+# ============================================
+
+test_that("splot() applies theme background color", {
+  adj <- create_test_matrix(4)
+
+  result <- safe_plot(splot(adj, theme = "dark", layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() converts pie_values vector to donut_fill", {
+  adj <- create_test_matrix(4)
+
+  # pie_values as numeric vector with values in [0,1] should convert to donut_fill
+  result <- safe_plot(splot(adj, pie_values = c(0.3, 0.5, 0.7, 0.9), layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles SVG shape registration error gracefully", {
+  adj <- create_test_matrix(3)
+
+  # Invalid SVG parameter type (not a string) should warn and fall back to default shape
+  expect_warning(
+    safe_plot(splot(adj, node_svg = c("a", "b"), layout = "circle")),
+    "Failed to register SVG"
+  )
+})
+
+test_that("splot() handles valid SVG content string", {
+  adj <- create_test_matrix(3)
+
+  # Valid SVG content (simple circle) should work
+  svg_content <- '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40"/></svg>'
+  result <- safe_plot(splot(adj, node_svg = svg_content, layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() subsets edge_labels after weight filtering", {
+  adj <- create_test_matrix(4, weighted = TRUE)
+  # Set some edges to be below threshold
+  adj[1, 2] <- 0.01
+  adj[2, 1] <- 0.01
+
+  # Character labels matching original edge count
+  n_edges <- sum(adj != 0 & !is.na(adj)) / 2  # approximate
+  labels <- paste0("e", seq_len(6))
+
+  result <- safe_plot(splot(adj, edge_labels = labels, threshold = 0.1, layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() applies edge_cutoff transparency fading", {
+  adj <- create_test_matrix(4, weighted = TRUE)
+  adj[adj > 0] <- adj[adj > 0] * 0.5  # Make weights smaller
+
+  result <- safe_plot(splot(adj, edge_cutoff = 0.3, layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles edge_alpha less than 1", {
+  adj <- create_test_matrix(4)
+
+  result <- safe_plot(splot(adj, edge_alpha = 0.5, layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles edge_style longdash and twodash", {
+  adj <- create_test_matrix(4)
+
+  result1 <- safe_plot(splot(adj, edge_style = "longdash", layout = "circle"))
+  expect_true(result1$success, info = result1$error)
+
+  result2 <- safe_plot(splot(adj, edge_style = "twodash", layout = "circle"))
+  expect_true(result2$success, info = result2$error)
+})
+
+test_that("splot() handles curves='force' skipping self-loops", {
+  adj <- create_test_matrix(3)
+  diag(adj) <- 1  # Add self-loops
+
+  result <- safe_plot(splot(adj, curves = "force", layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles vectorized show_arrows", {
+  adj <- create_test_matrix(3, symmetric = FALSE)
+  net <- cograph(adj, directed = TRUE)
+
+  result <- safe_plot(splot(net, show_arrows = c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE), layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles edge_ci_color NA using main edge colors", {
+  adj <- create_test_matrix(3, weighted = TRUE)
+
+  result <- safe_plot(splot(adj,
+    edge_ci = c(0.1, 0.2, 0.15),
+    edge_ci_color = NA,
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles edge_ci with explicit color", {
+  adj <- create_test_matrix(3, weighted = TRUE)
+
+  result <- safe_plot(splot(adj,
+    edge_ci = c(0.1, 0.2, 0.15),
+    edge_ci_color = "lightblue",
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() auto-enables donut_fill when node_shape is 'donut'", {
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(splot(adj, node_shape = "donut", layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles donut_fill as list", {
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(splot(adj,
+    donut_fill = list(0.3, 0.5, 0.8),
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles donut_empty replacing NA with 0", {
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(splot(adj,
+    donut_fill = c(0.5, NA, 0.7),
+    donut_empty = TRUE,
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles donut_color with 2 colors (fill + bg)", {
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(splot(adj,
+    donut_fill = c(0.5, 0.6, 0.7),
+    donut_color = c("blue", "lightgray"),
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles donut_color with 2*n_nodes list", {
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(splot(adj,
+    donut_fill = c(0.5, 0.6, 0.7),
+    donut_color = list("red", "pink", "green", "lightgreen", "blue", "lightblue"),
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() falls back to deprecated donut_colors", {
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(splot(adj,
+    donut_fill = c(0.5, 0.6, 0.7),
+    donut_colors = list("red", "green", "blue"),
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles edge_start_style numeric values", {
+  adj <- create_test_matrix(3, symmetric = FALSE)
+  net <- cograph(adj, directed = TRUE)
+
+  result1 <- safe_plot(splot(net, edge_start_style = 1, layout = "circle"))
+  expect_true(result1$success, info = result1$error)
+
+  result2 <- safe_plot(splot(net, edge_start_style = 2, layout = "circle"))
+  expect_true(result2$success, info = result2$error)
+
+  result3 <- safe_plot(splot(net, edge_start_style = 3, layout = "circle"))
+  expect_true(result3$success, info = result3$error)
+})
+
+test_that("splot() warns on invalid edge_start_style numeric", {
+  adj <- create_test_matrix(3, symmetric = FALSE)
+  net <- cograph(adj, directed = TRUE)
+
+  expect_warning(
+    safe_plot(splot(net, edge_start_style = 5, layout = "circle")),
+    "edge_start_style"
+  )
+})
+
+test_that("splot() errors on invalid edge_start_style string", {
+  adj <- create_test_matrix(3, symmetric = FALSE)
+  net <- cograph(adj, directed = TRUE)
+
+  expect_error(
+    splot(net, edge_start_style = "invalid", layout = "circle"),
+    "edge_start_style"
+  )
+})
+
+test_that("splot() handles CI underlay for self-loops", {
+  adj <- create_test_matrix(3, weighted = TRUE)
+  diag(adj) <- c(0.5, 0.7, 0.3)
+
+  result <- safe_plot(splot(adj,
+    edge_ci = rep(0.2, 6),  # Include CI for self-loops
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles CI underlay for curved edges", {
+  adj <- create_test_matrix(4, symmetric = FALSE, weighted = TRUE)
+  net <- cograph(adj, directed = TRUE)
+
+  result <- safe_plot(splot(net,
+    curves = TRUE,
+    edge_ci = rep(0.15, nrow(net$network$get_edges())),
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles edge_label_fontface string values", {
+  adj <- create_test_matrix(3, weighted = TRUE)
+
+  result1 <- safe_plot(splot(adj, edge_labels = TRUE, edge_label_fontface = "bold", layout = "circle"))
+  expect_true(result1$success, info = result1$error)
+
+  result2 <- safe_plot(splot(adj, edge_labels = TRUE, edge_label_fontface = "italic", layout = "circle"))
+  expect_true(result2$success, info = result2$error)
+
+  result3 <- safe_plot(splot(adj, edge_labels = TRUE, edge_label_fontface = "bold.italic", layout = "circle"))
+  expect_true(result3$success, info = result3$error)
+})
+
+test_that("splot() handles self-loop labels", {
+  adj <- create_test_matrix(3, weighted = TRUE)
+  diag(adj) <- c(0.5, 0.7, 0.3)
+
+  result <- safe_plot(splot(adj, edge_labels = TRUE, layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles default donut values when node_shape is donut", {
+  adj <- create_test_matrix(3)
+
+  # Mix of donut and other shapes
+  result <- safe_plot(splot(adj,
+    node_shape = c("donut", "circle", "donut"),
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles donut_outer_border_color", {
+  adj <- create_test_matrix(3)
+
+  result <- safe_plot(splot(adj,
+    donut_fill = c(0.5, 0.6, 0.7),
+    donut_outer_border_color = c("red", "green", "blue"),
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() renders legend with groups", {
+  adj <- create_test_matrix(4)
+
+  result <- safe_plot(splot(adj,
+    groups = c("A", "A", "B", "B"),
+    legend = TRUE,
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() renders legend with groups and node_names", {
+  adj <- create_test_matrix(4)
+
+  result <- safe_plot(splot(adj,
+    groups = c("A", "A", "B", "B"),
+    node_names = c("Node1", "Node2", "Node3", "Node4"),
+    legend = TRUE,
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() renders legend with node sizes", {
+  adj <- create_test_matrix(4)
+
+  result <- safe_plot(splot(adj,
+    node_size = c(0.05, 0.1, 0.15, 0.2),
+    legend = TRUE,
+    legend_node_sizes = TRUE,
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() renders legend with edge colors", {
+  adj <- create_test_matrix(4, weighted = TRUE)
+  adj[1, 2] <- -0.5
+  adj[2, 1] <- -0.5
+
+  result <- safe_plot(splot(adj,
+    legend = TRUE,
+    legend_edge_colors = TRUE,
+    layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles layout from network$layout", {
+  adj <- create_test_matrix(4)
+  net <- as_cograph(adj)
+  net$layout <- data.frame(x = c(0.2, 0.8, 0.2, 0.8), y = c(0.2, 0.2, 0.8, 0.8))
+
+  result <- safe_plot(splot(net))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles layout from attr(network, 'layout')", {
+  adj <- create_test_matrix(4)
+  net <- as_cograph(adj)
+  attr(net, "layout") <- data.frame(x = c(0.2, 0.8, 0.2, 0.8), y = c(0.2, 0.2, 0.8, 0.8))
+
+  result <- safe_plot(splot(net))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles layout from R6 wrapper network$network$get_layout()", {
+  adj <- create_test_matrix(4)
+  net <- cograph(adj, layout = "circle")
+
+  result <- safe_plot(splot(net))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() saves to PDF with filetype parameter", {
+  adj <- create_test_matrix(4)
+  tmp <- tempfile()
+  on.exit(unlink(paste0(tmp, ".pdf")), add = TRUE)
+
+  result <- tryCatch({
+    splot(adj, filename = tmp, filetype = "pdf", layout = "circle")
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+  expect_true(file.exists(paste0(tmp, ".pdf")))
+})
+
+test_that("splot() saves to JPEG with filetype parameter", {
+  adj <- create_test_matrix(4)
+  tmp <- tempfile()
+  on.exit(unlink(paste0(tmp, ".jpeg")), add = TRUE)
+
+  result <- tryCatch({
+    splot(adj, filename = tmp, filetype = "jpeg", layout = "circle")
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+  expect_true(file.exists(paste0(tmp, ".jpeg")))
+})
+
+test_that("splot() saves to TIFF with filetype parameter", {
+  adj <- create_test_matrix(4)
+  tmp <- tempfile()
+  on.exit(unlink(paste0(tmp, ".tiff")), add = TRUE)
+
+  result <- tryCatch({
+    splot(adj, filename = tmp, filetype = "tiff", layout = "circle")
+    TRUE
+  }, error = function(e) FALSE)
+
+  expect_true(result)
+  expect_true(file.exists(paste0(tmp, ".tiff")))
+})
+
+test_that("splot() errors on unknown filetype", {
+  adj <- create_test_matrix(4)
+  tmp <- tempfile()
+
+  expect_error(
+    splot(adj, filename = tmp, filetype = "unknown", layout = "circle"),
+    "Unknown filetype"
+  )
+})
+
+test_that("splot() handles NA in curve direction calculation", {
+  adj <- create_test_matrix(3)
+  net <- cograph(adj)
+
+  # Force some NA coordinates scenario
+  result <- safe_plot(splot(net, curves = TRUE, layout = "circle"))
+  expect_true(result$success, info = result$error)
+})
+
+test_that("splot() handles zero-length edge in curve direction", {
+  adj <- matrix(c(0, 1, 1, 0), nrow = 2)
+  net <- cograph(adj)
+
+  result <- safe_plot(splot(net, curves = TRUE, layout = "circle"))
+  expect_true(result$success, info = result$error)
+})

@@ -159,3 +159,58 @@ test_that("scale_alpha clamps values outside 0-1", {
   expect_true(all(result >= 0))
   expect_true(all(result <= 1))
 })
+
+# ============================================
+# map_node_colors Tests
+# ============================================
+
+test_that("map_node_colors maps groups to default palette", {
+  groups <- c("A", "B", "A", "C")
+  result <- cograph:::map_node_colors(groups)
+
+  expect_equal(length(result), 4)
+  expect_equal(result[1], result[3])  # Same group = same color
+})
+
+test_that("map_node_colors uses function palette", {
+  groups <- c("A", "B", "C")
+  pal_fn <- function(n) rep("red", n)
+  result <- cograph:::map_node_colors(groups, palette = pal_fn)
+
+  expect_true(all(result == "red"))
+})
+
+test_that("map_node_colors recycles vector palette", {
+  groups <- c("A", "B", "C", "D")
+  result <- cograph:::map_node_colors(groups, palette = c("red", "blue"))
+
+  expect_equal(length(result), 4)
+})
+
+# ============================================
+# scale_node_sizes Tests
+# ============================================
+
+test_that("scale_node_sizes handles all NA values", {
+  values <- c(NA, NA, NA)
+  result <- cograph:::scale_node_sizes(values, range = c(0.03, 0.1))
+
+  expect_equal(length(result), 3)
+  expect_true(all(result == mean(c(0.03, 0.1))))
+})
+
+test_that("scale_node_sizes handles constant values", {
+  values <- c(5, 5, 5)
+  result <- cograph:::scale_node_sizes(values, range = c(0.03, 0.1))
+
+  expect_equal(length(result), 3)
+  expect_true(all(result == mean(c(0.03, 0.1))))
+})
+
+test_that("scale_node_sizes maps to range correctly", {
+  values <- c(1, 5, 10)
+  result <- cograph:::scale_node_sizes(values, range = c(0.03, 0.1))
+
+  expect_equal(result[1], 0.03)
+  expect_equal(result[3], 0.1)
+})

@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
   out.width = "100%",
   background = "white",
   dev = "jpeg",
+  fig.bg = "white",
   dpi = 100,
   comment = "#>"
 )

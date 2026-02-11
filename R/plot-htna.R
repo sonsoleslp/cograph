@@ -49,6 +49,7 @@
 #' @param legend Logical. Whether to show a legend. Default TRUE for polygon layouts.
 #' @param legend_position Position for legend: "topright", "topleft", "bottomright",
 #'   "bottomleft", "right", "left", "top", "bottom". Default "topright".
+#' @param scale Scaling factor for high resolution plotting.
 #' @param extend_lines Logical or numeric. Draw extension lines from nodes.
 #'   Only applies to bipartite layout.
 #'   \itemize{

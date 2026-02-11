@@ -28,6 +28,7 @@
 #' @param legend_position Position for legend. Default "topright".
 #' @param curvature Edge curvature. Default 0.3.
 #' @param node_size Size of nodes inside shapes. Default 2.
+#' @param scale Scaling factor for high resolution plotting.
 #' @param ... Additional parameters passed to plot_tna().
 #'
 #' @return Invisibly returns NULL for summary mode, or the plot_tna result.

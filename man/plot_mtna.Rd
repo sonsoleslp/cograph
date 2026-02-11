@@ -94,6 +94,8 @@ edges within each cluster. Default TRUE.}
 
 \item{node_size}{Size of nodes inside shapes. Default 2.}
 
+\item{scale}{Scaling factor for high resolution plotting.}
+
 \item{...}{Additional parameters passed to plot_tna().}
 }
 \value{

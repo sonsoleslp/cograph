@@ -103,6 +103,8 @@ Only applies to bipartite layout.
 \item Numeric: Length of extension lines
 }}
 
+\item{scale}{Scaling factor for high resolution plotting.}
+
 \item{...}{Additional parameters passed to tplot().}
 }
 \value{

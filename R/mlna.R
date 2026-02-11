@@ -39,6 +39,7 @@
 #' @param node_size Size of nodes. Default 2.5.
 #' @param minimum Minimum edge weight threshold. Edges below this are hidden.
 #'   Default 0.
+#' @param scale Scaling factor for high resolution plotting.
 #' @param ... Additional parameters (currently unused).
 #'
 #' @return Invisibly returns NULL.

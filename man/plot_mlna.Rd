@@ -106,6 +106,8 @@ Use 1 for solid, 3 for dotted.}
 \item{minimum}{Minimum edge weight threshold. Edges below this are hidden.
 Default 0.}
 
+\item{scale}{Scaling factor for high resolution plotting.}
+
 \item{...}{Additional parameters (currently unused).}
 }
 \value{

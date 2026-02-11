@@ -16,8 +16,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Modern Network Visualization for R">
-<meta name="description" content="Provides high-quality static and interactive network plots as a modern, extensible network visualization package. It accepts adjacency matrices, edge lists, or igraph objects and offers customizable layouts, node shapes, edge styles, and themes. Designed for publication-ready visualizations with a pipe-friendly API.">
-<meta property="og:description" content="Provides high-quality static and interactive network plots as a modern, extensible network visualization package. It accepts adjacency matrices, edge lists, or igraph objects and offers customizable layouts, node shapes, edge styles, and themes. Designed for publication-ready visualizations with a pipe-friendly API.">
+<meta name="description" content="Provides tools for the analysis, visualization, and manipulation of dynamical, social and complex networks. The package supports multiple network formats and offers flexible tools for heterogeneous, multi-layer, and hierarchical network analysis with simple syntax and extensive toolset.">
+<meta property="og:description" content="Provides tools for the analysis, visualization, and manipulation of dynamical, social and complex networks. The package supports multiple network formats and offers flexible tools for heterogeneous, multi-layer, and hierarchical network analysis with simple syntax and extensive toolset.">
 <meta property="og:image" content="http://sonsoles.me/cograph/logo.png">
 </head>
 <body>
@@ -70,7 +70,7 @@
 <!-- badges: start -->
 
 <!-- badges: end -->
-<p><strong>cograph</strong> is a modern R package for network visualization. It renders publication-ready network plots from adjacency matrices, edge lists, igraph, statnet network, qgraph, or tna objects using a pipe-friendly API with full control over nodes, edges, layouts, and themes.</p>
+<p><strong>cograph</strong> provides tools for the analysis, visualization, and manipulation of dynamical, social and complex networks. The package supports multiple network formats and offers flexible tools for heterogeneous, multi-layer, and hierarchical network analysis with simple syntax and extensive toolset.</p>
 <p>Key features:</p>
 <ul>
 <li>
@@ -108,7 +108,7 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sonsoleslp/tna/" class="external-link">tna</a></span><span class="op">)</span></span>
 <span><span class="va">tna_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://sonsoles.me/tna/reference/build_model.html" class="external-link">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/splot.html">splot</a></span><span class="op">(</span><span class="va">tna_obj</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-4-1.jpeg" alt="" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-4-1.jpeg" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="simple-network-plotting">Simple network plotting<a class="anchor" aria-label="anchor" href="#simple-network-plotting"></a>
@@ -131,7 +131,7 @@
 <span>  edge_label_stars <span class="op">=</span> <span class="cn">TRUE</span>, edge_label_bg <span class="op">=</span> <span class="st">"transparent"</span>, edge_label_color <span class="op">=</span> <span class="st">"maroon"</span>, </span>
 <span>  edge_label_size <span class="op">=</span> <span class="fl">0.5</span>, edge_label_position <span class="op">=</span> <span class="fl">0.6</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-6-1.jpeg" alt="" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-6-1.jpeg" width="100%"></p>
 <p>Template placeholders: <code>{est}</code>, <code>{low}</code>, <code>{up}</code>, <code>{range}</code>, <code>{p}</code>, <a href="https://r-spatial.github.io/stars/" class="external-link">stars</a></p>
 <div class="section level3">
 <h3 id="pie-chart-nodes-and-shapes">Pie Chart Nodes and shapes<a class="anchor" aria-label="anchor" href="#pie-chart-nodes-and-shapes"></a>
@@ -169,7 +169,7 @@
 <span>  node_size <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  layout <span class="op">=</span> <span class="st">"oval"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-7-1.jpeg" alt="" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-7-1.jpeg" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="donut-nodes">Donut Nodes<a class="anchor" aria-label="anchor" href="#donut-nodes"></a>
@@ -205,7 +205,7 @@
 <span>                  <span class="st">"pentagon"</span>, <span class="st">"circle"</span>, <span class="st">"hexagon"</span>, <span class="st">"square"</span>, <span class="st">"diamond"</span><span class="op">)</span>,</span>
 <span>  donut_color <span class="op">=</span> <span class="fu"><a href="reference/palette_viridis.html">palette_viridis</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-8-1.jpeg" alt="" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-8-1.jpeg" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="plot_htna---heterogeneous-multi-group-networks">plot_htna() - Heterogeneous Multi-Group Networks<a class="anchor" aria-label="anchor" href="#plot_htna---heterogeneous-multi-group-networks"></a>
@@ -231,7 +231,7 @@
 <span></span>
 <span><span class="co"># Circular layout (groups as arcs)</span></span>
 <span><span class="fu"><a href="reference/plot_htna.html">plot_htna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">node_types</span>, layout <span class="op">=</span> <span class="st">"circular"</span>, minimum <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-9-1.jpeg" alt="" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-9-1.jpeg" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="plot_mtna---multi-cluster-networks">plot_mtna() - Multi-Cluster Networks<a class="anchor" aria-label="anchor" href="#plot_mtna---multi-cluster-networks"></a>
@@ -257,7 +257,7 @@
 <span></span>
 <span><span class="co"># Summary edges between clusters + individual edges within</span></span>
 <span><span class="fu"><a href="reference/plot_mtna.html">plot_mtna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">clusters</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-10-1.jpeg" alt="" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-10-1.jpeg" width="100%"></p>
 <p>Key parameters: * <code>spacing</code>: Distance between cluster centers * <code>shape_size</code>: Size of cluster shells * <code>node_spacing</code>: Node placement within shapes (0-1) * <code>shapes</code>: Vector of shapes per cluster (“circle”, “square”, “diamond”, “triangle”) * <code>summary_edges</code>: Show aggregated between-cluster edges (default TRUE) * <code>within_edges</code>: Show individual within-cluster edges (default TRUE)</p>
 <blockquote>
 <p><strong>Alias</strong>: <code><a href="reference/plot_mtna.html">mtna()</a></code> is available as a shorthand for <code><a href="reference/plot_mtna.html">plot_mtna()</a></code>.</p>
@@ -285,7 +285,7 @@
 <span></span>
 <span><span class="co"># Basic usage with spring layout</span></span>
 <span><span class="fu"><a href="reference/plot_mlna.html">plot_mlna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">layers</span>, layout <span class="op">=</span> <span class="st">"spring"</span>, minimum <span class="op">=</span> <span class="fl">0.18</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-11-1.jpeg" alt="" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-11-1.jpeg" width="100%"></p>
 </div>
 </div>
 <div class="section level2">

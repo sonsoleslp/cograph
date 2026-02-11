@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: end -->
 
-**cograph** is a modern R package for network visualization. It renders publication-ready network plots from adjacency matrices, edge lists, igraph, statnet network, qgraph, or tna objects using a pipe-friendly API with full control over nodes, edges, layouts, and themes.
+**cograph** provides tools for the analysis, visualization, and manipulation of dynamical, social and complex networks. The package supports multiple network formats and offers flexible tools for heterogeneous, multi-layer, and hierarchical network analysis with simple syntax and extensive toolset.
 
 Key features:
 

@@ -7,11 +7,10 @@ Authors@R: c(
            email = "sonsoles.lopez@uef.fi", role = c("aut", "cre")),
     person("Santtu", "Tikka", role = "aut")
   )
-Description: Provides high-quality static and interactive network plots
-    as a modern, extensible network visualization package. It accepts
-    adjacency matrices, edge lists, or igraph objects and offers customizable
-    layouts, node shapes, edge styles, and themes. Designed for
-    publication-ready visualizations with a pipe-friendly API.
+Description: Provides tools for the analysis, visualization, and manipulation 
+  of dynamical, social and complex networks. The package supports multiple 
+  network formats and offers flexible tools for heterogeneous, multi-layer, 
+  and hierarchical network analysis with simple syntax and extensive toolset.
 License: MIT + file LICENSE
 URL: http://sonsoles.me/cograph/
 BugReports: https://github.com/sonsoleslp/cograph/issues

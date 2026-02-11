@@ -16,10 +16,11 @@ MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.or
 
 <!-- badges: end -->
 
-**cograph** is a modern R package for network visualization. It renders
-publication-ready network plots from adjacency matrices, edge lists,
-igraph, statnet network, qgraph, or tna objects using a pipe-friendly
-API with full control over nodes, edges, layouts, and themes.
+**cograph** provides tools for the analysis, visualization, and
+manipulation of dynamical, social and complex networks. The package
+supports multiple network formats and offers flexible tools for
+heterogeneous, multi-layer, and hierarchical network analysis with
+simple syntax and extensive toolset.
 
 Key features:
 
@@ -55,7 +56,7 @@ tna_obj <- tna(group_regulation)
 splot(tna_obj)
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.jpeg" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-4-1.jpeg" width="100%" />
 
 ## Simple network plotting
 
@@ -83,7 +84,7 @@ splot(mat,
 )
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.jpeg" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-6-1.jpeg" width="100%" />
 
 Template placeholders: `{est}`, `{low}`, `{up}`, `{range}`, `{p}`,
 `{stars}`
@@ -125,7 +126,7 @@ splot(mat,
 )
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.jpeg" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-7-1.jpeg" width="100%" />
 
 ### Donut Nodes
 
@@ -162,7 +163,7 @@ splot(mat,
 )
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.jpeg" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.jpeg" width="100%" />
 
 ### plot_htna() - Heterogeneous Multi-Group Networks
 
@@ -192,7 +193,7 @@ plot_htna(m, node_types, layout = "polygon", minimum = 0.15)
 plot_htna(m, node_types, layout = "circular", minimum = 0.15)
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.jpeg" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-9-1.jpeg" width="100%" />
 
 ### plot_mtna() - Multi-Cluster Networks
 
@@ -223,7 +224,7 @@ clusters <- list(
 plot_mtna(m, clusters)
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.jpeg" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-10-1.jpeg" width="100%" />
 
 Key parameters: \* `spacing`: Distance between cluster centers \*
 `shape_size`: Size of cluster shells \* `node_spacing`: Node placement
@@ -261,7 +262,7 @@ layers <- list(
 plot_mlna(m, layers, layout = "spring", minimum = 0.18, legend = FALSE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-11-1.jpeg" alt="" width="100%" />
+<img src="man/figures/README-unnamed-chunk-11-1.jpeg" width="100%" />
 
 ## License
 

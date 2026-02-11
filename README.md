@@ -16,22 +16,28 @@ MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.or
 
 <!-- badges: end -->
 
-**cograph** provides tools for the analysis, visualization, and
-manipulation of dynamical, social and complex networks. The package
-supports multiple network formats and offers flexible tools for
-heterogeneous, multi-layer, and hierarchical network analysis with
-simple syntax and extensive toolset.
+**cograph** is a modern R package that provides tools for the analysis,
+visualization, and manipulation of dynamical, social and complex
+networks. The package supports multiple network formats and offers
+flexible tools for heterogeneous, multi-layer, and hierarchical network
+analysis with simple syntax and extensive toolset.
 
 Key features:
 
-- **Base R and grid rendering** via `splot()` and `soplot()`
-- **Pipe-friendly API**:
-  `cograph() |> sn_nodes() |> sn_edges() |> sn_theme()`
-- **25+ node shapes** including pie charts and donut rings
-- **7 built-in themes** and multiple color palettes
-- **Confidence interval underlays**, edge label templates, weight
-  scaling
-- **Converters** for `tna` and `qgraph` objects
+- Tools for analysis, visualization, and manipulation of dynamical,
+  social, and complex networks
+- Provides network metrics including centrality measures, motif
+  analysis, community detection, and network comparison
+- Validation engine with bootstrap confidence intervals, permutation
+  testing, and centrality stability analysis
+- Supports multiple input formats: adjacency matrices, edge lists, and
+  igraph objects
+- Tools for heterogeneous, multi-layer, and hierarchical network
+  analysis
+- Publication-ready plotting with customizable layouts, node shapes,
+  edge styles, and themes
+- Intuitive, pipe-friendly API
+- Fully compatible with the `tna` package
 
 ## Installation
 

@@ -27,9 +27,7 @@ Key features:
 - Tools for analysis, visualization, and manipulation of dynamical,
   social, and complex networks
 - Provides network metrics including centrality measures, motif
-  analysis, community detection, and network comparison
-- Validation engine with bootstrap confidence intervals, permutation
-  testing, and centrality stability analysis
+  analysis, and community detection
 - Supports multiple input formats: adjacency matrices, edge lists, and
   igraph objects
 - Tools for heterogeneous, multi-layer, and hierarchical network

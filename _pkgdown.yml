@@ -1,7 +1,7 @@
 url: http://sonsoles.me/cograph/
 template:
   bootstrap: 5
-  bootswatch: materia
+  bootswatch: flatly
 figures:
   dev: ragg::agg_png
   dpi: 180

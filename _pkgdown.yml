@@ -1,7 +1,7 @@
 url: http://sonsoles.me/cograph/
 template:
   bootstrap: 5
-  bootswatch: yeti
+  bootswatch: materia
 figures:
   dev: ragg::agg_png
   dpi: 180
@@ -10,7 +10,7 @@ figures:
   fig.height: 6
   fig.retina: 3
   fig.asp: NULL
-  bg: NA
+  bg: white
 
 authors:
   Mohammed Saqr:

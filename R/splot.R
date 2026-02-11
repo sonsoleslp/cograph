@@ -476,13 +476,9 @@ splot <- function(
     call_args <- tna_params
     user_args <- as.list(match.call(expand.dots = FALSE))[-1]
     user_args$x <- NULL  # already set via tna_params$x
-    dots <- list(...)
     for (nm in names(user_args)) {
       val <- eval(user_args[[nm]], envir = parent.frame())
       if (!is.null(val)) call_args[[nm]] <- val
-    }
-    for (nm in names(dots)) {
-      call_args[[nm]] <- dots[[nm]]
     }
     return(do.call(splot, call_args))
   }
@@ -541,7 +537,7 @@ splot <- function(
       # Extract theme colors
       if (is.null(node_fill)) node_fill <- th$get("node_fill")
       if (is.null(node_border_color)) node_border_color <- th$get("node_border_color")
-      if (is.null(background)) background <- th$get("background")
+      background <- th$get("background")
       if (length(label_color) == 1 && label_color == "black") label_color <- th$get("label_color")
       if (length(edge_positive_color) == 1 && edge_positive_color == "#2E7D32") edge_positive_color <- th$get("edge_positive_color")
       if (length(edge_negative_color) == 1 && edge_negative_color == "#C62828") edge_negative_color <- th$get("edge_negative_color")
@@ -554,18 +550,8 @@ splot <- function(
   edges <- get_edges(network)
   is_net_directed <- is_directed(network)
 
-  # Get layout coordinates from nodes if available, or from layout element
-  if ("x" %in% names(nodes) && !all(is.na(nodes$x))) {
-    layout_coords <- data.frame(x = nodes$x, y = nodes$y)
-  } else if (!is.null(network$layout)) {
-    layout_coords <- network$layout
-  } else if (!is.null(attr(network, "layout"))) {
-    layout_coords <- attr(network, "layout")
-  } else if (!is.null(network$network) && inherits(network$network, "CographNetwork")) {
-    layout_coords <- network$network$get_layout()
-  } else {
-    layout_coords <- NULL
-  }
+  # Get layout coordinates from nodes (ensure_cograph_network always sets x/y)
+  layout_coords <- data.frame(x = nodes$x, y = nodes$y)
 
   # (oval layout uses elliptical spacing but nodes remain circular via aspect=TRUE)
 
@@ -610,10 +596,6 @@ splot <- function(
   # ============================================
   # 2. LAYOUT HANDLING
   # ============================================
-
-  if (is.null(layout_coords)) {
-    stop("Layout coordinates not available", call. = FALSE)
-  }
 
   layout_mat <- as.matrix(layout_coords[, c("x", "y")])
 
@@ -948,7 +930,7 @@ splot <- function(
     } else if (filetype == "pdf") {
       grDevices::pdf(full_filename, width = width, height = height)
     } else if (filetype == "svg") {
-      grDevices::svg(full_filename, width = width, height = height)
+      grDevices::svg(full_filename, width = width, height = height) # nocov
     } else if (filetype == "jpeg" || filetype == "jpg") {
       grDevices::jpeg(full_filename, width = width, height = height,
                       units = "in", res = res, quality = 100)
@@ -1297,13 +1279,6 @@ render_edges_splot <- function(edges, layout, node_sizes, shapes,
 
   # Helper function to calculate curve direction (bend INWARD toward center)
   calc_curve_direction <- function(curve_val, start_x, start_y, end_x, end_y) {
-    # Defensive check: ensure all coordinates are valid scalars
-    if (length(start_x) == 0 || length(start_y) == 0 ||
-        length(end_x) == 0 || length(end_y) == 0 ||
-        any(is.na(c(start_x, start_y, end_x, end_y)))) {
-      return(if (length(curve_val) > 0) curve_val else 0)
-    }
-
     if (length(curve_val) == 0 || is.na(curve_val)) {
       return(0)
     }

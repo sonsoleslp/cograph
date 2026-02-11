@@ -91,7 +91,7 @@ parse_svg <- function(svg_data) {
   }
 
   # Check for grImport2 package
-  if (!requireNamespace("grImport2", quietly = TRUE)) {
+  if (!has_package("grImport2")) {
     warning("Package 'grImport2' is required for SVG shapes. ",
             "Install with: install.packages('grImport2')",
             call. = FALSE)
@@ -140,19 +140,6 @@ draw_svg_shape <- function(x, y, size, svg_data, fill, border_color, border_widt
 
   if (is.null(parsed)) {
     # Fallback to circle if SVG parsing fails
-    fill_col <- adjust_alpha(fill, alpha)
-    border_col <- adjust_alpha(border_color, alpha)
-
-    return(grid::circleGrob(
-      x = grid::unit(x, "npc"),
-      y = grid::unit(y, "npc"),
-      r = grid::unit(size, "npc"),
-      gp = grid::gpar(fill = fill_col, col = border_col, lwd = border_width)
-    ))
-  }
-
-  # Check for grImport2
-  if (!requireNamespace("grImport2", quietly = TRUE)) {
     fill_col <- adjust_alpha(fill, alpha)
     border_col <- adjust_alpha(border_color, alpha)
 
@@ -222,7 +209,7 @@ draw_svg_shape_base <- function(x, y, size, svg_data, fill, border_color, border
   # For Base R, we attempt to use rsvg to rasterize and rasterImage to draw
   # This requires the 'rsvg' package
 
-  if (!requireNamespace("rsvg", quietly = TRUE)) {
+  if (!has_package("rsvg")) {
     # Fallback to circle
     graphics::symbols(
       x = x, y = y,

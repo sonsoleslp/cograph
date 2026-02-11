@@ -15,25 +15,25 @@ tna_color_palette <- function(n_states) {
   # Check for required packages with fallbacks
   switch(color_group,
     # 1-2 states: Accent palette (first n colors)
-    if (requireNamespace("RColorBrewer", quietly = TRUE)) {
+    if (has_package("RColorBrewer")) {
       RColorBrewer::brewer.pal(n = 3, name = "Accent")[seq_len(n_states)]
     } else {
       grDevices::hcl.colors(n_states, palette = "Set 2")
     },
     # 3-8 states: Full Accent palette
-    if (requireNamespace("RColorBrewer", quietly = TRUE)) {
+    if (has_package("RColorBrewer")) {
       RColorBrewer::brewer.pal(n = n_states, name = "Accent")
     } else {
       grDevices::hcl.colors(n_states, palette = "Set 2")
     },
     # 9-12 states: Set3 palette
-    if (requireNamespace("RColorBrewer", quietly = TRUE)) {
+    if (has_package("RColorBrewer")) {
       RColorBrewer::brewer.pal(n = n_states, name = "Set3")
     } else {
       grDevices::hcl.colors(n_states, palette = "Set 3")
     },
     # 13+ states: colorspace qualitative HCL
-    if (requireNamespace("colorspace", quietly = TRUE)) {
+    if (has_package("colorspace")) {
       colorspace::qualitative_hcl(n = n_states, palette = "Set 3")
     } else {
       grDevices::hcl.colors(n_states, palette = "Set 3")
@@ -138,10 +138,13 @@ from_tna <- function(tna_object, engine = c("splot", "soplot"), plot = TRUE,
   # --- Build params ---
   n_states <- nrow(x)
 
+  # Auto-detect directedness from matrix symmetry
+  is_directed <- !is_symmetric_matrix(x)
+
   params <- list(
     x          = x,
     labels     = tna_object$labels,
-    directed   = TRUE,
+    directed   = is_directed,
     weight_digits     = weight_digits,
     donut_fill = as.numeric(tna_object$inits),
     donut_inner_ratio = 0.8,
@@ -151,14 +154,16 @@ from_tna <- function(tna_object, engine = c("splot", "soplot"), plot = TRUE,
   # --- TNA-specific visual defaults (can be overridden via ...) ---
   params$node_fill <- tna_color_palette(n_states)
   params$layout <- "oval"
-  params$arrow_size <- 0.61
   params$edge_labels <- TRUE
   params$edge_label_size <- 0.6
   params$edge_color <- "#003355"
   params$edge_label_position <- 0.7
   params$node_size <- 7
-  params$edge_start_length <- 0.2
-  params$edge_start_style <- "dotted"
+  if (is_directed) {
+    params$arrow_size <- 0.61
+    params$edge_start_length <- 0.2
+    params$edge_start_style <- "dotted"
+  }
 
   # --- Apply overrides ---
   for (nm in names(overrides)) {

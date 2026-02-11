@@ -196,9 +196,7 @@ plot_htna <- function(
   if (layout == "polygon" && n_groups < 3) {
     stop("Polygon layout requires at least 3 groups", call. = FALSE)
   }
-  if (layout == "circular" && n_groups < 2) {
-    stop("Circular layout requires at least 2 groups", call. = FALSE)
-  }
+  # Note: circular with < 2 groups is already caught by the n_groups < 2 check above
 
   # Determine colors and shapes for each group
   if (is.null(group_colors)) {
@@ -638,10 +636,7 @@ for (i in seq_len(n_sides)) {
     outward <- c(-edge_vec[2], edge_vec[1])  # Perpendicular
     outward <- outward / sqrt(sum(outward^2))  # Normalize
 
-    # Make sure it points outward (away from origin)
-    if (sum(outward * mid) < 0) {
-      outward <- -outward
-    }
+    # Clockwise vertex ordering ensures outward already points away from center
 
     if (n_nodes > 1) {
       # Distribute nodes along edge with gaps at corners

@@ -122,9 +122,7 @@ CographNetwork <- R6::R6Class(
       if (!is.null(coords)) {
         if (is.matrix(coords)) {
           coords <- as.data.frame(coords)
-          if (is.null(names(coords))) {
-            names(coords) <- c("x", "y")
-          }
+          names(coords)[1:2] <- c("x", "y")
         }
         private$.layout <- coords
         # Update node positions

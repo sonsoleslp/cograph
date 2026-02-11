@@ -14,7 +14,7 @@ NULL
 #' @noRd
 parse_statnet <- function(net, directed = NULL) {
   # Check if network package is available
-  if (!requireNamespace("network", quietly = TRUE)) {
+  if (!has_package("network")) {
     stop("Package 'network' is required for statnet network input. ",
          "Please install it with: install.packages('network')",
          call. = FALSE)
@@ -35,9 +35,6 @@ parse_statnet <- function(net, directed = NULL) {
 
   # Get node labels
   labels <- network::network.vertex.names(net)
-  if (is.null(labels) || all(is.na(labels))) {
-    labels <- as.character(seq_len(n))
-  }
 
   # Get edges as matrix
   edge_matrix <- network::as.edgelist(net)

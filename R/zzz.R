@@ -4,6 +4,17 @@
 #' @keywords internal
 NULL
 
+#' Check if a package is available
+#'
+#' Internal wrapper around requireNamespace that can be mocked in tests.
+#'
+#' @param pkg Package name.
+#' @return Logical.
+#' @keywords internal
+has_package <- function(pkg) {
+  requireNamespace(pkg, quietly = TRUE)
+}
+
 .onLoad <- function(libname, pkgname) {
   # Initialize registries
   init_registries()

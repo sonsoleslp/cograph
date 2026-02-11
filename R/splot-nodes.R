@@ -433,11 +433,7 @@ draw_donut_node_base <- function(x, y, size, values, colors = NULL,
     n <- length(props)
 
     if (is.null(colors)) {
-      if (!is.null(default_color) && n == 1) {
-        colors <- default_color
-      } else {
-        colors <- grDevices::rainbow(n, s = 0.7, v = 0.9)
-      }
+      colors <- grDevices::rainbow(n, s = 0.7, v = 0.9)
     }
     colors <- recycle_to_length(colors, n)
 
@@ -730,8 +726,6 @@ draw_double_donut_pie_node_base <- function(x, y, size,
 
   # Helper to draw donut ring (handles both progress and segmented)
   draw_donut_ring <- function(values, colors, default_color, r_outer, r_inner) {
-    if (is.null(values)) return()
-
     if (length(values) == 1) {
       # Progress donut - draw background then filled portion
       draw_ring_segment(0, 2 * pi, r_outer, r_inner, bg_color)

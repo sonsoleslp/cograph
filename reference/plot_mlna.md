@@ -151,6 +151,10 @@ mlna(
 
   Minimum edge weight threshold. Edges below this are hidden. Default 0.
 
+- scale:
+
+  Scaling factor for high resolution plotting.
+
 - ...:
 
   Additional parameters (currently unused).

@@ -167,6 +167,10 @@ plot_htna(
 
   - Numeric: Length of extension lines
 
+- scale:
+
+  Scaling factor for high resolution plotting.
+
 - ...:
 
   Additional parameters passed to tplot().

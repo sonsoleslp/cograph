@@ -134,6 +134,10 @@ mtna(
 
   Size of nodes inside shapes. Default 2.
 
+- scale:
+
+  Scaling factor for high resolution plotting.
+
 - ...:
 
   Additional parameters passed to plot_tna().

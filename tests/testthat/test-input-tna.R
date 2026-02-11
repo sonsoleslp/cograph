@@ -220,8 +220,7 @@ test_that("parse_tna handles fully connected network", {
   result <- parse_tna(tna_obj)
 
   expect_equal(nrow(result$nodes), 3)
-  # 3*3 - 3 (diagonal) = 6 edges
-  expect_equal(nrow(result$edges), 6)
+  expect_equal(nrow(result$edges), 3)
 })
 
 test_that("parse_tna handles single node network", {

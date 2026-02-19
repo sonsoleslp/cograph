@@ -1,5 +1,5 @@
 Package: cograph
-Title: Modern Network Visualization for R
+Title: Modern Network Visualization
 Version: 1.5.2
 Authors@R: c(
     person("Mohammed", "Saqr", role = "aut"),

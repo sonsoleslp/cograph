@@ -3,7 +3,7 @@
 \docType{package}
 \name{cograph-package}
 \alias{cograph-package}
-\title{cograph: Modern Network Visualization for R}
+\title{cograph: Modern Network Visualization}
 \description{
 A modern, extensible network visualization package that provides high-quality
 static and interactive network plots. cograph accepts adjacency matrices,

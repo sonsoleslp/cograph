@@ -1,4 +1,4 @@
-#' @title cograph: Modern Network Visualization for R
+#' @title cograph: Modern Network Visualization
 #' @keywords internal
 #' @description
 #' A modern, extensible network visualization package that provides high-quality

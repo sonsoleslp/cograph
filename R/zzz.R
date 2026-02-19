@@ -37,7 +37,7 @@ has_package <- function(pkg) {
 
 .onAttach <- function(libname, pkgname) {
   packageStartupMessage(
-    "cograph: Modern Network Visualization for R\n",
+    "cograph: Modern Network Visualization\n",
     "Version: ", utils::packageVersion(pkgname), "\n",
     "Type ?cograph for help"
   )

@@ -20,7 +20,7 @@ MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.or
 visualization, and manipulation of dynamical, social and complex
 networks. The package supports multiple network formats and offers
 flexible tools for heterogeneous, multi-layer, and hierarchical network
-analysis with simple syntax and extensive toolset.
+analysis with simple syntax and extensive tool-set.
 
 Key features:
 
@@ -270,4 +270,4 @@ plot_mlna(m, layers, layout = "spring", minimum = 0.18, legend = FALSE)
 
 ## License
 
-MIT License. See [LICENSE.md](LICENSE.md) for details.
+MIT License. See [LICENSE](LICENSE) for details.

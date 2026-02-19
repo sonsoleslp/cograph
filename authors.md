@@ -14,11 +14,10 @@ Source:
 [`DESCRIPTION`](https://github.com/sonsoleslp/cograph/blob/main/DESCRIPTION)
 
 Saqr M, López-Pernas S, Tikka S (2026). *cograph: Modern Network
-Visualization for R*. R package version 1.5.2,
-<http://sonsoles.me/cograph/>.
+Visualization*. R package version 1.5.2, <http://sonsoles.me/cograph/>.
 
     @Manual{,
-      title = {cograph: Modern Network Visualization for R},
+      title = {cograph: Modern Network Visualization},
       author = {Mohammed Saqr and Sonsoles López-Pernas and Santtu Tikka},
       year = {2026},
       note = {R package version 1.5.2},

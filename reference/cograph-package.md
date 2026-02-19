@@ -1,4 +1,4 @@
-# cograph: Modern Network Visualization for R
+# cograph: Modern Network Visualization
 
 A modern, extensible network visualization package that provides
 high-quality static and interactive network plots. cograph accepts

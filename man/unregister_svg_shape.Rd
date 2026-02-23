@@ -17,7 +17,5 @@ Remove a custom SVG shape from the registry.
 }
 \examples{
 # Attempt to unregister a non-existent shape (returns FALSE)
-\dontrun{
 unregister_svg_shape("nonexistent")
-}
 }

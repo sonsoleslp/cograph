@@ -274,9 +274,7 @@ list_svg_shapes <- function() {
 #' @export
 #' @examples
 #' # Attempt to unregister a non-existent shape (returns FALSE)
-#' \dontrun{
 #' unregister_svg_shape("nonexistent")
-#' }
 unregister_svg_shape <- function(name) {
   if (exists(name, envir = svg_shape_registry)) {
     rm(list = name, envir = svg_shape_registry)

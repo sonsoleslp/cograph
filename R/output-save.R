@@ -20,14 +20,14 @@ NULL
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
 #' # With cograph()
 #' net <- cograph(adj)
-#' sn_save(net, "network.pdf")
+#' sn_save(net, file.path(tempdir(), "network.pdf"))
 #'
 #' # Direct matrix input
-#' sn_save(adj, "network.png", dpi = 300)
+#' sn_save(adj, file.path(tempdir(), "network.png"), dpi = 300)
 #' }
 sn_save <- function(network, filename, width = 7, height = 7, dpi = 300,
                     title = NULL, ...) {
@@ -109,10 +109,10 @@ sn_save <- function(network, filename, width = 7, height = 7, dpi = 300,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
 #' net <- cograph(adj)
-#' sn_save_ggplot(net, "network.pdf")
+#' sn_save_ggplot(net, file.path(tempdir(), "network.pdf"))
 #' }
 sn_save_ggplot <- function(network, filename, width = 7, height = 7,
                            dpi = 300, title = NULL, ...) {

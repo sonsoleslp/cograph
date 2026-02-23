@@ -134,7 +134,7 @@ splot(
   groups = NULL,
   node_names = NULL,
   filetype = "default",
-  filename = "splot",
+  filename = file.path(tempdir(), "splot"),
   width = 7,
   height = 7,
   res = 600,

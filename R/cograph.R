@@ -53,8 +53,15 @@ compute_layout_for_cograph <- function(net, layout = "spring", seed = 42, ...) {
   nodes <- get_nodes(net)
   n <- nrow(nodes)
 
-  # Set seed for deterministic layouts
+  # Set seed for deterministic layouts, restoring RNG state on exit
   if (!is.null(seed)) {
+    rng_exists <- exists(".Random.seed", envir = globalenv(), inherits = FALSE)
+    if (rng_exists) {
+      old_rng_state <- .Random.seed
+      on.exit(assign(".Random.seed", old_rng_state, envir = globalenv()), add = TRUE)
+    } else {
+      on.exit(rm(".Random.seed", envir = globalenv()), add = TRUE)
+    }
     set.seed(seed)
   }
 
@@ -172,7 +179,7 @@ compute_layout_for_cograph <- function(net, layout = "spring", seed = 42, ...) {
 #'   splot()
 #'
 #' # With igraph (if installed)
-#' \dontrun{
+#' \donttest{
 #' library(igraph)
 #' g <- make_ring(10)
 #' cograph(g) |> splot()
@@ -190,8 +197,15 @@ cograph <- function(input, layout = "spring", directed = NULL,
   # Apply default theme
   network$set_theme(get_theme("classic"))
 
-  # Set seed for deterministic layouts
+  # Set seed for deterministic layouts, restoring RNG state on exit
   if (!is.null(seed)) {
+    rng_exists <- exists(".Random.seed", envir = globalenv(), inherits = FALSE)
+    if (rng_exists) {
+      old_rng_state <- .Random.seed
+      on.exit(assign(".Random.seed", old_rng_state, envir = globalenv()), add = TRUE)
+    } else {
+      on.exit(rm(".Random.seed", envir = globalenv()), add = TRUE)
+    }
     set.seed(seed)
   }
 
@@ -280,7 +294,7 @@ cograph <- function(input, layout = "spring", directed = NULL,
 #' cograph(adj) |> sn_layout("spring") |> splot()
 #'
 #' # igraph layouts (if igraph installed)
-#' \dontrun{
+#' \donttest{
 #' cograph(adj) |> sn_layout("kk") |> splot()
 #' cograph(adj) |> sn_layout("fr") |> splot()
 #' }
@@ -297,8 +311,15 @@ sn_layout <- function(network, layout, seed = 42, ...) {
 
   new_net <- network$network$clone_network()
 
-  # Set seed for deterministic layouts
+  # Set seed for deterministic layouts, restoring RNG state on exit
   if (!is.null(seed)) {
+    rng_exists <- exists(".Random.seed", envir = globalenv(), inherits = FALSE)
+    if (rng_exists) {
+      old_rng_state <- .Random.seed
+      on.exit(assign(".Random.seed", old_rng_state, envir = globalenv()), add = TRUE)
+    } else {
+      on.exit(rm(".Random.seed", envir = globalenv()), add = TRUE)
+    }
     set.seed(seed)
   }
 

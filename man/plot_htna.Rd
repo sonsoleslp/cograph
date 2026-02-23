@@ -119,37 +119,53 @@ Plots a TNA model with nodes arranged in multiple groups using geometric layouts
 Supports triangle (3), rectangle (4), pentagon (5), hexagon (6), and beyond.
 }
 \examples{
-\dontrun{
-# Define node groups (2 groups - bipartite)
+\donttest{
+# --- 2-group bipartite example ---
+nodes_2 <- c("Wrong", "Retry", "Right", "Attempt", "Instruction", "Skip",
+              "Order", "Correct", "Hint", "Quit", "Clarify", "Question", "Praise")
+set.seed(1)
+m2 <- matrix(runif(length(nodes_2)^2, 0, 0.3), length(nodes_2), length(nodes_2))
+diag(m2) <- 0
+dimnames(m2) <- list(nodes_2, nodes_2)
+
 node_types <- list(
   Student = c("Wrong", "Retry", "Right", "Attempt", "Instruction", "Skip"),
   AI = c("Order", "Correct", "Hint", "Quit", "Clarify", "Question", "Praise")
 )
+plot_htna(m2, node_types)
+plot_htna(m2, node_types, jitter_amount = 0.5)
 
-# Basic bipartite plot
-plot_htna(model, node_types)
+# --- Triangle layout (3 groups) ---
+nodes_3 <- c("Explain", "Question", "Feedback",
+              "Answer", "Ask", "Attempt",
+              "Hint", "Score", "Progress")
+m3 <- matrix(runif(81, 0, 0.3), 9, 9)
+diag(m3) <- 0
+dimnames(m3) <- list(nodes_3, nodes_3)
 
-# With custom jitter
-plot_htna(model, node_types, jitter_amount = 0.5)
-
-# Triangle layout (3 groups)
 node_types_3 <- list(
   Teacher = c("Explain", "Question", "Feedback"),
   Student = c("Answer", "Ask", "Attempt"),
-  System = c("Hint", "Score", "Progress")
+  System  = c("Hint", "Score", "Progress")
 )
-plot_htna(model, node_types_3)  # Auto-detects triangle
+plot_htna(m3, node_types_3)
+plot_htna(m3, node_types_3, layout = "triangle")
 
-# Rectangle layout (4 groups)
+# --- Rectangle layout (4 groups) ---
+nodes_4 <- c("Click", "Type", "Scroll",
+              "Validate", "Transform",
+              "Display", "Alert",
+              "Save", "Load", "Cache")
+m4 <- matrix(runif(100, 0, 0.3), 10, 10)
+diag(m4) <- 0
+dimnames(m4) <- list(nodes_4, nodes_4)
+
 node_types_4 <- list(
-  Input = c("Click", "Type", "Scroll"),
+  Input   = c("Click", "Type", "Scroll"),
   Process = c("Validate", "Transform"),
-  Output = c("Display", "Alert"),
+  Output  = c("Display", "Alert"),
   Storage = c("Save", "Load", "Cache")
 )
-plot_htna(model, node_types_4)  # Auto-detects rectangle
-
-# Explicit layout selection
-plot_htna(model, node_types_3, layout = "triangle")
+plot_htna(m4, node_types_4)
 }
 }

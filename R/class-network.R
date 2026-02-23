@@ -644,7 +644,7 @@ set_layout <- function(x, layout_df) {
 #' splot(net)
 #'
 #' # From igraph (if installed)
-#' \dontrun{
+#' \donttest{
 #' library(igraph)
 #' g <- make_ring(10)
 #' net <- as_cograph(g)

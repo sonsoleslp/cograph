@@ -22,10 +22,7 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages({
   library("cograph")
 })
-options(scipen = 99)
-options(digits = 2)
-options(max.print = 30)
-options(width = 83)
+old_opts <- options(scipen = 99, digits = 2, max.print = 30, width = 83)
 ```
 
 This vignette demonstrates how to visualize statistical uncertainty on network edges using confidence interval underlays, p-value significance stars, and label templates.
@@ -158,4 +155,8 @@ splot(mat, node_size = 9,
       edge_ci_scale = 4,
       edge_ci_alpha = 0.15,
       theme = "minimal")
+```
+
+```{r, include = FALSE}
+options(old_opts)
 ```

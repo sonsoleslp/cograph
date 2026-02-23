@@ -96,7 +96,7 @@ with hanging labels.
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Convert and plot a qgraph object
 library(qgraph)
 adj <- matrix(c(0, .5, .3, .5, 0, .4, .3, .4, 0), 3, 3)

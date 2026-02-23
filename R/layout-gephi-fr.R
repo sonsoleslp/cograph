@@ -21,14 +21,6 @@
 #'   \item Different cooling/speed mechanism
 #' }
 #'
-#' @examples
-#' \dontrun{
-#' library(igraph)
-#' g <- make_ring(10)
-#' coords <- layout_gephi_fr(g)
-#' plot(g, layout = coords)
-#' }
-#'
 #' @keywords internal
 layout_gephi_fr <- function(g, area = 10000, gravity = 10.0, speed = 1.0, niter = 100) {
 

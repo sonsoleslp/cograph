@@ -37,8 +37,15 @@ layout_spring <- function(network, iterations = 500, cooling = 0.95,
     return(data.frame(x = 0.5, y = 0.5))
   }
 
-  # Set seed if provided
+  # Set seed if provided, restoring RNG state on exit
   if (!is.null(seed)) {
+    rng_exists <- exists(".Random.seed", envir = globalenv(), inherits = FALSE)
+    if (rng_exists) {
+      old_rng_state <- .Random.seed
+      on.exit(assign(".Random.seed", old_rng_state, envir = globalenv()), add = TRUE)
+    } else {
+      on.exit(rm(".Random.seed", envir = globalenv()), add = TRUE)
+    }
     set.seed(seed)
   }
 

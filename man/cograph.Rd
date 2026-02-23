@@ -66,7 +66,7 @@ cograph(w_adj) |>
   splot()
 
 # With igraph (if installed)
-\dontrun{
+\donttest{
 library(igraph)
 g <- make_ring(10)
 cograph(g) |> splot()

@@ -49,7 +49,7 @@ Built-in themes include:
 \seealso{
 Useful links:
 \itemize{
-  \item \url{http://sonsoles.me/cograph/}
+  \item \url{https://sonsoles.me/cograph/}
   \item Report bugs at \url{https://github.com/sonsoleslp/cograph/issues}
 }
 

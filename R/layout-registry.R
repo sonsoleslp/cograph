@@ -40,7 +40,16 @@ layout_grid_fn <- function(network, ncol = NULL, ...) {
 #' @keywords internal
 layout_random_fn <- function(network, seed = NULL, ...) {
   n <- network$n_nodes
-  if (!is.null(seed)) set.seed(seed)
+  if (!is.null(seed)) {
+    rng_exists <- exists(".Random.seed", envir = globalenv(), inherits = FALSE)
+    if (rng_exists) {
+      old_rng_state <- .Random.seed
+      on.exit(assign(".Random.seed", old_rng_state, envir = globalenv()), add = TRUE)
+    } else {
+      on.exit(rm(".Random.seed", envir = globalenv()), add = TRUE)
+    }
+    set.seed(seed)
+  }
   data.frame(x = stats::runif(n, 0.1, 0.9), y = stats::runif(n, 0.1, 0.9))
 }
 

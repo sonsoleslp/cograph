@@ -23,10 +23,7 @@ suppressPackageStartupMessages({
   library("cograph")
   library("qgraph")
 })
-options(scipen = 99)
-options(digits = 2)
-options(max.print = 30)
-options(width = 83)
+old_opts <- options(scipen = 99, digits = 2, max.print = 30, width = 83)
 ```
 
 This guide introduces `splot()`, the main plotting function in `cograph`, and helps `qgraph` users transition to it.
@@ -276,4 +273,8 @@ splot(mat, node_size = 9,
       donut_color = palette_rainbow(9),
       donut2_values = lapply(1:9, function(i) runif(1)),
       donut2_colors = lapply(palette_colorblind(9), function(x) x))
+```
+
+```{r, include = FALSE}
+options(old_opts)
 ```

@@ -107,7 +107,7 @@ and individual edges within clusters. Each cluster is displayed as a
 shape (circle, square, diamond, triangle) containing its nodes.
 }
 \examples{
-\dontrun{
+\donttest{
 # Create network with 4 clusters
 nodes <- paste0("N", 1:20)
 m <- matrix(runif(400, 0, 0.3), 20, 20)

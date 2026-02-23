@@ -458,7 +458,7 @@ splot <- function(
 
     # Output
     filetype = "default",
-    filename = "splot",
+    filename = file.path(tempdir(), "splot"),
     width = 7,
     height = 7,
     res = 600,
@@ -522,8 +522,15 @@ splot <- function(
     x <- round(x, weight_digits)
   }
 
-  # Set seed for deterministic layouts
+  # Set seed for deterministic layouts, restoring RNG state on exit
   if (!is.null(seed)) {
+    rng_exists <- exists(".Random.seed", envir = globalenv(), inherits = FALSE)
+    if (rng_exists) {
+      old_rng_state <- .Random.seed
+      on.exit(assign(".Random.seed", old_rng_state, envir = globalenv()), add = TRUE)
+    } else {
+      on.exit(rm(".Random.seed", envir = globalenv()), add = TRUE)
+    }
     set.seed(seed)
   }
 

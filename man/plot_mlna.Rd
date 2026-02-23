@@ -125,7 +125,7 @@ a pseudo-3D appearance.
 \if{latex}{\figure{mlna_example.png}{options: width=4in}}
 }
 \examples{
-\dontrun{
+\donttest{
 # Create multilevel network
 set.seed(42)
 nodes <- paste0("N", 1:15)

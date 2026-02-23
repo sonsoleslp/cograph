@@ -33,13 +33,4 @@ Fruchterman-Reingold. Key differences from igraph's layout_with_fr:
 \item Different cooling/speed mechanism
 }
 }
-\examples{
-\dontrun{
-library(igraph)
-g <- make_ring(10)
-coords <- layout_gephi_fr(g)
-plot(g, layout = coords)
-}
-
-}
 \keyword{internal}

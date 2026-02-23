@@ -35,10 +35,3 @@ has_package <- function(pkg) {
   register_builtin_palettes()
 }
 
-.onAttach <- function(libname, pkgname) {
-  packageStartupMessage(
-    "cograph: Modern Network Visualization\n",
-    "Version: ", utils::packageVersion(pkgname), "\n",
-    "Type ?cograph for help"
-  )
-}

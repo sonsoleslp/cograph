@@ -22,10 +22,7 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages({
   library("cograph")
 })
-options(scipen = 99)
-options(digits = 2)
-options(max.print = 30)
-options(width = 83)
+old_opts <- options(scipen = 99, digits = 2, max.print = 30, width = 83)
 ```
 
 This vignette demonstrates the basic usage of the `cograph` package using a transition probability matrix from a learning analytics study.
@@ -133,5 +130,9 @@ soplot(mat, node_size = 9, layout = "oval")
 
 ```{r, eval = FALSE}
 splot(mat, node_size = 9, filetype = "png",
-      filename = "network", width = 8, height = 8)
+      filename = file.path(tempdir(), "network"), width = 8, height = 8)
+```
+
+```{r, include = FALSE}
+options(old_opts)
 ```

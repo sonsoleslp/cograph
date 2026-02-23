@@ -24,3 +24,9 @@
 ^\.\.Rcheck$
 ^mds$
 .git
+^CHANGES\.md$
+^LEARNINGS\.md$
+^HANDOFF\.md$
+^CRAN_fixes_report\.Rmd$
+^CRAN_review_report\.Rmd$
+^tmp$

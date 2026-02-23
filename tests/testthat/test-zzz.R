@@ -231,34 +231,10 @@ test_that("tplot is exported as alias", {
 # .onAttach Startup Message Tests
 # ============================================
 
-test_that(".onAttach produces startup message", {
-  msg <- capture.output(type = "message", {
-    cograph:::.onAttach(NULL, "cograph")
-  })
-
-  # Should contain package name and version
-  msg_text <- paste(msg, collapse = " ")
-  expect_true(grepl("cograph", msg_text, ignore.case = TRUE))
-  expect_true(grepl("Version", msg_text))
-})
-
-test_that(".onAttach message includes version number", {
-  msg <- capture.output(type = "message", {
-    cograph:::.onAttach(NULL, "cograph")
-  })
-
-  msg_text <- paste(msg, collapse = " ")
-  # Should contain a version number pattern (e.g., 1.5.2)
-  expect_true(grepl("\\d+\\.\\d+", msg_text))
-})
-
-test_that(".onAttach message includes help hint", {
-  msg <- capture.output(type = "message", {
-    cograph:::.onAttach(NULL, "cograph")
-  })
-
-  msg_text <- paste(msg, collapse = " ")
-  expect_true(grepl("help", msg_text, ignore.case = TRUE))
+test_that(".onAttach is absent (removed per CRAN policy)", {
+  # CRAN policy: boilerplate startup messages are not permitted.
+  # .onAttach was intentionally removed; verify it no longer exists.
+  expect_false(exists(".onAttach", envir = asNamespace("cograph"), inherits = FALSE))
 })
 
 # ============================================

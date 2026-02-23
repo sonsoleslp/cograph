@@ -81,10 +81,10 @@ The following visual defaults are applied for TNA plots (all can be overridden v
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Convert and plot a tna object
 library(tna)
-trans <- tna(transitions)
+trans <- tna(group_regulation)
 from_tna(trans)  # Plots with donut rings showing initial probabilities
 
 # Use soplot engine instead

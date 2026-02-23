@@ -55,7 +55,7 @@ cograph(adj) |> sn_layout("circle") |> splot()
 cograph(adj) |> sn_layout("spring") |> splot()
 
 # igraph layouts (if igraph installed)
-\dontrun{
+\donttest{
 cograph(adj) |> sn_layout("kk") |> splot()
 cograph(adj) |> sn_layout("fr") |> splot()
 }

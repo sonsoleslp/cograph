@@ -102,10 +102,10 @@ tna_color_palette <- function(n_states) {
 #' \code{\link{from_qgraph}} for qgraph object conversion
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Convert and plot a tna object
 #' library(tna)
-#' trans <- tna(transitions)
+#' trans <- tna(group_regulation)
 #' from_tna(trans)  # Plots with donut rings showing initial probabilities
 #'
 #' # Use soplot engine instead
@@ -266,7 +266,7 @@ from_tna <- function(tna_object, engine = c("splot", "soplot"), plot = TRUE,
 #' \code{\link{from_tna}} for tna object conversion
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Convert and plot a qgraph object
 #' library(qgraph)
 #' adj <- matrix(c(0, .5, .3, .5, 0, .4, .3, .4, 0), 3, 3)

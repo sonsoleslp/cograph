@@ -22,10 +22,7 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages({
   library("cograph")
 })
-options(scipen = 99)
-options(digits = 2)
-options(max.print = 30)
-options(width = 83)
+old_opts <- options(scipen = 99, digits = 2, max.print = 30, width = 83)
 ```
 
 This vignette shows how to use pie chart and donut (ring) nodes in `cograph` to display additional data dimensions on each node.
@@ -176,4 +173,8 @@ splot(mat, node_size = 9,
       pie_colors = rep(list(c("#E41A1C", "#377EB8", "#4DAF4A")), 9),
       label_position = "below",
       edge_labels = TRUE)
+```
+
+```{r, include = FALSE}
+options(old_opts)
 ```

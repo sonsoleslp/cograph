@@ -125,7 +125,6 @@ a pseudo-3D appearance.
 \if{latex}{\figure{mlna_example.png}{options: width=4in}}
 }
 \examples{
-\donttest{
 # Create multilevel network
 set.seed(42)
 nodes <- paste0("N", 1:15)
@@ -152,5 +151,4 @@ plot_mlna(m, layers,
 
 # Circle layout within layers
 plot_mlna(m, layers, layout = "circle")
-}
 }

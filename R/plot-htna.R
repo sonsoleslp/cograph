@@ -64,7 +64,6 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' # --- 2-group bipartite example ---
 #' nodes_2 <- c("Wrong", "Retry", "Right", "Attempt", "Instruction", "Skip",
 #'               "Order", "Correct", "Hint", "Quit", "Clarify", "Question", "Praise")
@@ -112,7 +111,6 @@
 #'   Storage = c("Save", "Load", "Cache")
 #' )
 #' plot_htna(m4, node_types_4)
-#' }
 plot_htna <- function(
     x,
     node_list,

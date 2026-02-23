@@ -22,7 +22,8 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages({
   library("cograph")
 })
-old_opts <- options(scipen = 99, digits = 2, max.print = 30, width = 83)
+old_opts <- options()
+options(scipen = 99, digits = 2, max.print = 30, width = 83)
 ```
 
 This vignette demonstrates the basic usage of the `cograph` package using a transition probability matrix from a learning analytics study.

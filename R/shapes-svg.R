@@ -17,7 +17,6 @@ svg_shape_registry <- new.env(parent = emptyenv())
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' # Register a custom SVG shape from an inline SVG string
 #' register_svg_shape("simple_star",
 #'   '<svg viewBox="0 0 100 100">
@@ -30,7 +29,6 @@ svg_shape_registry <- new.env(parent = emptyenv())
 #'
 #' # Use in network (requires grImport2 for SVG rendering; falls back to circle)
 #' cograph(adj) |> sn_nodes(shape = "simple_star")
-#' }
 register_svg_shape <- function(name, svg_source) {
   if (!is.character(name) || length(name) != 1) {
     stop("name must be a single character string", call. = FALSE)
@@ -276,7 +274,9 @@ list_svg_shapes <- function() {
 #' @export
 #' @examples
 #' # Attempt to unregister a non-existent shape (returns FALSE)
+#' \dontrun{
 #' unregister_svg_shape("nonexistent")
+#' }
 unregister_svg_shape <- function(name) {
   if (exists(name, envir = svg_shape_registry)) {
     rm(list = name, envir = svg_shape_registry)

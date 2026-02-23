@@ -644,11 +644,11 @@ set_layout <- function(x, layout_df) {
 #' splot(net)
 #'
 #' # From igraph (if installed)
-#' \donttest{
-#' library(igraph)
-#' g <- make_ring(10)
-#' net <- as_cograph(g)
-#' splot(net)
+#' if (requireNamespace("igraph", quietly = TRUE)) {
+#'   library(igraph)
+#'   g <- make_ring(10)
+#'   net <- as_cograph(g)
+#'   splot(net)
 #' }
 as_cograph <- function(x, directed = NULL, ...) {
   # Return as-is if already a cograph_network

@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   fig.width = 7,
@@ -22,7 +22,11 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages({
   library("cograph")
 })
-old_opts <- options(scipen = 99, digits = 2, max.print = 30, width = 83)
+old_opts <- options()
+options(scipen = 99, digits = 2, max.print = 30, width = 83)
+
+old_par <- par(no.readonly = TRUE)
+par(mar = c(0,0,0,0))
 ```
 
 `cograph` provides three functions for visualizing networks with grouped structure: `plot_htna()` for multi-group layouts, `plot_mtna()` for multi-cluster layouts with summary edges, and `plot_mlna()` for multilevel networks rendered in 3D perspective. All three accept a weight matrix and a list defining how nodes are assigned to groups, clusters, or layers.
@@ -58,9 +62,8 @@ groups <- list(
 With three groups, the default layout places each group along one edge of a triangle.
 
 ```{r}
-oldpar <- par(mar = c(0, 0, 0, 0))
+par(mar = c(0, 0, 0, 0))
 plot_htna(m, groups, layout = "polygon", minimum = 0.15, esize = 3)
-par(oldpar)
 ```
 
 ## Example 2: Circular layout
@@ -68,19 +71,17 @@ par(oldpar)
 The circular layout places groups along arcs of a circle instead of polygon edges.
 
 ```{r}
-oldpar <- par(mar = c(0, 0, 0, 0))
+par(mar = c(0, 0, 0, 0))
 plot_htna(m, groups, layout = "circular", minimum = 0.15, esize = 3)
-par(oldpar)
 ```
 
 ## Example 3: Custom colors and shapes
 
 ```{r}
-oldpar <- par(mar = c(0, 0, 0, 0))
 plot_htna(m, groups, layout = "polygon", minimum = 0.15, esize = 3,
           group_colors = c("#E63946", "#457B9D", "#2A9D8F"),
           group_shapes = c("circle", "square", "diamond"))
-par(oldpar)
+
 ```
 
 ## Example 4: Two-group bipartite
@@ -93,18 +94,14 @@ two_groups <- list(
   Student = paste0("N", 8:15)
 )
 
-oldpar <- par(mar = c(0, 0, 0, 0))
 plot_htna(m, two_groups, minimum = 0.15, esize = 3)
-par(oldpar)
 ```
 
 ## Example 5: Horizontal bipartite
 
 ```{r, fig.height = 4}
-oldpar <- par(mar = c(0, 0, 0, 0))
 plot_htna(m, two_groups, minimum = 0.15, esize = 3,
           orientation = "horizontal")
-par(oldpar)
 ```
 
 ## Example 6: Four groups
@@ -119,9 +116,7 @@ four_groups <- list(
   Storage = paste0("N", 13:15)
 )
 
-oldpar <- par(mar = c(0, 0, 0, 0))
 plot_htna(m, four_groups, layout = "polygon", minimum = 0.15, esize = 3)
-par(oldpar)
 ```
 
 # plot_mtna: Multi-Cluster Networks
@@ -146,29 +141,23 @@ clusters <- list(
   Zeta    = paste0("N", 26:30)
 )
 
-oldpar <- par(mar = c(0, 0, 0, 0))
 plot_mtna(m30, clusters, minimum = 0.1)
-par(oldpar)
 ```
 
 ## Example 8: Custom shapes and spacing
 
 ```{r, fig.width = 8, fig.height = 8}
-oldpar <- par(mar = c(0, 0, 0, 0))
 plot_mtna(m30, clusters, minimum = 0.1,
           shapes = c("circle", "square", "diamond",
                      "triangle", "circle", "square"),
           spacing = 4,
           shape_size = 1.5)
-par(oldpar)
 ```
 
 ## Example 9: Grid layout
 
 ```{r, fig.width = 8, fig.height = 8}
-oldpar <- par(mar = c(0, 0, 0, 0))
 plot_mtna(m30, clusters, layout = "grid", spacing = 4, minimum = 0.1)
-par(oldpar)
 ```
 
 ## Example 10: Three clusters
@@ -180,9 +169,7 @@ three_clusters <- list(
   Gamma = paste0("N", 11:15)
 )
 
-oldpar <- par(mar = c(0, 0, 0, 0))
 plot_mtna(m, three_clusters, minimum = 0.1)
-par(oldpar)
 ```
 
 # plot_mlna: Multilevel Networks
@@ -204,9 +191,7 @@ layers <- list(
   Micro = paste0("N", 15:21)
 )
 
-oldpar <- par(mar = c(0, 0, 0, 0))
 plot_mlna(m21, layers, minimum = 0.2, legend = FALSE)
-par(oldpar)
 ```
 
 ## Example 12: Spring layout
@@ -214,39 +199,31 @@ par(oldpar)
 The spring layout uses a force-directed algorithm within each layer.
 
 ```{r, fig.width = 8, fig.height = 10}
-oldpar <- par(mar = c(0, 0, 0, 0))
 plot_mlna(m21, layers, layout = "spring", minimum = 0.2, legend = FALSE)
-par(oldpar)
 ```
 
 ## Example 13: Circle layout
 
 ```{r, fig.width = 8, fig.height = 10}
-oldpar <- par(mar = c(0, 0, 0, 0))
 plot_mlna(m21, layers, layout = "circle", minimum = 0.2, legend = FALSE)
-par(oldpar)
 ```
 
 ## Example 14: Custom colors and perspective
 
 ```{r, fig.width = 8, fig.height = 10}
-oldpar <- par(mar = c(0, 0, 0, 0))
 plot_mlna(m21, layers, minimum = 0.2,
           colors = c("#E63946", "#457B9D", "#2A9D8F"),
           skew_angle = 35,
           layer_spacing = 2.5,
           legend = FALSE)
-par(oldpar)
 ```
 
 ## Example 15: Without between-layer edges
 
 ```{r, fig.width = 8, fig.height = 10}
-oldpar <- par(mar = c(0, 0, 0, 0))
 plot_mlna(m21, layers, minimum = 0.2,
           between_edges = FALSE,
           legend = FALSE)
-par(oldpar)
 ```
 
 
@@ -303,4 +280,5 @@ par(oldpar)
 
 ```{r, include = FALSE}
 options(old_opts)
+par(old_par)
 ```

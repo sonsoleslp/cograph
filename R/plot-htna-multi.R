@@ -36,7 +36,6 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' # Create network with 4 clusters
 #' nodes <- paste0("N", 1:20)
 #' m <- matrix(runif(400, 0, 0.3), 20, 20)
@@ -55,7 +54,6 @@
 #'
 #' # Control spacing and sizes
 #' plot_mtna(m, clusters, spacing = 4, shape_size = 1.5, node_spacing = 0.6)
-#' }
 plot_mtna <- function(
     x,
     cluster_list,

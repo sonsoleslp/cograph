@@ -47,7 +47,6 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' # Create multilevel network
 #' set.seed(42)
 #' nodes <- paste0("N", 1:15)
@@ -74,7 +73,6 @@
 #'
 #' # Circle layout within layers
 #' plot_mlna(m, layers, layout = "circle")
-#' }
 plot_mlna <- function(
     model,
     layer_list,

@@ -107,7 +107,6 @@ and individual edges within clusters. Each cluster is displayed as a
 shape (circle, square, diamond, triangle) containing its nodes.
 }
 \examples{
-\donttest{
 # Create network with 4 clusters
 nodes <- paste0("N", 1:20)
 m <- matrix(runif(400, 0, 0.3), 20, 20)
@@ -126,5 +125,4 @@ plot_mtna(m, clusters, summary_edges = TRUE)
 
 # Control spacing and sizes
 plot_mtna(m, clusters, spacing = 4, shape_size = 1.5, node_spacing = 0.6)
-}
 }

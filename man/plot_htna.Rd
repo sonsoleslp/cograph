@@ -119,7 +119,6 @@ Plots a TNA model with nodes arranged in multiple groups using geometric layouts
 Supports triangle (3), rectangle (4), pentagon (5), hexagon (6), and beyond.
 }
 \examples{
-\donttest{
 # --- 2-group bipartite example ---
 nodes_2 <- c("Wrong", "Retry", "Right", "Attempt", "Instruction", "Skip",
               "Order", "Correct", "Hint", "Quit", "Clarify", "Question", "Praise")
@@ -167,5 +166,4 @@ node_types_4 <- list(
   Storage = c("Save", "Load", "Cache")
 )
 plot_htna(m4, node_types_4)
-}
 }

@@ -102,23 +102,23 @@ tna_color_palette <- function(n_states) {
 #' \code{\link{from_qgraph}} for qgraph object conversion
 #'
 #' @examples
-#' \donttest{
 #' # Convert and plot a tna object
-#' library(tna)
-#' trans <- tna(group_regulation)
-#' from_tna(trans)  # Plots with donut rings showing initial probabilities
+#' if (requireNamespace("tna", quietly = TRUE)) {
+#'   library(tna)
+#'   trans <- tna(group_regulation)
+#'   from_tna(trans)  # Plots with donut rings showing initial probabilities
 #'
-#' # Use soplot engine instead
-#' from_tna(trans, engine = "soplot")
+#'   # Use soplot engine instead
+#'   from_tna(trans, engine = "soplot")
 #'
-#' # Customize the visualization
-#' from_tna(trans, layout = "circle", donut_color = c("steelblue", "gray90"))
+#'   # Customize the visualization
+#'   from_tna(trans, layout = "circle", donut_color = c("steelblue", "gray90"))
 #'
-#' # Extract parameters without plotting
-#' params <- from_tna(trans, plot = FALSE)
-#' # Modify and plot manually
-#' params$node_fill <- "coral"
-#' do.call(splot, params)
+#'   # Extract parameters without plotting
+#'   params <- from_tna(trans, plot = FALSE)
+#'   # Modify and plot manually
+#'   params$node_fill <- "coral"
+#'   do.call(splot, params)
 #' }
 #'
 #' @export
@@ -266,26 +266,26 @@ from_tna <- function(tna_object, engine = c("splot", "soplot"), plot = TRUE,
 #' \code{\link{from_tna}} for tna object conversion
 #'
 #' @examples
-#' \donttest{
 #' # Convert and plot a qgraph object
-#' library(qgraph)
-#' adj <- matrix(c(0, .5, .3, .5, 0, .4, .3, .4, 0), 3, 3)
-#' q <- qgraph(adj)
-#' from_qgraph(q)  # Plots with splot
+#' if (requireNamespace("qgraph", quietly = TRUE)) {
+#'   library(qgraph)
+#'   adj <- matrix(c(0, .5, .3, .5, 0, .4, .3, .4, 0), 3, 3)
+#'   q <- qgraph(adj)
+#'   from_qgraph(q)  # Plots with splot
 #'
-#' # Use soplot engine instead
-#' from_qgraph(q, engine = "soplot")
+#'   # Use soplot engine instead
+#'   from_qgraph(q, engine = "soplot")
 #'
-#' # Override extracted parameters
-#' from_qgraph(q, node_fill = "steelblue", layout = "circle")
+#'   # Override extracted parameters
+#'   from_qgraph(q, node_fill = "steelblue", layout = "circle")
 #'
-#' # Extract parameters without plotting
-#' params <- from_qgraph(q, plot = FALSE)
-#' names(params)  # See what was extracted
+#'   # Extract parameters without plotting
+#'   params <- from_qgraph(q, plot = FALSE)
+#'   names(params)  # See what was extracted
 #'
-#' # Works with themed qgraph objects
-#' q_themed <- qgraph(adj, theme = "colorblind", posCol = "blue")
-#' from_qgraph(q_themed)
+#'   # Works with themed qgraph objects
+#'   q_themed <- qgraph(adj, theme = "colorblind", posCol = "blue")
+#'   from_qgraph(q_themed)
 #' }
 #'
 #' @export

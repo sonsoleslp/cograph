@@ -87,11 +87,11 @@ net <- set_layout(net, data.frame(x = c(0, 1, 0.5), y = c(0, 0, 1)))
 splot(net)
 
 # From igraph (if installed)
-\donttest{
-library(igraph)
-g <- make_ring(10)
-net <- as_cograph(g)
-splot(net)
+if (requireNamespace("igraph", quietly = TRUE)) {
+  library(igraph)
+  g <- make_ring(10)
+  net <- as_cograph(g)
+  splot(net)
 }
 }
 \seealso{

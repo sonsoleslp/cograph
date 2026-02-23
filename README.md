@@ -1,5 +1,5 @@
 
-# cograph <img src="man/figures/logo.png" align="right" height="139" />
+# cograph <img src="man/figures/logo.png" align="right" height="139" style="height:139px"/>
 
 <!-- badges: start -->
 

@@ -8,11 +8,11 @@ Authors@R: c(
     person("Santtu", "Tikka", role = "aut")
   )
 Description: Provides tools for the analysis, visualization, and manipulation
-  of dynamical, social and complex networks. The package supports multiple
-  network formats and offers flexible tools for heterogeneous, multi-layer,
-  and hierarchical network analysis with simple syntax and extensive toolset.
-  The force-directed layout algorithm is based on Fruchterman and Reingold
-  (1991) <doi:10.1002/spe.4380211102>.
+  of dynamical, social (Saqr et al. (2024) <doi:10.1007/978-3-031-54464-4_10>) and 
+  complex networks (Saqr et al. (2025) <doi:10.1145/3706468.3706513>). The package 
+  supports multiple network formats and offers flexible tools for heterogeneous, 
+  multi-layer, and hierarchical network analysis with simple syntax and
+  extensive toolset.
 License: MIT + file LICENSE
 URL: https://sonsoles.me/cograph/
 BugReports: https://github.com/sonsoleslp/cograph/issues

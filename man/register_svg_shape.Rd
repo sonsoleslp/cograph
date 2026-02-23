@@ -18,7 +18,6 @@ Invisible NULL. The shape is registered for use with sn_nodes().
 Register an SVG file or string as a custom node shape.
 }
 \examples{
-\donttest{
 # Register a custom SVG shape from an inline SVG string
 register_svg_shape("simple_star",
   '<svg viewBox="0 0 100 100">
@@ -31,5 +30,4 @@ adj <- matrix(c(0, 1, 1, 0, 0, 1, 1, 0, 0), nrow = 3,
 
 # Use in network (requires grImport2 for SVG rendering; falls back to circle)
 cograph(adj) |> sn_nodes(shape = "simple_star")
-}
 }

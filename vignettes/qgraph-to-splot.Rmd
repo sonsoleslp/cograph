@@ -23,7 +23,8 @@ suppressPackageStartupMessages({
   library("cograph")
   library("qgraph")
 })
-old_opts <- options(scipen = 99, digits = 2, max.print = 30, width = 83)
+old_opts <- options()
+options(scipen = 99, digits = 2, max.print = 30, width = 83)
 ```
 
 This guide introduces `splot()`, the main plotting function in `cograph`, and helps `qgraph` users transition to it.

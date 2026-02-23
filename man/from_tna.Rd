@@ -81,23 +81,23 @@ The following visual defaults are applied for TNA plots (all can be overridden v
 }
 }
 \examples{
-\donttest{
 # Convert and plot a tna object
-library(tna)
-trans <- tna(group_regulation)
-from_tna(trans)  # Plots with donut rings showing initial probabilities
+if (requireNamespace("tna", quietly = TRUE)) {
+  library(tna)
+  trans <- tna(group_regulation)
+  from_tna(trans)  # Plots with donut rings showing initial probabilities
 
-# Use soplot engine instead
-from_tna(trans, engine = "soplot")
+  # Use soplot engine instead
+  from_tna(trans, engine = "soplot")
 
-# Customize the visualization
-from_tna(trans, layout = "circle", donut_color = c("steelblue", "gray90"))
+  # Customize the visualization
+  from_tna(trans, layout = "circle", donut_color = c("steelblue", "gray90"))
 
-# Extract parameters without plotting
-params <- from_tna(trans, plot = FALSE)
-# Modify and plot manually
-params$node_fill <- "coral"
-do.call(splot, params)
+  # Extract parameters without plotting
+  params <- from_tna(trans, plot = FALSE)
+  # Modify and plot manually
+  params$node_fill <- "coral"
+  do.call(splot, params)
 }
 
 }

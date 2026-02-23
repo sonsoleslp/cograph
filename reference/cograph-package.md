@@ -58,7 +58,7 @@ Built-in themes include:
 
 Useful links:
 
-- <http://sonsoles.me/cograph/>
+- <https://sonsoles.me/cograph/>
 
 - Report bugs at <https://github.com/sonsoleslp/cograph/issues>
 

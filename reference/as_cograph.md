@@ -176,10 +176,21 @@ splot(net)
 
 
 # From igraph (if installed)
-if (FALSE) { # \dontrun{
-library(igraph)
-g <- make_ring(10)
-net <- as_cograph(g)
-splot(net)
-} # }
+if (requireNamespace("igraph", quietly = TRUE)) {
+  library(igraph)
+  g <- make_ring(10)
+  net <- as_cograph(g)
+  splot(net)
+}
+#> 
+#> Attaching package: ‘igraph’
+#> The following object is masked from ‘package:cograph’:
+#> 
+#>     is_directed
+#> The following objects are masked from ‘package:stats’:
+#> 
+#>     decompose, spectrum
+#> The following object is masked from ‘package:base’:
+#> 
+#>     union
 ```

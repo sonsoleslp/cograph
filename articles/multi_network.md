@@ -52,7 +52,7 @@ plot_htna(m, groups, layout = "polygon", minimum = 0.15, esize = 3)
 #> Warning: 'esize' is deprecated, use 'edge_size' instead.
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-4-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-3-1.png)
 
 ### Example 2: Circular layout
 
@@ -65,19 +65,18 @@ plot_htna(m, groups, layout = "circular", minimum = 0.15, esize = 3)
 #> Warning: 'esize' is deprecated, use 'edge_size' instead.
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-5-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-4-1.png)
 
 ### Example 3: Custom colors and shapes
 
 ``` r
-par(mar = c(0, 0, 0, 0))
 plot_htna(m, groups, layout = "polygon", minimum = 0.15, esize = 3,
           group_colors = c("#E63946", "#457B9D", "#2A9D8F"),
           group_shapes = c("circle", "square", "diamond"))
 #> Warning: 'esize' is deprecated, use 'edge_size' instead.
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-6-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-5-1.png)
 
 ### Example 4: Two-group bipartite
 
@@ -92,23 +91,21 @@ two_groups <- list(
   Student = paste0("N", 8:15)
 )
 
-par(mar = c(0, 0, 0, 0))
 plot_htna(m, two_groups, minimum = 0.15, esize = 3)
 #> Warning: 'esize' is deprecated, use 'edge_size' instead.
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-7-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-6-1.png)
 
 ### Example 5: Horizontal bipartite
 
 ``` r
-par(mar = c(0, 0, 0, 0))
 plot_htna(m, two_groups, minimum = 0.15, esize = 3,
           orientation = "horizontal")
 #> Warning: 'esize' is deprecated, use 'edge_size' instead.
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-8-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-7-1.png)
 
 ### Example 6: Four groups
 
@@ -122,12 +119,11 @@ four_groups <- list(
   Storage = paste0("N", 13:15)
 )
 
-par(mar = c(0, 0, 0, 0))
 plot_htna(m, four_groups, layout = "polygon", minimum = 0.15, esize = 3)
 #> Warning: 'esize' is deprecated, use 'edge_size' instead.
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-9-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-8-1.png)
 
 ## plot_mtna: Multi-Cluster Networks
 
@@ -156,16 +152,14 @@ clusters <- list(
   Zeta    = paste0("N", 26:30)
 )
 
-par(mar = c(0, 0, 0, 0))
 plot_mtna(m30, clusters, minimum = 0.1)
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-10-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-9-1.png)
 
 ### Example 8: Custom shapes and spacing
 
 ``` r
-par(mar = c(0, 0, 0, 0))
 plot_mtna(m30, clusters, minimum = 0.1,
           shapes = c("circle", "square", "diamond",
                      "triangle", "circle", "square"),
@@ -173,16 +167,15 @@ plot_mtna(m30, clusters, minimum = 0.1,
           shape_size = 1.5)
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-11-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-10-1.png)
 
 ### Example 9: Grid layout
 
 ``` r
-par(mar = c(0, 0, 0, 0))
 plot_mtna(m30, clusters, layout = "grid", spacing = 4, minimum = 0.1)
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-12-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-11-1.png)
 
 ### Example 10: Three clusters
 
@@ -193,11 +186,10 @@ three_clusters <- list(
   Gamma = paste0("N", 11:15)
 )
 
-par(mar = c(0, 0, 0, 0))
 plot_mtna(m, three_clusters, minimum = 0.1)
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-13-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-12-1.png)
 
 ## plot_mlna: Multilevel Networks
 
@@ -223,36 +215,32 @@ layers <- list(
   Micro = paste0("N", 15:21)
 )
 
-par(mar = c(0, 0, 0, 0))
 plot_mlna(m21, layers, minimum = 0.2, legend = FALSE)
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-14-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-13-1.png)
 
 ### Example 12: Spring layout
 
 The spring layout uses a force-directed algorithm within each layer.
 
 ``` r
-par(mar = c(0, 0, 0, 0))
 plot_mlna(m21, layers, layout = "spring", minimum = 0.2, legend = FALSE)
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-15-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-14-1.png)
 
 ### Example 13: Circle layout
 
 ``` r
-par(mar = c(0, 0, 0, 0))
 plot_mlna(m21, layers, layout = "circle", minimum = 0.2, legend = FALSE)
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-16-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-15-1.png)
 
 ### Example 14: Custom colors and perspective
 
 ``` r
-par(mar = c(0, 0, 0, 0))
 plot_mlna(m21, layers, minimum = 0.2,
           colors = c("#E63946", "#457B9D", "#2A9D8F"),
           skew_angle = 35,
@@ -260,18 +248,17 @@ plot_mlna(m21, layers, minimum = 0.2,
           legend = FALSE)
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-17-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-16-1.png)
 
 ### Example 15: Without between-layer edges
 
 ``` r
-par(mar = c(0, 0, 0, 0))
 plot_mlna(m21, layers, minimum = 0.2,
           between_edges = FALSE,
           legend = FALSE)
 ```
 
-![](multi_network_files/figure-html/unnamed-chunk-18-1.png)
+![](multi_network_files/figure-html/unnamed-chunk-17-1.png)
 
 ## Parameter reference
 

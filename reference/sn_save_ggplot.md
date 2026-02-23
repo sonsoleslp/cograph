@@ -53,9 +53,10 @@ Invisible filename.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
 net <- cograph(adj)
-sn_save_ggplot(net, "network.pdf")
-} # }
+sn_save_ggplot(net, file.path(tempdir(), "network.pdf"))
+#> Saved to: /tmp/RtmpRvUwrU/network.pdf
+# }
 ```

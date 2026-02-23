@@ -25,17 +25,27 @@ Invisible NULL. The shape is registered for use with sn_nodes().
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-# Register from file
-register_svg_shape("custom_icon", "path/to/icon.svg")
-
-# Register from inline SVG
+# Register a custom SVG shape from an inline SVG string
 register_svg_shape("simple_star",
   '<svg viewBox="0 0 100 100">
     <polygon points="50,5 20,99 95,39 5,39 80,99" fill="currentColor"/>
   </svg>')
 
-# Use in network
-cograph(adj) |> sn_nodes(shape = "custom_icon")
-} # }
+# Create a small adjacency matrix
+adj <- matrix(c(0, 1, 1, 0, 0, 1, 1, 0, 0), nrow = 3,
+              dimnames = list(c("A", "B", "C"), c("A", "B", "C")))
+
+# Use in network (requires grImport2 for SVG rendering; falls back to circle)
+cograph(adj) |> sn_nodes(shape = "simple_star")
+#> Cograph Network
+#> ==============
+#> Nodes: 3 
+#> Edges: 4 
+#> Directed: TRUE 
+#> Weighted: FALSE 
+#> Layout: computed 
+#> Theme: classic 
+#> 
+#> Use plot() or sn_render() to visualize
+#> Use sn_ggplot() to convert to ggplot2
 ```

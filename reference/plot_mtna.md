@@ -149,7 +149,6 @@ Invisibly returns NULL for summary mode, or the plot_tna result.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 # Create network with 4 clusters
 nodes <- paste0("N", 1:20)
 m <- matrix(runif(400, 0, 0.3), 20, 20)
@@ -166,7 +165,7 @@ clusters <- list(
 # Summary edges between clusters + individual edges within
 plot_mtna(m, clusters, summary_edges = TRUE)
 
+
 # Control spacing and sizes
 plot_mtna(m, clusters, spacing = 4, shape_size = 1.5, node_spacing = 0.6)
-} # }
 ```

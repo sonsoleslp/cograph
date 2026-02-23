@@ -52,27 +52,3 @@ undirected mode.
 
 [`aggregate_duplicate_edges`](http://sonsoles.me/cograph/reference/aggregate_duplicate_edges.md)
 for combining duplicates into single edges
-
-## Examples
-
-``` r
-if (FALSE) { # \dontrun{
-# Create edges with duplicates
-edges <- data.frame(
-  from = c(1, 1, 2, 2, 3),
-  to = c(2, 2, 3, 1, 1),
-  weight = c(0.5, 0.3, 0.4, 0.6, 0.2)
-)
-
-# Detect duplicates (undirected: 1-2 appears 3 times, 1-3 appears 2 times)
-result <- detect_duplicate_edges(edges)
-result$has_duplicates
-# [1] TRUE
-
-# View duplicate details
-result$info[[1]]
-# $nodes: 1, 2
-# $count: 3
-# $weights: 0.5, 0.3, 0.6
-} # }
-```

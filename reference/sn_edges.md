@@ -432,7 +432,6 @@ estimates <- c(0.5, -0.3, 0.8)
 ci_lo <- c(0.2, -0.6, 0.5)
 ci_hi <- c(0.8, -0.1, 1.1)
 
-if (FALSE) { # \dontrun{
 cograph(adj) |>
   sn_edges(
     label_template = "{est} [{low}, {up}]",
@@ -441,7 +440,6 @@ cograph(adj) |>
     label_digits = 2
   ) |>
   splot()
-} # }
 
 # Curved edges for reciprocal pairs
 cograph(adj) |>

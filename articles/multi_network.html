@@ -81,7 +81,7 @@ with summary edges, and <code><a href="../reference/plot_mlna.html">plot_mlna()<
 rendered in 3D perspective. All three accept a weight matrix and a list
 defining how nodes are assigned to groups, clusters, or layers.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://sonsoles.me/cograph/">cograph</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sonsoles.me/cograph/" class="external-link">cograph</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
 </h2>
@@ -116,7 +116,7 @@ edge of a triangle.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_htna.html">plot_htna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">groups</span>, layout <span class="op">=</span> <span class="st">"polygon"</span>, minimum <span class="op">=</span> <span class="fl">0.15</span>, esize <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: 'esize' is deprecated, use 'edge_size' instead.</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="example-2-circular-layout">Example 2: Circular layout<a class="anchor" aria-label="anchor" href="#example-2-circular-layout"></a>
@@ -127,18 +127,17 @@ polygon edges.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_htna.html">plot_htna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">groups</span>, layout <span class="op">=</span> <span class="st">"circular"</span>, minimum <span class="op">=</span> <span class="fl">0.15</span>, esize <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: 'esize' is deprecated, use 'edge_size' instead.</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="example-3-custom-colors-and-shapes">Example 3: Custom colors and shapes<a class="anchor" aria-label="anchor" href="#example-3-custom-colors-and-shapes"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_htna.html">plot_htna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">groups</span>, layout <span class="op">=</span> <span class="st">"polygon"</span>, minimum <span class="op">=</span> <span class="fl">0.15</span>, esize <span class="op">=</span> <span class="fl">3</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_htna.html">plot_htna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">groups</span>, layout <span class="op">=</span> <span class="st">"polygon"</span>, minimum <span class="op">=</span> <span class="fl">0.15</span>, esize <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>          group_colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#E63946"</span>, <span class="st">"#457B9D"</span>, <span class="st">"#2A9D8F"</span><span class="op">)</span>,</span>
 <span>          group_shapes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"circle"</span>, <span class="st">"square"</span>, <span class="st">"diamond"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: 'esize' is deprecated, use 'edge_size' instead.</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="example-4-two-group-bipartite">Example 4: Two-group bipartite<a class="anchor" aria-label="anchor" href="#example-4-two-group-bipartite"></a>
@@ -152,20 +151,18 @@ connectivity.</p>
 <span>  Student <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="fl">8</span><span class="op">:</span><span class="fl">15</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_htna.html">plot_htna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">two_groups</span>, minimum <span class="op">=</span> <span class="fl">0.15</span>, esize <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: 'esize' is deprecated, use 'edge_size' instead.</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="example-5-horizontal-bipartite">Example 5: Horizontal bipartite<a class="anchor" aria-label="anchor" href="#example-5-horizontal-bipartite"></a>
 </h3>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_htna.html">plot_htna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">two_groups</span>, minimum <span class="op">=</span> <span class="fl">0.15</span>, esize <span class="op">=</span> <span class="fl">3</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_htna.html">plot_htna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">two_groups</span>, minimum <span class="op">=</span> <span class="fl">0.15</span>, esize <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>          orientation <span class="op">=</span> <span class="st">"horizontal"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: 'esize' is deprecated, use 'edge_size' instead.</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="example-6-four-groups">Example 6: Four groups<a class="anchor" aria-label="anchor" href="#example-6-four-groups"></a>
@@ -179,10 +176,9 @@ connectivity.</p>
 <span>  Storage <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="fl">13</span><span class="op">:</span><span class="fl">15</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_htna.html">plot_htna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">four_groups</span>, layout <span class="op">=</span> <span class="st">"polygon"</span>, minimum <span class="op">=</span> <span class="fl">0.15</span>, esize <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: 'esize' is deprecated, use 'edge_size' instead.</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 </div>
 <div class="section level2">
@@ -211,29 +207,26 @@ within-cluster edges are shown inside each shape. The alias
 <span>  Zeta    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="fl">26</span><span class="op">:</span><span class="fl">30</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_mtna.html">plot_mtna</a></span><span class="op">(</span><span class="va">m30</span>, <span class="va">clusters</span>, minimum <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="example-8-custom-shapes-and-spacing">Example 8: Custom shapes and spacing<a class="anchor" aria-label="anchor" href="#example-8-custom-shapes-and-spacing"></a>
 </h3>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_mtna.html">plot_mtna</a></span><span class="op">(</span><span class="va">m30</span>, <span class="va">clusters</span>, minimum <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_mtna.html">plot_mtna</a></span><span class="op">(</span><span class="va">m30</span>, <span class="va">clusters</span>, minimum <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>          shapes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"circle"</span>, <span class="st">"square"</span>, <span class="st">"diamond"</span>,</span>
 <span>                     <span class="st">"triangle"</span>, <span class="st">"circle"</span>, <span class="st">"square"</span><span class="op">)</span>,</span>
 <span>          spacing <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>          shape_size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="example-9-grid-layout">Example 9: Grid layout<a class="anchor" aria-label="anchor" href="#example-9-grid-layout"></a>
 </h3>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_mtna.html">plot_mtna</a></span><span class="op">(</span><span class="va">m30</span>, <span class="va">clusters</span>, layout <span class="op">=</span> <span class="st">"grid"</span>, spacing <span class="op">=</span> <span class="fl">4</span>, minimum <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="100%"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_mtna.html">plot_mtna</a></span><span class="op">(</span><span class="va">m30</span>, <span class="va">clusters</span>, layout <span class="op">=</span> <span class="st">"grid"</span>, spacing <span class="op">=</span> <span class="fl">4</span>, minimum <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="example-10-three-clusters">Example 10: Three clusters<a class="anchor" aria-label="anchor" href="#example-10-three-clusters"></a>
@@ -245,9 +238,8 @@ within-cluster edges are shown inside each shape. The alias
 <span>  Gamma <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="fl">11</span><span class="op">:</span><span class="fl">15</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_mtna.html">plot_mtna</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">three_clusters</span>, minimum <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 </div>
 <div class="section level2">
@@ -273,9 +265,8 @@ is available as shorthand.</p>
 <span>  Micro <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"N"</span>, <span class="fl">15</span><span class="op">:</span><span class="fl">21</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_mlna.html">plot_mlna</a></span><span class="op">(</span><span class="va">m21</span>, <span class="va">layers</span>, minimum <span class="op">=</span> <span class="fl">0.2</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="example-12-spring-layout">Example 12: Spring layout<a class="anchor" aria-label="anchor" href="#example-12-spring-layout"></a>
@@ -283,39 +274,35 @@ is available as shorthand.</p>
 <p>The spring layout uses a force-directed algorithm within each
 layer.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_mlna.html">plot_mlna</a></span><span class="op">(</span><span class="va">m21</span>, <span class="va">layers</span>, layout <span class="op">=</span> <span class="st">"spring"</span>, minimum <span class="op">=</span> <span class="fl">0.2</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="100%"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_mlna.html">plot_mlna</a></span><span class="op">(</span><span class="va">m21</span>, <span class="va">layers</span>, layout <span class="op">=</span> <span class="st">"spring"</span>, minimum <span class="op">=</span> <span class="fl">0.2</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="example-13-circle-layout">Example 13: Circle layout<a class="anchor" aria-label="anchor" href="#example-13-circle-layout"></a>
 </h3>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_mlna.html">plot_mlna</a></span><span class="op">(</span><span class="va">m21</span>, <span class="va">layers</span>, layout <span class="op">=</span> <span class="st">"circle"</span>, minimum <span class="op">=</span> <span class="fl">0.2</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="100%"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_mlna.html">plot_mlna</a></span><span class="op">(</span><span class="va">m21</span>, <span class="va">layers</span>, layout <span class="op">=</span> <span class="st">"circle"</span>, minimum <span class="op">=</span> <span class="fl">0.2</span>, legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="example-14-custom-colors-and-perspective">Example 14: Custom colors and perspective<a class="anchor" aria-label="anchor" href="#example-14-custom-colors-and-perspective"></a>
 </h3>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_mlna.html">plot_mlna</a></span><span class="op">(</span><span class="va">m21</span>, <span class="va">layers</span>, minimum <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_mlna.html">plot_mlna</a></span><span class="op">(</span><span class="va">m21</span>, <span class="va">layers</span>, minimum <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>          colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#E63946"</span>, <span class="st">"#457B9D"</span>, <span class="st">"#2A9D8F"</span><span class="op">)</span>,</span>
 <span>          skew_angle <span class="op">=</span> <span class="fl">35</span>,</span>
 <span>          layer_spacing <span class="op">=</span> <span class="fl">2.5</span>,</span>
 <span>          legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="example-15-without-between-layer-edges">Example 15: Without between-layer edges<a class="anchor" aria-label="anchor" href="#example-15-without-between-layer-edges"></a>
 </h3>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_mlna.html">plot_mlna</a></span><span class="op">(</span><span class="va">m21</span>, <span class="va">layers</span>, minimum <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_mlna.html">plot_mlna</a></span><span class="op">(</span><span class="va">m21</span>, <span class="va">layers</span>, minimum <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>          between_edges <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>          legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="multi_network_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="multi_network_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 </div>
 <div class="section level2">

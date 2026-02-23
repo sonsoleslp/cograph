@@ -170,7 +170,6 @@ Invisibly returns NULL.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 # Create multilevel network
 set.seed(42)
 nodes <- paste0("N", 1:15)
@@ -188,6 +187,7 @@ layers <- list(
 # Basic usage
 plot_mlna(m, layers)
 
+
 # Customized
 plot_mlna(m, layers,
      layer_spacing = 2.5,
@@ -195,7 +195,7 @@ plot_mlna(m, layers,
      between_style = 2,  # dashed
      minimum = 0.1)
 
+
 # Circle layout within layers
 plot_mlna(m, layers, layout = "circle")
-} # }
 ```

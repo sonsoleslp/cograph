@@ -137,5 +137,5 @@ soplot(mat, node_size = 9, layout = "oval")
 
 ``` r
 splot(mat, node_size = 9, filetype = "png",
-      filename = "network", width = 8, height = 8)
+      filename = file.path(tempdir(), "network"), width = 8, height = 8)
 ```

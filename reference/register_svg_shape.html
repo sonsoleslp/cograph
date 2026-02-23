@@ -69,19 +69,29 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Register from file</span></span></span>
-<span class="r-in"><span><span class="fu">register_svg_shape</span><span class="op">(</span><span class="st">"custom_icon"</span>, <span class="st">"path/to/icon.svg"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Register from inline SVG</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Register a custom SVG shape from an inline SVG string</span></span></span>
 <span class="r-in"><span><span class="fu">register_svg_shape</span><span class="op">(</span><span class="st">"simple_star"</span>,</span></span>
 <span class="r-in"><span>  <span class="st">'&lt;svg viewBox="0 0 100 100"&gt;</span></span></span>
 <span class="r-in"><span><span class="st">    &lt;polygon points="50,5 20,99 95,39 5,39 80,99" fill="currentColor"/&gt;</span></span></span>
 <span class="r-in"><span><span class="st">  &lt;/svg&gt;'</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Use in network</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="cograph.html">cograph</a></span><span class="op">(</span><span class="va">adj</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="sn_nodes.html">sn_nodes</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="st">"custom_icon"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># Create a small adjacency matrix</span></span></span>
+<span class="r-in"><span><span class="va">adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>              dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Use in network (requires grImport2 for SVG rendering; falls back to circle)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="cograph.html">cograph</a></span><span class="op">(</span><span class="va">adj</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="sn_nodes.html">sn_nodes</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="st">"simple_star"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Cograph Network</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ==============</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Nodes: 3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Edges: 4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Directed: TRUE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Weighted: FALSE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Layout: computed </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Theme: classic </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Use plot() or sn_render() to visualize</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Use sn_ggplot() to convert to ggplot2</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

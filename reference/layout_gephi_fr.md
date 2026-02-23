@@ -47,14 +47,3 @@ Fruchterman-Reingold. Key differences from igraph's layout_with_fr:
 - Includes configurable gravity toward center
 
 - Different cooling/speed mechanism
-
-## Examples
-
-``` r
-if (FALSE) { # \dontrun{
-library(igraph)
-g <- make_ring(10)
-coords <- layout_gephi_fr(g)
-plot(g, layout = coords)
-} # }
-```

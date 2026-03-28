@@ -18,6 +18,9 @@ splot(
   theme = NULL,
   node_size = NULL,
   node_size2 = NULL,
+  scale_nodes_by = NULL,
+  node_size_range = c(2, 8),
+  scale_nodes_scale = 1,
   node_shape = "circle",
   node_svg = NULL,
   svg_preserve_aspect = TRUE,
@@ -73,7 +76,7 @@ splot(
   edge_labels = FALSE,
   edge_label_size = 0.8,
   edge_label_color = "gray30",
-  edge_label_bg = "white",
+  edge_label_bg = NA,
   edge_label_position = 0.5,
   edge_label_offset = 0,
   edge_label_fontface = "plain",
@@ -81,6 +84,7 @@ splot(
   edge_label_shadow_color = "gray40",
   edge_label_shadow_offset = 0.5,
   edge_label_shadow_alpha = 0.5,
+  edge_label_halo = TRUE,
   edge_style = 1,
   curvature = 0,
   curve_scale = TRUE,
@@ -101,11 +105,13 @@ splot(
   edge_ci_color = NA,
   edge_ci_style = 2,
   edge_ci_arrows = FALSE,
+  edge_priority = NULL,
   edge_label_style = "none",
   edge_label_template = NULL,
   edge_label_digits = 2,
   edge_label_oneline = TRUE,
   edge_label_ci_format = "bracket",
+  edge_label_leading_zero = TRUE,
   edge_ci_lower = NULL,
   edge_ci_upper = NULL,
   edge_label_p = NULL,
@@ -139,6 +145,8 @@ splot(
   legend_node_sizes = FALSE,
   groups = NULL,
   node_names = NULL,
+  tna_styling = NULL,
+  i = NULL,
   filetype = "default",
   filename = file.path(tempdir(), "splot"),
   width = 7,
@@ -162,12 +170,17 @@ splot(
 
   - A cograph_network object
 
+  - A tna object (from tna package)
+
+  - A group_tna object (list of tna objects from tna package). Use
+    parameter `i` to select a specific group, or omit to plot all
+    groups.
+
 - layout:
 
   Layout algorithm: "circle", "spring", "groups", or a matrix of x,y
   coordinates, or an igraph layout function. Also supports igraph
-  two-letter codes: "kk", "fr", "drl", "mds", "ni", etc. Default is
-  "oval"
+  two-letter codes: "kk", "fr", "drl", "mds", "ni", etc.
 
 - directed:
 
@@ -188,6 +201,33 @@ splot(
 - node_size2:
 
   Secondary node size for ellipse/rectangle height.
+
+- scale_nodes_by:
+
+  Scale node sizes by a centrality measure. Can be:
+
+  - A measure name: "degree", "strength", "betweenness", "closeness",
+    "eigenvector", "pagerank", "authority", "hub", "harmonic", etc.
+
+  - A directional shorthand: "indegree", "outdegree", "instrength",
+    "outstrength", "incloseness", "outcloseness", "inharmonic",
+    "outharmonic", "ineccentricity", "outeccentricity".
+
+  - A list with measure and parameters: list("pagerank", damping = 0.9)
+
+  When used, node_size is ignored. Use node_size_range to control the
+  min/max size. Default NULL (no centrality scaling).
+
+- node_size_range:
+
+  Size range for centrality-based scaling. Numeric vector c(min_size,
+  max_size). Default c(2, 8).
+
+- scale_nodes_scale:
+
+  Dampening exponent for centrality-based sizing. Values \< 1 compress
+  differences (e.g., 0.5 applies square root), values \> 1 exaggerate
+  differences. Default 1 (linear).
 
 - node_shape:
 
@@ -472,6 +512,11 @@ splot(
 
   Transparency for shadow (0-1). Default 0.5.
 
+- edge_label_halo:
+
+  Logical: enable white halo/outline around edge labels for readability
+  over dark edges? Default FALSE. When TRUE, overrides shadow settings.
+
 - edge_style:
 
   Line type(s): 1=solid, 2=dashed, 3=dotted, etc.
@@ -561,6 +606,11 @@ splot(
 
   Logical: show arrows on underlay? Default FALSE.
 
+- edge_priority:
+
+  Numeric vector of edge priorities. Higher values render on top. Useful
+  for ensuring significant edges appear above non-significant ones.
+
 - edge_label_style:
 
   Preset style: "none", "estimate", "full", "range", "stars".
@@ -581,6 +631,11 @@ splot(
 - edge_label_ci_format:
 
   CI format: "bracket" for `[low, up]` or "dash" for `low-up`.
+
+- edge_label_leading_zero:
+
+  Logical: show leading zero for values \< 1? Default TRUE. Set to FALSE
+  to display ".5" instead of "0.5".
 
 - edge_ci_lower:
 
@@ -725,6 +780,22 @@ splot(
 - node_names:
 
   Alternative names for legend (separate from labels).
+
+- tna_styling:
+
+  Logical or NULL. If `TRUE`, applies TNA visual defaults (oval layout,
+  TNA color palette, edge labels as estimates, dotted edge starts, etc.)
+  as a base layer. Any explicitly provided argument overrides the TNA
+  default. If `FALSE`, no TNA styling is applied. If `NULL` (default),
+  automatically set to `TRUE` when `x` is a tna object, `FALSE`
+  otherwise. Can be used with any input type (matrix, igraph,
+  cograph_network).
+
+- i:
+
+  Group index or name when x is a group_tna object. If NULL (default),
+  plots all groups in a grid. If specified (e.g., i = 1 or i =
+  "Treatment"), plots only that group.
 
 - filetype:
 

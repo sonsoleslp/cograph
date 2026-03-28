@@ -7,7 +7,9 @@ via `$`.
 ## Usage
 
 ``` r
-as_cograph(x, directed = NULL, ...)
+as_cograph(x, directed = NULL, simplify = FALSE, ...)
+
+to_cograph(x, directed = NULL, ...)
 ```
 
 ## Arguments
@@ -34,6 +36,12 @@ as_cograph(x, directed = NULL, ...)
 
   Logical. Force directed interpretation. NULL for auto-detect.
 
+- simplify:
+
+  Logical or character. If FALSE (default), every transition from tna
+  sequence data is a separate edge. If TRUE or a string ("sum", "mean",
+  "max", "min"), duplicate edges are aggregated.
+
 - ...:
 
   Additional arguments (currently unused).
@@ -42,56 +50,43 @@ as_cograph(x, directed = NULL, ...)
 
 A cograph_network object: a named list with components:
 
-- `from`:
-
-  Integer vector of source node indices
-
-- `to`:
-
-  Integer vector of target node indices
-
-- `weight`:
-
-  Numeric vector of edge weights
-
 - `nodes`:
 
   Data frame with id, label, (x, y if layout applied)
+
+- `edges`:
+
+  Data frame with from, to, weight columns
 
 - `directed`:
 
   Logical indicating if network is directed
 
-- `n_nodes`:
+- `weights`:
 
-  Integer count of nodes
+  Full n×n weight matrix (for to_matrix round-trip)
 
-- `n_edges`:
+- `data`:
 
-  Integer count of edges
+  Original estimation data (sequence matrix, edge list, etc.), or NULL
 
-- `labels`:
+- `meta`:
 
-  Character vector of node labels
+  Consolidated metadata list with sub-fields: `source` (input type
+  string), `layout` (layout info list or NULL), `tna` (TNA metadata or
+  NULL)
 
-- `source`:
+- `node_groups`:
 
-  Character indicating input type
+  Optional node groupings data frame
 
-- `layout`:
-
-  Layout coordinates (NULL until computed)
-
-- `layout_info`:
-
-  Layout algorithm info (NULL until computed)
+A `cograph_network` object. See `as_cograph`.
 
 ## Details
 
 The cograph_network format is designed to be:
 
-- Simple: All data accessible via `net$from`, `net$to`, `net$weight`,
-  etc.
+- Lean: Only essential data stored, computed values derived on demand
 
 - Modern: Uses named list elements instead of attributes for clean `$`
   access
@@ -101,7 +96,9 @@ The cograph_network format is designed to be:
 Use getter functions for programmatic access:
 [`get_nodes`](http://sonsoles.me/cograph/reference/get_nodes.md),
 [`get_edges`](http://sonsoles.me/cograph/reference/get_edges.md),
-[`get_labels`](http://sonsoles.me/cograph/reference/get_labels.md)
+[`get_labels`](http://sonsoles.me/cograph/reference/get_labels.md),
+[`n_nodes`](http://sonsoles.me/cograph/reference/n_nodes.md),
+[`n_edges`](http://sonsoles.me/cograph/reference/n_edges.md)
 
 Use setter functions to modify:
 [`set_nodes`](http://sonsoles.me/cograph/reference/set_nodes.md),
@@ -127,24 +124,19 @@ check directedness,
 mat <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
 net <- as_cograph(mat)
 
-# Direct $ access to all data
-net$from       # edge sources
-#> [1] 1 1 2
-net$to         # edge targets
-#> [1] 2 3 3
-net$weight     # edge weights
-#> [1] 1 1 1
+# Direct $ access to core data
 net$nodes      # nodes data frame
 #>   id label name  x  y
 #> 1  1     1    1 NA NA
 #> 2  2     2    2 NA NA
 #> 3  3     3    3 NA NA
+net$edges      # edges data frame
+#>   from to weight
+#> 1    1  2      1
+#> 2    1  3      1
+#> 3    2  3      1
 net$directed   # TRUE/FALSE
 #> [1] FALSE
-net$n_nodes    # 3
-#> [1] 3
-net$n_edges    # 3
-#> [1] 3
 
 # Getter functions (recommended for programmatic use)
 get_nodes(net)   # nodes data frame
@@ -163,7 +155,7 @@ n_nodes(net)     # 3
 #> [1] 3
 n_edges(net)     # 3
 #> [1] 3
-is_directed(net) # FALSE (symmetric matrix)
+cograph::is_directed(net) # FALSE (symmetric matrix)
 #> [1] FALSE
 
 # Setter functions
@@ -177,20 +169,11 @@ splot(net)
 
 # From igraph (if installed)
 if (requireNamespace("igraph", quietly = TRUE)) {
-  library(igraph)
-  g <- make_ring(10)
+  g <- igraph::make_ring(10)
   net <- as_cograph(g)
   splot(net)
 }
-#> 
-#> Attaching package: ‘igraph’
-#> The following object is masked from ‘package:cograph’:
-#> 
-#>     is_directed
-#> The following objects are masked from ‘package:stats’:
-#> 
-#>     decompose, spectrum
-#> The following object is masked from ‘package:base’:
-#> 
-#>     union
+
+mat <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+net <- to_cograph(mat)
 ```

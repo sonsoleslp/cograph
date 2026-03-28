@@ -5,7 +5,7 @@ Automatically detects input type and converts to internal format.
 ## Usage
 
 ``` r
-parse_input(input, directed = NULL)
+parse_input(input, directed = NULL, simplify = FALSE)
 ```
 
 ## Arguments

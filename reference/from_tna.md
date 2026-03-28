@@ -118,39 +118,21 @@ qgraph object conversion
 
 ``` r
 # Convert and plot a tna object
-if (requireNamespace("tna", quietly = TRUE)) {
-  library(tna)
-  trans <- tna(group_regulation)
-  from_tna(trans)  # Plots with donut rings showing initial probabilities
-
-  # Use soplot engine instead
-  from_tna(trans, engine = "soplot")
-
-  # Customize the visualization
-  from_tna(trans, layout = "circle", donut_color = c("steelblue", "gray90"))
-
-  # Extract parameters without plotting
-  params <- from_tna(trans, plot = FALSE)
-  # Modify and plot manually
-  params$node_fill <- "coral"
-  do.call(splot, params)
-}
-#> 'tna' package version 1.2.0
-#> ------------------------------------------------------
-#>   Tikka, S., López-Pernas, S., and Saqr, M. (2025). 
-#>   tna: An R Package for Transition Network Analysis.
-#>   Applied Psychological Measurement.
-#>   https://doi.org/10.1177/01466216251348840
-#> ------------------------------------------------------
-#> Please type 'citation("tna")' for more citation information.
-#> See the package website at https://sonsoles.me/tna/
-#> 
-#> Attaching package: ‘tna’
-#> The following objects are masked from ‘package:igraph’:
-#> 
-#>     cliques, communities, compare
+model <- tna::tna(tna::group_regulation)
+from_tna(model)  # Plots with donut rings showing initial probabilities
 
 
+# Use soplot engine instead
+from_tna(model, engine = "soplot")
 
 
+# Customize the visualization
+from_tna(model, layout = "circle", donut_color = c("steelblue", "gray90"))
+
+
+# Extract parameters without plotting
+params <- from_tna(model, plot = FALSE)
+# Modify and plot manually
+params$node_fill <- "coral"
+do.call(splot, params)
 ```

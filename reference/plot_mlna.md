@@ -11,11 +11,12 @@ parallelogram shell giving a pseudo-3D appearance.
 ``` r
 plot_mlna(
   model,
-  layer_list,
+  layer_list = NULL,
+  community = NULL,
   layout = "horizontal",
-  layer_spacing = 2.2,
-  layer_width = 4.5,
-  layer_depth = 2.2,
+  layer_spacing = 4,
+  layer_width = 8,
+  layer_depth = 4,
   skew_angle = 25,
   node_spacing = 0.7,
   colors = NULL,
@@ -31,16 +32,20 @@ plot_mlna(
   node_size = 3,
   minimum = 0,
   scale = 1,
+  show_labels = TRUE,
+  nodes = NULL,
+  label_abbrev = NULL,
   ...
 )
 
 mlna(
   model,
-  layer_list,
+  layer_list = NULL,
+  community = NULL,
   layout = "horizontal",
-  layer_spacing = 2.2,
-  layer_width = 4.5,
-  layer_depth = 2.2,
+  layer_spacing = 4,
+  layer_width = 8,
+  layer_depth = 4,
   skew_angle = 25,
   node_spacing = 0.7,
   colors = NULL,
@@ -56,6 +61,9 @@ mlna(
   node_size = 3,
   minimum = 0,
   scale = 1,
+  show_labels = TRUE,
+  nodes = NULL,
+  label_abbrev = NULL,
   ...
 )
 ```
@@ -64,13 +72,27 @@ mlna(
 
 - model:
 
-  A tna object or weight matrix.
+  A tna object, weight matrix, or cograph_network.
 
 - layer_list:
 
-  List of character vectors defining layers. Each element contains node
-  names belonging to that layer. Layers are displayed from top to bottom
-  in list order.
+  Layers can be specified as:
+
+  - A list of character vectors (node names per layer)
+
+  - A string column name from nodes data (e.g., "layer")
+
+  - NULL to auto-detect from columns named: layer, layers, groups, etc.
+
+  - NULL with `community` specified for algorithmic detection
+
+- community:
+
+  Community detection method to use for auto-layering. If specified,
+  overrides `layer_list`. See
+  [`detect_communities`](http://sonsoles.me/cograph/reference/detect_communities.md)
+  for available methods: "louvain", "walktrap", "fast_greedy",
+  "label_prop", "infomap", "leiden".
 
 - layout:
 
@@ -80,15 +102,15 @@ mlna(
 
 - layer_spacing:
 
-  Vertical distance between layer centers. Default 2.2.
+  Vertical distance between layer centers. Default 2.5.
 
 - layer_width:
 
-  Horizontal width of each layer shell. Default 4.5.
+  Horizontal width of each layer shell. Default 5.
 
 - layer_depth:
 
-  Depth of each layer (for 3D effect). Default 2.2.
+  Depth of each layer (for 3D effect). Default 2.5.
 
 - skew_angle:
 
@@ -153,7 +175,30 @@ mlna(
 
 - scale:
 
-  Scaling factor for high resolution plotting.
+  Scaling factor for spacing parameters. Use scale \> 1 for
+  high-resolution output (e.g., scale = 4 for 300 dpi). This multiplies
+  layer_spacing, layer_width, and layer_depth to maintain proper
+  proportions at higher resolutions. Default 1.
+
+- show_labels:
+
+  Logical. Show node labels. Default TRUE.
+
+- nodes:
+
+  Node metadata. Can be:
+
+  - NULL (default): Use existing nodes data from cograph_network
+
+  - Data frame: Must have `label` column for matching; if `labels`
+    column exists, uses it for display text
+
+  Display priority: `labels` column \> `label` column (identifiers).
+
+- label_abbrev:
+
+  Label abbreviation: NULL (none), integer (max chars), or "auto"
+  (adaptive based on node count).
 
 - ...:
 
@@ -163,13 +208,12 @@ mlna(
 
 Invisibly returns NULL.
 
-## Details
-
-![Multilevel network example](figures/mlna_example.png)
+See `plot_mlna`.
 
 ## Examples
 
 ``` r
+# \donttest{
 # Create multilevel network
 set.seed(42)
 nodes <- paste0("N", 1:15)
@@ -198,4 +242,15 @@ plot_mlna(m, layers,
 
 # Circle layout within layers
 plot_mlna(m, layers, layout = "circle")
+
+# }
+# \donttest{
+nodes <- paste0("N", 1:9)
+m <- matrix(runif(81, 0, 0.3), 9, 9)
+diag(m) <- 0
+colnames(m) <- rownames(m) <- nodes
+layers <- list(L1 = nodes[1:3], L2 = nodes[4:6], L3 = nodes[7:9])
+mlna(m, layers)
+
+# }
 ```

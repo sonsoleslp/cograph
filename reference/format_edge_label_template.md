@@ -16,7 +16,8 @@ format_edge_label_template(
   p_digits = 3,
   p_prefix = "p=",
   ci_format = "bracket",
-  oneline = TRUE
+  oneline = TRUE,
+  leading_zero = TRUE
 )
 ```
 
@@ -66,6 +67,10 @@ format_edge_label_template(
 - oneline:
 
   Logical: single line format (space-separated) or multiline.
+
+- leading_zero:
+
+  Logical: include leading zero for values \< 1? Default TRUE.
 
 ## Value
 

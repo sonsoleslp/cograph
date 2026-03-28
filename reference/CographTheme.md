@@ -2,6 +2,10 @@
 
 Class for managing visual themes for network plots.
 
+## Value
+
+A `CographTheme` R6 object.
+
 ## Active bindings
 
 - `name`:

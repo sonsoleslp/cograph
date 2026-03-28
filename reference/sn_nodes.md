@@ -293,31 +293,29 @@ adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
 # Basic usage with cograph()
 cograph(adj) |>
   sn_nodes(size = 0.08, fill = "steelblue", shape = "circle")
-#> Cograph Network
-#> ==============
-#> Nodes: 3 
-#> Edges: 3 
-#> Directed: FALSE 
-#> Weighted: FALSE 
-#> Layout: computed 
-#> Theme: classic 
-#> 
-#> Use plot() or sn_render() to visualize
-#> Use sn_ggplot() to convert to ggplot2
+#> Cograph network: 3 nodes, 3 edges ( undirected )
+#> Source: matrix 
+#>   Nodes (3): 1, 2, 3
+#>   Edges: 3 / 3 (density: 100.0%)
+#>   Weights: [1.000, 1.000]  |  mean: 1.000
+#>   Strongest edges:
+#>     1 -- 2  1.000
+#>     1 -- 3  1.000
+#>     2 -- 3  1.000
+#> Layout: set 
 
 # Direct matrix input (auto-converted)
 adj |> sn_nodes(fill = "coral", size = 0.1)
-#> Cograph Network
-#> ==============
-#> Nodes: 3 
-#> Edges: 3 
-#> Directed: FALSE 
-#> Weighted: FALSE 
-#> Layout: computed 
-#> Theme: classic 
-#> 
-#> Use plot() or sn_render() to visualize
-#> Use sn_ggplot() to convert to ggplot2
+#> Cograph network: 3 nodes, 3 edges ( undirected )
+#> Source: matrix 
+#>   Nodes (3): 1, 2, 3
+#>   Edges: 3 / 3 (density: 100.0%)
+#>   Weights: [1.000, 1.000]  |  mean: 1.000
+#>   Strongest edges:
+#>     1 -- 2  1.000
+#>     1 -- 3  1.000
+#>     2 -- 3  1.000
+#> Layout: set 
 
 # Per-node customization with vectors
 cograph(adj) |>

@@ -12,7 +12,8 @@ compute_polygon_layout(
   lab,
   group_indices,
   n_sides,
-  angle_spacing = 0.15
+  angle_spacing = 0.15,
+  scale = 1
 )
 ```
 
@@ -37,6 +38,10 @@ compute_polygon_layout(
 - angle_spacing:
 
   How far to push edges away from vertices (0-1). Default 0.15.
+
+- scale:
+
+  Scaling factor for radius. Default 1.
 
 ## Value
 

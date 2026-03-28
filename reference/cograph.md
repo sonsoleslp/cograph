@@ -9,10 +9,11 @@ visualization-ready network object.
 ``` r
 cograph(
   input,
-  layout = "spring",
+  layout = NULL,
   directed = NULL,
-  node_labels = NULL,
+  nodes = NULL,
   seed = 42,
+  simplify = FALSE,
   ...
 )
 ```
@@ -38,20 +39,29 @@ cograph(
 - layout:
 
   Layout algorithm: "circle", "spring", "groups", "grid", "random",
-  "star", "bipartite", or "custom". Default "spring".
+  "star", "bipartite", or "custom". Default NULL (no layout computed).
+  Set to a layout name to compute immediately, or use sn_layout() later.
 
 - directed:
 
   Logical. Force directed interpretation. NULL for auto-detect.
 
-- node_labels:
+- nodes:
 
-  Character vector of node labels.
+  Node metadata. Can be NULL or a data frame with node attributes. If
+  data frame has a `label` or `labels` column, those are used for
+  display.
 
 - seed:
 
   Random seed for deterministic layouts. Default 42. Set NULL for
   random.
+
+- simplify:
+
+  Logical or character. If FALSE (default), every transition from tna
+  sequence data is a separate edge. If TRUE or a string ("sum", "mean",
+  "max", "min"), duplicate edges are aggregated.
 
 - ...:
 
@@ -84,42 +94,34 @@ converting external objects
 ## Examples
 
 ``` r
-# From adjacency matrix
+# From adjacency matrix (no layout computed yet - fast!)
 adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
-cograph(adj)
-#> Cograph Network
-#> ==============
-#> Nodes: 3 
-#> Edges: 3 
-#> Directed: FALSE 
-#> Weighted: FALSE 
-#> Layout: computed 
-#> Theme: classic 
-#> 
-#> Use plot() or sn_render() to visualize
-#> Use sn_ggplot() to convert to ggplot2
+net <- cograph(adj)
+
+# Layout computed automatically when plotting
+splot(net)  # Uses spring layout by default
+
 
 # From edge list
 edges <- data.frame(from = c(1, 1, 2), to = c(2, 3, 3))
 cograph(edges)
-#> Cograph Network
-#> ==============
-#> Nodes: 3 
-#> Edges: 3 
-#> Directed: FALSE 
-#> Weighted: FALSE 
-#> Layout: computed 
-#> Theme: classic 
-#> 
-#> Use plot() or sn_render() to visualize
-#> Use sn_ggplot() to convert to ggplot2
+#> Cograph network: 3 nodes, 3 edges ( undirected )
+#> Source: edgelist 
+#> Data: data.frame (3 x 2) 
+#>   Nodes (3): 1, 2, 3
+#> Weights: 1 (all equal)
+#> Layout: none 
+
+# Compute layout immediately if needed
+cograph(adj, layout = "circle") |> splot()
+
 
 # With customization (pipe-friendly workflow)
 adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
-cograph(adj, layout = "circle") |>
+cograph(adj) |>
   sn_nodes(fill = "steelblue") |>
   sn_edges(color = "gray50") |>
-  splot()
+  splot(layout = "circle")
 
 
 # Weighted network with automatic styling
@@ -131,8 +133,7 @@ cograph(w_adj) |>
 
 # With igraph (if installed)
 if (requireNamespace("igraph", quietly = TRUE)) {
-  library(igraph)
-  g <- make_ring(10)
+  g <- igraph::make_ring(10)
   cograph(g) |> splot()
 }
 ```

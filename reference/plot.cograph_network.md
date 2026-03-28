@@ -21,12 +21,15 @@ plot(x, ...)
 
 ## Value
 
-Invisible x.
+The input object `x`, invisibly.
 
 ## Examples
 
 ``` r
+# \donttest{
 adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
 net <- cograph(adj)
 plot(net)
+
+# }
 ```

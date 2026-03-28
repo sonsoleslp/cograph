@@ -18,6 +18,7 @@ build_edge_labels_from_template(
   p_prefix = "p=",
   ci_format = "bracket",
   oneline = TRUE,
+  leading_zero = TRUE,
   n
 )
 ```
@@ -71,6 +72,10 @@ build_edge_labels_from_template(
 - oneline:
 
   Logical: single line format.
+
+- leading_zero:
+
+  Logical: include leading zero for values \< 1? Default TRUE.
 
 - n:
 

@@ -15,28 +15,73 @@ beyond.
 ``` r
 plot_htna(
   x,
-  node_list,
+  node_list = NULL,
+  community = NULL,
   layout = "auto",
   use_list_order = TRUE,
-  jitter = TRUE,
+  jitter = FALSE,
   jitter_amount = 0.8,
   jitter_side = "first",
   orientation = "vertical",
-  group1_pos = -1.2,
-  group2_pos = 1.2,
+  group1_pos = -2,
+  group2_pos = 2,
+  group_spacing = NULL,
+  node_spacing = NULL,
+  columns = 1,
+  column_spacing = NULL,
+  layout_margin = 0.15,
   curvature = 0.4,
-  group1_color = "#ffd89d",
-  group2_color = "#a68ba5",
+  group1_color = "#4FC3F7",
+  group2_color = "#fbb550",
   group1_shape = "circle",
   group2_shape = "square",
   group_colors = NULL,
   group_shapes = NULL,
   angle_spacing = 0.15,
   edge_colors = NULL,
+  intra_curvature = NULL,
   legend = TRUE,
-  legend_position = "topright",
+  legend_position = "bottomright",
   extend_lines = FALSE,
   scale = 1,
+  nodes = NULL,
+  label_abbrev = NULL,
+  ...
+)
+
+htna(
+  x,
+  node_list = NULL,
+  community = NULL,
+  layout = "auto",
+  use_list_order = TRUE,
+  jitter = FALSE,
+  jitter_amount = 0.8,
+  jitter_side = "first",
+  orientation = "vertical",
+  group1_pos = -2,
+  group2_pos = 2,
+  group_spacing = NULL,
+  node_spacing = NULL,
+  columns = 1,
+  column_spacing = NULL,
+  layout_margin = 0.15,
+  curvature = 0.4,
+  group1_color = "#4FC3F7",
+  group2_color = "#fbb550",
+  group1_shape = "circle",
+  group2_shape = "square",
+  group_colors = NULL,
+  group_shapes = NULL,
+  angle_spacing = 0.15,
+  edge_colors = NULL,
+  intra_curvature = NULL,
+  legend = TRUE,
+  legend_position = "bottomright",
+  extend_lines = FALSE,
+  scale = 1,
+  nodes = NULL,
+  label_abbrev = NULL,
   ...
 )
 ```
@@ -45,11 +90,28 @@ plot_htna(
 
 - x:
 
-  A tna object or weight matrix.
+  A tna object, weight matrix, or cograph_network.
 
 - node_list:
 
-  List of 2+ character vectors defining node groups.
+  Node groups can be specified as:
+
+  - A list of character vectors (node names per group)
+
+  - A string column name from nodes data (e.g., "groups")
+
+  - NULL to auto-detect from columns named: groups, cluster, community,
+    etc.
+
+  - NULL with `community` specified for algorithmic detection
+
+- community:
+
+  Community detection method to use for auto-grouping. If specified,
+  overrides `node_list`. See
+  [`detect_communities`](http://sonsoles.me/cograph/reference/detect_communities.md)
+  for available methods: "louvain", "walktrap", "fast_greedy",
+  "label_prop", "infomap", "leiden".
 
 - layout:
 
@@ -67,9 +129,9 @@ plot_htna(
 
   Controls horizontal spread of nodes. Options:
 
-  - TRUE (default): Auto-compute jitter based on edge connectivity
+  - FALSE (default) or 0: No jitter (nodes aligned in columns)
 
-  - FALSE or 0: No jitter (nodes aligned in columns)
+  - TRUE: Auto-compute jitter based on edge connectivity
 
   - Numeric (0-1): Amount of jitter (0.3 = spread nodes 30\\
 
@@ -93,16 +155,51 @@ plot_htna(
 
 - orientation:
 
-  Layout orientation for bipartite: "vertical" (two columns, default) or
-  "horizontal" (two rows). Ignored for triangle/rectangle layouts.
+  Layout orientation for bipartite: "vertical" (two columns, default),
+  "horizontal" (two rows), "facing" (both groups on same horizontal
+  line, group1 left, group2 right, tip-to-tip), or "circular" (two
+  facing semicircles with a gap between them). Ignored for
+  triangle/rectangle layouts.
 
 - group1_pos:
 
-  Position for first group in bipartite layout. Default -1.2.
+  Position for first group in bipartite layout. Default -2. Overridden
+  by `group_spacing` if specified.
 
 - group2_pos:
 
-  Position for second group in bipartite layout. Default 1.2.
+  Position for second group in bipartite layout. Default 2. Overridden
+  by `group_spacing` if specified.
+
+- group_spacing:
+
+  Numeric. Distance between the two groups in bipartite layout.
+  Overrides `group1_pos`/`group2_pos`. For example, `group_spacing = 6`
+  places groups at x = -3 and x = 3. Default NULL (uses
+  group1_pos/group2_pos).
+
+- node_spacing:
+
+  Numeric. Vertical (or horizontal) gap between nodes within a group.
+  Default NULL (auto-computed from the largest group size). Increase for
+  more space between nodes (e.g., 0.5 or 0.8).
+
+- columns:
+
+  Integer or vector of length 2. Number of sub-columns per group. A
+  single value applies to both groups. A vector of 2 sets columns per
+  group independently (e.g., `c(2, 1)` puts the first group in 2
+  columns). Nodes are distributed evenly across sub-columns. Default 1.
+
+- column_spacing:
+
+  Numeric. Horizontal distance between sub-columns within a group.
+  Default NULL (auto: `node_spacing * 2`).
+
+- layout_margin:
+
+  Margin around the layout (0-1). Default 0.15. Increase if labels or
+  self-loops are clipped at the edges.
 
 - curvature:
 
@@ -110,11 +207,11 @@ plot_htna(
 
 - group1_color:
 
-  Color for first group nodes. Default "#ffd89d".
+  Color for first group nodes. Default "#4FC3F7".
 
 - group2_color:
 
-  Color for second group nodes. Default "#a68ba5".
+  Color for second group nodes. Default "#fbb550".
 
 - group1_shape:
 
@@ -146,6 +243,14 @@ plot_htna(
   darker versions of group_colors. Set to FALSE to use default edge
   color.
 
+- intra_curvature:
+
+  Numeric. Curvature amount for intra-group edges (edges between nodes
+  in the same group). When set, intra-group edges are drawn separately
+  with curves that arc away from the opposing group. Default NULL
+  (intra-group edges drawn normally by splot). Typical values: 0.3 to
+  1.0.
+
 - legend:
 
   Logical. Whether to show a legend. Default TRUE for polygon layouts.
@@ -153,7 +258,7 @@ plot_htna(
 - legend_position:
 
   Position for legend: "topright", "topleft", "bottomright",
-  "bottomleft", "right", "left", "top", "bottom". Default "topright".
+  "bottomleft", "right", "left", "top", "bottom". Default "bottomright".
 
 - extend_lines:
 
@@ -169,7 +274,26 @@ plot_htna(
 
 - scale:
 
-  Scaling factor for high resolution plotting.
+  Scaling factor for spacing parameters. Use scale \> 1 for
+  high-resolution output (e.g., scale = 4 for 300 dpi). This multiplies
+  group positions and polygon/circular radius to maintain proper
+  proportions at higher resolutions. Default 1.
+
+- nodes:
+
+  Node metadata. Can be:
+
+  - NULL (default): Use existing nodes data from cograph_network
+
+  - Data frame: Must have `label` column for matching; if `labels`
+    column exists, uses it for display text
+
+  Display priority: `labels` column \> `label` column (identifiers).
+
+- label_abbrev:
+
+  Label abbreviation: NULL (none), integer (max chars), or "auto"
+  (adaptive based on node count). Applied before passing to tplot.
 
 - ...:
 
@@ -182,54 +306,26 @@ Invisibly returns the result from tplot().
 ## Examples
 
 ``` r
-# --- 2-group bipartite example ---
-nodes_2 <- c("Wrong", "Retry", "Right", "Attempt", "Instruction", "Skip",
-              "Order", "Correct", "Hint", "Quit", "Clarify", "Question", "Praise")
-set.seed(1)
-m2 <- matrix(runif(length(nodes_2)^2, 0, 0.3), length(nodes_2), length(nodes_2))
-diag(m2) <- 0
-dimnames(m2) <- list(nodes_2, nodes_2)
+# Create a 6-node network
+mat <- matrix(runif(36, 0, 0.3), 6, 6)
+diag(mat) <- 0
+colnames(mat) <- rownames(mat) <- c("A", "B", "C", "D", "E", "F")
 
-node_types <- list(
-  Student = c("Wrong", "Retry", "Right", "Attempt", "Instruction", "Skip"),
-  AI = c("Order", "Correct", "Hint", "Quit", "Clarify", "Question", "Praise")
-)
-plot_htna(m2, node_types)
-
-plot_htna(m2, node_types, jitter_amount = 0.5)
+# Bipartite layout (2 groups)
+groups <- list(Group1 = c("A", "B", "C"), Group2 = c("D", "E", "F"))
+plot_htna(mat, groups)
 
 
-# --- Triangle layout (3 groups) ---
-nodes_3 <- c("Explain", "Question", "Feedback",
-              "Answer", "Ask", "Attempt",
-              "Hint", "Score", "Progress")
-m3 <- matrix(runif(81, 0, 0.3), 9, 9)
-diag(m3) <- 0
-dimnames(m3) <- list(nodes_3, nodes_3)
+# Polygon layout (3 groups)
+groups3 <- list(X = c("A", "B"), Y = c("C", "D"), Z = c("E", "F"))
+plot_htna(mat, groups3)
 
-node_types_3 <- list(
-  Teacher = c("Explain", "Question", "Feedback"),
-  Student = c("Answer", "Ask", "Attempt"),
-  System  = c("Hint", "Score", "Progress")
-)
-plot_htna(m3, node_types_3)
+# \donttest{
+mat <- matrix(runif(36, 0, 0.3), 6, 6)
+diag(mat) <- 0
+colnames(mat) <- rownames(mat) <- c("A", "B", "C", "D", "E", "F")
+groups <- list(Group1 = c("A", "B", "C"), Group2 = c("D", "E", "F"))
+htna(mat, groups)
 
-plot_htna(m3, node_types_3, layout = "triangle")
-
-# --- Rectangle layout (4 groups) ---
-nodes_4 <- c("Click", "Type", "Scroll",
-              "Validate", "Transform",
-              "Display", "Alert",
-              "Save", "Load", "Cache")
-m4 <- matrix(runif(100, 0, 0.3), 10, 10)
-diag(m4) <- 0
-dimnames(m4) <- list(nodes_4, nodes_4)
-
-node_types_4 <- list(
-  Input   = c("Click", "Type", "Scroll"),
-  Process = c("Validate", "Transform"),
-  Output  = c("Display", "Alert"),
-  Storage = c("Save", "Load", "Cache")
-)
-plot_htna(m4, node_types_4)
+# }
 ```

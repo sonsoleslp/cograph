@@ -1,8 +1,7 @@
 # Set Edges in Cograph Network
 
 Replaces the edges in a cograph_network object. Expects a data frame
-with from, to, and optionally weight columns. Updates the from, to,
-weight vectors and n_edges.
+with from, to, and optionally weight columns.
 
 ## Usage
 

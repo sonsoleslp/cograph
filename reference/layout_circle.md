@@ -5,7 +5,7 @@ Arrange nodes evenly spaced around a circle.
 ## Usage
 
 ``` r
-layout_circle(network, order = NULL, start_angle = pi/2, clockwise = TRUE)
+layout_circle(network, order = NULL, start_angle = pi/2, clockwise = TRUE, ...)
 ```
 
 ## Arguments
@@ -25,6 +25,10 @@ layout_circle(network, order = NULL, start_angle = pi/2, clockwise = TRUE)
 - clockwise:
 
   Logical. Arrange nodes clockwise? Default TRUE.
+
+- ...:
+
+  Additional arguments (ignored).
 
 ## Value
 

@@ -48,16 +48,17 @@ draw_edge_label_base(
 
 - shadow:
 
-  Logical: enable drop shadow?
+  Logical or character: FALSE for none, TRUE or "shadow" for drop
+  shadow, "halo" for outline rim around text.
 
 - shadow_color:
 
-  Shadow color.
+  Shadow/halo color.
 
 - shadow_offset:
 
-  Shadow offset distance.
+  Shadow/halo offset distance.
 
 - shadow_alpha:
 
-  Shadow transparency.
+  Shadow/halo transparency.

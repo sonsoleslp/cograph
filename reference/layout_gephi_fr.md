@@ -2,12 +2,25 @@
 
 Force-directed layout that replicates Gephi's Fruchterman-Reingold
 algorithm. This is a strict port of the Java implementation from Gephi's
-source code.
+source code, with additional improvements for reproducibility and
+flexibility.
 
 ## Usage
 
 ``` r
-layout_gephi_fr(g, area = 10000, gravity = 10, speed = 1, niter = 100)
+layout_gephi_fr(
+  g,
+  area = 10000,
+  gravity = 1,
+  speed = 1,
+  niter = 100,
+  seed = NULL,
+  initial = NULL,
+  normalize = TRUE,
+  gravity_mode = c("linear", "degree", "none"),
+  cooling_mode = c("constant", "vcf", "linear"),
+  anchor_strength = 0
+)
 ```
 
 ## Arguments
@@ -22,7 +35,8 @@ layout_gephi_fr(g, area = 10000, gravity = 10, speed = 1, niter = 100)
 
 - gravity:
 
-  Gravity force pulling nodes toward center. Default 10.0.
+  Gravity force pulling nodes toward center. Default 1.0. (Note: Reduced
+  from Gephi's default of 10.0 to prevent circular layouts)
 
 - speed:
 
@@ -31,6 +45,37 @@ layout_gephi_fr(g, area = 10000, gravity = 10, speed = 1, niter = 100)
 - niter:
 
   Number of iterations. Default 100.
+
+- seed:
+
+  Random seed for reproducibility. Default NULL.
+
+- initial:
+
+  Optional initial coordinates (matrix or data frame). Useful for
+  warm-starting or animations.
+
+- normalize:
+
+  Logical. If TRUE (default), normalize output to \[0,1\] range. If
+  FALSE, return raw Gephi-scale coordinates.
+
+- gravity_mode:
+
+  Gravity behavior: "linear" (default, standard gravity), "degree"
+  (high-degree nodes feel stronger gravity, creates hub structure), or
+  "none" (no gravity, like igraph FR).
+
+- cooling_mode:
+
+  Cooling schedule: "constant" (default, no cooling), "vcf" (Variable
+  Cooling Factor - adapts based on movement), or "linear" (linear
+  decrease over iterations).
+
+- anchor_strength:
+
+  Strength of force pulling nodes toward initial positions (default: 0).
+  Only applies when `initial` is provided.
 
 ## Value
 
@@ -47,3 +92,5 @@ Fruchterman-Reingold. Key differences from igraph's layout_with_fr:
 - Includes configurable gravity toward center
 
 - Different cooling/speed mechanism
+
+- Supports multiple gravity modes for different layout styles

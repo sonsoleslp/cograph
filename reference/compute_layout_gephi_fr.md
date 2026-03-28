@@ -8,9 +8,15 @@ Wrapper for Gephi FR Layout (for layout registry)
 compute_layout_gephi_fr(
   network,
   area = 10000,
-  gravity = 10,
+  gravity = 1,
   speed = 1,
   niter = 100,
+  seed = NULL,
+  initial = NULL,
+  normalize = TRUE,
+  gravity_mode = "linear",
+  cooling_mode = "constant",
+  anchor_strength = 0,
   ...
 )
 ```
@@ -27,7 +33,7 @@ compute_layout_gephi_fr(
 
 - gravity:
 
-  Gravity force. Default 10.0.
+  Gravity force. Default 1.0.
 
 - speed:
 
@@ -36,6 +42,30 @@ compute_layout_gephi_fr(
 - niter:
 
   Number of iterations. Default 100.
+
+- seed:
+
+  Random seed for reproducibility.
+
+- initial:
+
+  Optional initial coordinates.
+
+- normalize:
+
+  Normalize output to \[0,1\]. Default TRUE.
+
+- gravity_mode:
+
+  Gravity behavior: "linear", "degree", or "none".
+
+- cooling_mode:
+
+  Cooling schedule: "constant", "vcf", or "linear".
+
+- anchor_strength:
+
+  Anchor force strength for animations.
 
 - ...:
 

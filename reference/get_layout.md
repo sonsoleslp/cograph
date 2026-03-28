@@ -22,9 +22,15 @@ The layout function, or NULL if not found.
 
 ``` r
 get_layout("circle")
-#> function (network, order = NULL, start_angle = pi/2, clockwise = TRUE) 
+#> function (network, order = NULL, start_angle = pi/2, clockwise = TRUE, 
+#>     ...) 
 #> {
-#>     n <- network$n_nodes
+#>     n <- if (inherits(network, "cograph_network")) {
+#>         n_nodes(network)
+#>     }
+#>     else {
+#>         network$n_nodes
+#>     }
 #>     if (n == 0) {
 #>         return(data.frame(x = numeric(0), y = numeric(0)))
 #>     }
@@ -59,6 +65,6 @@ get_layout("circle")
 #>     coords[order, ] <- coords
 #>     coords
 #> }
-#> <bytecode: 0x555fd91b9368>
+#> <bytecode: 0x55d18b1030f8>
 #> <environment: namespace:cograph>
 ```

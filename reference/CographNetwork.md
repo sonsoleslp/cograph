@@ -3,6 +3,10 @@
 Core class representing a network for visualization. Stores nodes,
 edges, layout coordinates, and aesthetic mappings.
 
+## Value
+
+A `CographNetwork` R6 object.
+
 ## Active bindings
 
 - `n_nodes`:
@@ -23,7 +27,7 @@ edges, layout coordinates, and aesthetic mappings.
 
 - `node_labels`:
 
-  Vector of node labels.
+  Vector of node labels (priority: labels \> label).
 
 ## Methods
 
@@ -81,7 +85,12 @@ Create a new CographNetwork object.
 
 #### Usage
 
-    CographNetwork$new(input = NULL, directed = NULL, node_labels = NULL)
+    CographNetwork$new(
+      input = NULL,
+      directed = NULL,
+      nodes = NULL,
+      simplify = FALSE
+    )
 
 #### Arguments
 
@@ -93,9 +102,17 @@ Create a new CographNetwork object.
 
   Logical. Force directed interpretation. NULL for auto-detect.
 
-- `node_labels`:
+- `nodes`:
 
-  Character vector of node labels.
+  Node metadata. Can be NULL or a data frame with node attributes. If
+  data frame has a `label` or `labels` column, those are used for
+  display.
+
+- `simplify`:
+
+  Logical or character. If FALSE (default), every transition from tna
+  sequence data is a separate edge. If TRUE or a string ("sum", "mean",
+  "max", "min"), duplicate edges are aggregated.
 
 #### Returns
 

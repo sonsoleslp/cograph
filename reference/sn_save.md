@@ -41,20 +41,15 @@ sn_save(network, filename, width = 7, height = 7, dpi = 300, title = NULL, ...)
 
 ## Value
 
-Invisible filename.
+The output `filename`, invisibly.
 
 ## Examples
 
 ``` r
 # \donttest{
 adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
-# With cograph()
 net <- cograph(adj)
 sn_save(net, file.path(tempdir(), "network.pdf"))
-#> Saved to: /tmp/RtmpRvUwrU/network.pdf
-
-# Direct matrix input
-sn_save(adj, file.path(tempdir(), "network.png"), dpi = 300)
-#> Saved to: /tmp/RtmpRvUwrU/network.png
+#> Saved to: /tmp/Rtmpseh1Vm/network.pdf
 # }
 ```

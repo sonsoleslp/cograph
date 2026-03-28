@@ -5,7 +5,7 @@ Returns indices for rendering edges from weakest to strongest.
 ## Usage
 
 ``` r
-get_edge_order(edges)
+get_edge_order(edges, priority = NULL)
 ```
 
 ## Arguments
@@ -13,6 +13,10 @@ get_edge_order(edges)
 - edges:
 
   Edge data frame.
+
+- priority:
+
+  Optional numeric vector of edge priorities. Higher = on top.
 
 ## Value
 

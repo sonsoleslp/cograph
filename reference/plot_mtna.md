@@ -9,10 +9,11 @@ shape (circle, square, diamond, triangle) containing its nodes.
 ``` r
 plot_mtna(
   x,
-  cluster_list,
+  cluster_list = NULL,
+  community = NULL,
   layout = "circle",
-  spacing = 3,
-  shape_size = 1.2,
+  spacing = 4,
+  shape_size = 1.8,
   node_spacing = 0.5,
   colors = NULL,
   shapes = NULL,
@@ -20,22 +21,30 @@ plot_mtna(
   bundle_edges = TRUE,
   bundle_strength = 0.8,
   summary_edges = TRUE,
+  aggregation = c("sum", "mean", "max", "min", "median", "density"),
   within_edges = TRUE,
   show_border = TRUE,
   legend = TRUE,
   legend_position = "topright",
   curvature = 0.3,
-  node_size = 2,
+  node_size = 3,
+  layout_margin = 0.15,
   scale = 1,
+  show_labels = FALSE,
+  nodes = NULL,
+  label_size = NULL,
+  label_abbrev = NULL,
+  cluster_shape = NULL,
   ...
 )
 
 mtna(
   x,
-  cluster_list,
+  cluster_list = NULL,
+  community = NULL,
   layout = "circle",
-  spacing = 3,
-  shape_size = 1.2,
+  spacing = 4,
+  shape_size = 1.8,
   node_spacing = 0.5,
   colors = NULL,
   shapes = NULL,
@@ -43,13 +52,20 @@ mtna(
   bundle_edges = TRUE,
   bundle_strength = 0.8,
   summary_edges = TRUE,
+  aggregation = c("sum", "mean", "max", "min", "median", "density"),
   within_edges = TRUE,
   show_border = TRUE,
   legend = TRUE,
   legend_position = "topright",
   curvature = 0.3,
-  node_size = 2,
+  node_size = 3,
+  layout_margin = 0.15,
   scale = 1,
+  show_labels = FALSE,
+  nodes = NULL,
+  label_size = NULL,
+  label_abbrev = NULL,
+  cluster_shape = NULL,
   ...
 )
 ```
@@ -58,12 +74,26 @@ mtna(
 
 - x:
 
-  A tna object or weight matrix.
+  A tna object, weight matrix, cograph_network, or cluster_summary
+  object.
 
 - cluster_list:
 
-  List of character vectors defining clusters. Each cluster becomes a
-  separate shape in the layout.
+  Clusters can be specified as:
+
+  - A list of character vectors (node names per cluster)
+
+  - A string column name from nodes data (e.g., "groups")
+
+  - NULL with `community` specified for auto-detection
+
+- community:
+
+  Community detection method to use for auto-clustering. If specified,
+  overrides `cluster_list`. See
+  [`detect_communities`](http://sonsoles.me/cograph/reference/detect_communities.md)
+  for available methods: "louvain", "walktrap", "fast_greedy",
+  "label_prop", "infomap", "leiden".
 
 - layout:
 
@@ -72,11 +102,11 @@ mtna(
 
 - spacing:
 
-  Distance between cluster centers. Default 3.
+  Distance between cluster centers. Default 4.
 
 - shape_size:
 
-  Size of each cluster shape (shell radius). Default 1.2.
+  Size of each cluster shape (shell radius). Default 1.8.
 
 - node_spacing:
 
@@ -109,6 +139,13 @@ mtna(
   Logical. Show aggregated summary edges between clusters instead of
   individual node edges. Default TRUE.
 
+- aggregation:
+
+  Method for aggregating edge weights between clusters: "sum" (total
+  flow), "mean" (average strength), "max" (strongest link), "min"
+  (weakest link), "median", or "density" (normalized by possible edges).
+  Default "sum". Only used when summary_edges = TRUE.
+
 - within_edges:
 
   Logical. When summary_edges is TRUE, also show individual edges within
@@ -132,11 +169,47 @@ mtna(
 
 - node_size:
 
-  Size of nodes inside shapes. Default 2.
+  Size of nodes inside shapes. Default 3.
+
+- layout_margin:
+
+  Margin around the layout as fraction of range. Default 0.15.
 
 - scale:
 
-  Scaling factor for high resolution plotting.
+  Scaling factor for spacing parameters. Use scale \> 1 for
+  high-resolution output (e.g., scale = 4 for 300 dpi). This multiplies
+  spacing and shape_size to maintain proper proportions at higher
+  resolutions. Default 1.
+
+- show_labels:
+
+  Logical. Show node labels inside clusters. Default FALSE.
+
+- nodes:
+
+  Node metadata. Can be:
+
+  - NULL (default): Use existing nodes data from cograph_network
+
+  - Data frame: Must have `label` column for matching; if `labels`
+    column exists, uses it for display text
+
+  Display priority: `labels` column \> `label` column (identifiers).
+
+- label_size:
+
+  Label text size. Default NULL (auto-scaled).
+
+- label_abbrev:
+
+  Label abbreviation: NULL (none), integer (max chars), or "auto"
+  (adaptive based on node count).
+
+- cluster_shape:
+
+  Shape for cluster summary nodes when using summary view. Can be single
+  value or vector. Overrides `shapes`. Default NULL (use shapes).
 
 - ...:
 
@@ -144,11 +217,20 @@ mtna(
 
 ## Value
 
-Invisibly returns NULL for summary mode, or the plot_tna result.
+Invisibly returns a cluster_summary object for summary mode, or the
+plot_tna result otherwise.
+
+See `plot_mtna`.
+
+## See also
+
+[`cluster_summary`](http://sonsoles.me/cograph/reference/cluster_summary.md),
+[`plot_mcml`](http://sonsoles.me/cograph/reference/plot_mcml.md)
 
 ## Examples
 
 ``` r
+# \donttest{
 # Create network with 4 clusters
 nodes <- paste0("N", 1:20)
 m <- matrix(runif(400, 0, 0.3), 20, 20)
@@ -166,6 +248,21 @@ clusters <- list(
 plot_mtna(m, clusters, summary_edges = TRUE)
 
 
+# With node labels
+plot_mtna(m, clusters, show_labels = TRUE, label_abbrev = 3)
+
+
 # Control spacing and sizes
 plot_mtna(m, clusters, spacing = 4, shape_size = 1.5, node_spacing = 0.6)
+
+# }
+# \donttest{
+nodes <- paste0("N", 1:12)
+m <- matrix(runif(144, 0, 0.3), 12, 12)
+diag(m) <- 0
+colnames(m) <- rownames(m) <- nodes
+clusters <- list(C1 = nodes[1:4], C2 = nodes[5:8], C3 = nodes[9:12])
+mtna(m, clusters)
+
+# }
 ```

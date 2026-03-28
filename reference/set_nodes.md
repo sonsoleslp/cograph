@@ -1,7 +1,6 @@
 # Set Nodes in Cograph Network
 
-Replaces the nodes data frame in a cograph_network object. Automatically
-updates n_nodes and labels.
+Replaces the nodes data frame in a cograph_network object.
 
 ## Usage
 

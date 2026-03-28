@@ -2,6 +2,10 @@
 
 Class for managing layout algorithms and computing node positions.
 
+## Value
+
+A `CographLayout` R6 object.
+
 ## Methods
 
 ### Public methods

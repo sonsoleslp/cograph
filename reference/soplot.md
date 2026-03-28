@@ -14,6 +14,7 @@ soplot(
   margins = c(0.05, 0.05, 0.1, 0.05),
   layout_margin = 0.15,
   newpage = TRUE,
+  background = "white",
   layout = NULL,
   theme = NULL,
   seed = 42,
@@ -100,6 +101,7 @@ sn_render(
   margins = c(0.05, 0.05, 0.1, 0.05),
   layout_margin = 0.15,
   newpage = TRUE,
+  background = "white",
   layout = NULL,
   theme = NULL,
   seed = 42,
@@ -207,6 +209,10 @@ sn_render(
 - newpage:
 
   Logical. Start a new graphics page? Default TRUE.
+
+- background:
+
+  Background color for the plot. Default "white".
 
 - layout:
 
@@ -550,6 +556,8 @@ sn_render(
 
 Invisible NULL. Called for side effect of drawing.
 
+Invisible NULL. Called for side effect of drawing.
+
 ## Details
 
 ### soplot vs splot
@@ -656,4 +664,10 @@ adj |> soplot(
   node_size = 0.08,
   edge_width = 2
 )
+
+# \donttest{
+mat <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
+sn_render(mat)
+
+# }
 ```

@@ -13,7 +13,8 @@ layout_oval(
   order = NULL,
   start_angle = pi/2,
   clockwise = TRUE,
-  rotation = 0
+  rotation = 0,
+  ...
 )
 ```
 
@@ -43,6 +44,10 @@ layout_oval(
 - rotation:
 
   Rotation angle in radians to tilt the entire oval. Default 0.
+
+- ...:
+
+  Additional arguments (ignored).
 
 ## Value
 

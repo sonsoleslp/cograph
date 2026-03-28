@@ -6,11 +6,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Introduction to cograph • cograph</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
-<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
-<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="icon" sizes="any" href="../favicon.ico">
-<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -25,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cograph</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,12 +33,14 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/basic_example.html">Basic example</a></li>
-    <li><a class="dropdown-item" href="../articles/co_pvalue.html">Confidence Interval and p-value Demo</a></li>
-    <li><a class="dropdown-item" href="../articles/cograph_demo.html">Intermediate example</a></li>
+<li><a class="dropdown-item" href="../articles/comparison-plots-demo.html">Network Comparison and Visualization</a></li>
+    <li><a class="dropdown-item" href="../articles/function-reference.html">Function Reference</a></li>
+    <li><a class="dropdown-item" href="../articles/input-formats.html">Input Formats</a></li>
     <li><a class="dropdown-item" href="../articles/introduction.html">Introduction to cograph</a></li>
-    <li><a class="dropdown-item" href="../articles/pie_donut_guide.html">Pie &amp; Donut Nodes in cograph</a></li>
-    <li><a class="dropdown-item" href="../articles/qgraph-to-splot.html">Migrating from qgraph to splot</a></li>
+    <li><a class="dropdown-item" href="../articles/mcml-examples.html">Nice Examples</a></li>
+    <li><a class="dropdown-item" href="../articles/network-structure-and-groups.html">Network Structure and Node Groups</a></li>
+    <li><a class="dropdown-item" href="../articles/plotting-tna-models.html">Plotting TNA Models with splot</a></li>
+    <li><a class="dropdown-item" href="../articles/why-cograph.html">Why cograph?</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -65,7 +62,8 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Introduction to cograph</h1>
+
+      <h1>Introduction to cograph</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/cograph/blob/main/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
@@ -81,7 +79,7 @@
 a clean, pipe-friendly API for creating publication-quality network
 plots.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://sonsoles.me/cograph/">cograph</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sonsoles.me/cograph/" class="external-link">cograph</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="creating-a-network">Creating a Network<a class="anchor" aria-label="anchor" href="#creating-a-network"></a>
@@ -105,17 +103,18 @@ plots.</p>
 <span></span>
 <span><span class="co"># Create and render</span></span>
 <span><span class="fu"><a href="../reference/cograph.html">cograph</a></span><span class="op">(</span><span class="va">adj</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: FALSE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: classic </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): A, B, C, D, E</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 10 (density: 70.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [1.000, 1.000]  |  mean: 1.000</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     A -- B  1.000</span></span>
+<span><span class="co">#&gt;     A -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- D  1.000</span></span>
+<span><span class="co">#&gt;     C -- D  1.000</span></span>
+<span><span class="co">#&gt; Layout: none</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="from-an-edge-list">From an Edge List<a class="anchor" aria-label="anchor" href="#from-an-edge-list"></a>
@@ -128,17 +127,12 @@ plots.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/cograph.html">cograph</a></span><span class="op">(</span><span class="va">edges</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 4 </span></span>
-<span><span class="co">#&gt; Edges: 4 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: TRUE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: classic </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 4 nodes, 4 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: edgelist </span></span>
+<span><span class="co">#&gt; Data: data.frame (4 x 3) </span></span>
+<span><span class="co">#&gt;   Nodes (4): Alice, Bob, Carol, Dave</span></span>
+<span><span class="co">#&gt; Weights: 1 to 3 </span></span>
+<span><span class="co">#&gt; Layout: none</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -150,34 +144,36 @@ plots.</p>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cograph.html">cograph</a></span><span class="op">(</span><span class="va">adj</span>, layout <span class="op">=</span> <span class="st">"circle"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: FALSE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: classic </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): A, B, C, D, E</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 10 (density: 70.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [1.000, 1.000]  |  mean: 1.000</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     A -- B  1.000</span></span>
+<span><span class="co">#&gt;     A -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- D  1.000</span></span>
+<span><span class="co">#&gt;     C -- D  1.000</span></span>
+<span><span class="co">#&gt; Layout: set</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="force-directed-spring-layout">Force-Directed (Spring) Layout<a class="anchor" aria-label="anchor" href="#force-directed-spring-layout"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cograph.html">cograph</a></span><span class="op">(</span><span class="va">adj</span>, layout <span class="op">=</span> <span class="st">"spring"</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: FALSE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: classic </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): A, B, C, D, E</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 10 (density: 70.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [1.000, 1.000]  |  mean: 1.000</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     A -- B  1.000</span></span>
+<span><span class="co">#&gt;     A -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- D  1.000</span></span>
+<span><span class="co">#&gt;     C -- D  1.000</span></span>
+<span><span class="co">#&gt; Layout: set</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="group-based-layout">Group-Based Layout<a class="anchor" aria-label="anchor" href="#group-based-layout"></a>
@@ -186,17 +182,18 @@ plots.</p>
 <code class="sourceCode R"><span><span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/cograph.html">cograph</a></span><span class="op">(</span><span class="va">adj</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/sn_layout.html">sn_layout</a></span><span class="op">(</span><span class="st">"groups"</span>, groups <span class="op">=</span> <span class="va">groups</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: FALSE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: classic </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): A, B, C, D, E</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 10 (density: 70.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [1.000, 1.000]  |  mean: 1.000</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     A -- B  1.000</span></span>
+<span><span class="co">#&gt;     A -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- D  1.000</span></span>
+<span><span class="co">#&gt;     C -- D  1.000</span></span>
+<span><span class="co">#&gt; Layout: set</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -211,17 +208,18 @@ plots.</p>
 <span>    border_color <span class="op">=</span> <span class="st">"navy"</span>,</span>
 <span>    border_width <span class="op">=</span> <span class="fl">2</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: FALSE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: classic </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): A, B, C, D, E</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 10 (density: 70.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [1.000, 1.000]  |  mean: 1.000</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     A -- B  1.000</span></span>
+<span><span class="co">#&gt;     A -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- D  1.000</span></span>
+<span><span class="co">#&gt;     C -- D  1.000</span></span>
+<span><span class="co">#&gt; Layout: set</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="per-node-styles">Per-Node Styles<a class="anchor" aria-label="anchor" href="#per-node-styles"></a>
 </h3>
@@ -231,17 +229,18 @@ plots.</p>
 <span>    size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.06</span>, <span class="fl">0.08</span>, <span class="fl">0.06</span>, <span class="fl">0.05</span><span class="op">)</span>,</span>
 <span>    fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"orange"</span>, <span class="st">"yellow"</span>, <span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: FALSE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: classic </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): A, B, C, D, E</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 10 (density: 70.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [1.000, 1.000]  |  mean: 1.000</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     A -- B  1.000</span></span>
+<span><span class="co">#&gt;     A -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- D  1.000</span></span>
+<span><span class="co">#&gt;     C -- D  1.000</span></span>
+<span><span class="co">#&gt; Layout: set</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="node-shapes">Node Shapes<a class="anchor" aria-label="anchor" href="#node-shapes"></a>
@@ -255,17 +254,18 @@ plots.</p>
 <span>  <span class="fu"><a href="../reference/sn_nodes.html">sn_nodes</a></span><span class="op">(</span></span>
 <span>    shape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"circle"</span>, <span class="st">"square"</span>, <span class="st">"triangle"</span>, <span class="st">"diamond"</span>, <span class="st">"star"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: FALSE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: classic </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): A, B, C, D, E</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 10 (density: 70.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [1.000, 1.000]  |  mean: 1.000</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     A -- B  1.000</span></span>
+<span><span class="co">#&gt;     A -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- D  1.000</span></span>
+<span><span class="co">#&gt;     C -- D  1.000</span></span>
+<span><span class="co">#&gt; Layout: set</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -281,17 +281,18 @@ plots.</p>
 <span>    color <span class="op">=</span> <span class="st">"gray40"</span>,</span>
 <span>    alpha <span class="op">=</span> <span class="fl">0.7</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: FALSE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: classic </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): A, B, C, D, E</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 10 (density: 70.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [1.000, 1.000]  |  mean: 1.000</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     A -- B  1.000</span></span>
+<span><span class="co">#&gt;     A -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- D  1.000</span></span>
+<span><span class="co">#&gt;     C -- D  1.000</span></span>
+<span><span class="co">#&gt; Layout: set</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="weighted-edges">Weighted Edges<a class="anchor" aria-label="anchor" href="#weighted-edges"></a>
@@ -317,17 +318,18 @@ weights:</p>
 <span>  <span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: 'positive_color' is deprecated, use 'edge_positive_color' instead.</span></span>
 <span><span class="co">#&gt; Warning: 'negative_color' is deprecated, use 'edge_negative_color' instead.</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: TRUE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: classic </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): 1, 2, 3, 4, 5</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 10 (density: 70.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [-0.700, 0.900]  |  +4 / -3 edges</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     4 -- 5  0.900</span></span>
+<span><span class="co">#&gt;     1 -- 2  0.800</span></span>
+<span><span class="co">#&gt;     2 -- 4  -0.700</span></span>
+<span><span class="co">#&gt;     3 -- 4  0.600</span></span>
+<span><span class="co">#&gt;     1 -- 3  -0.500</span></span>
+<span><span class="co">#&gt; Layout: set</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="directed-networks">Directed Networks<a class="anchor" aria-label="anchor" href="#directed-networks"></a>
@@ -347,17 +349,18 @@ weights:</p>
 <span>    curvature <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>    arrow_size <span class="op">=</span> <span class="fl">0.015</span></span>
 <span>  <span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: TRUE </span></span>
-<span><span class="co">#&gt; Weighted: FALSE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: classic </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( directed )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): 1, 2, 3, 4, 5</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 20 (density: 35.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [1.000, 1.000]  |  mean: 1.000</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     1 -&gt; 2  1.000</span></span>
+<span><span class="co">#&gt;     1 -&gt; 3  1.000</span></span>
+<span><span class="co">#&gt;     2 -&gt; 3  1.000</span></span>
+<span><span class="co">#&gt;     2 -&gt; 4  1.000</span></span>
+<span><span class="co">#&gt;     3 -&gt; 4  1.000</span></span>
+<span><span class="co">#&gt; Layout: set</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -369,68 +372,72 @@ weights:</p>
 </h3>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cograph.html">cograph</a></span><span class="op">(</span><span class="va">adj</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/sn_theme.html">sn_theme</a></span><span class="op">(</span><span class="st">"classic"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: FALSE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: classic </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): A, B, C, D, E</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 10 (density: 70.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [1.000, 1.000]  |  mean: 1.000</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     A -- B  1.000</span></span>
+<span><span class="co">#&gt;     A -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- D  1.000</span></span>
+<span><span class="co">#&gt;     C -- D  1.000</span></span>
+<span><span class="co">#&gt; Layout: set</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="dark-theme">Dark Theme<a class="anchor" aria-label="anchor" href="#dark-theme"></a>
 </h3>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cograph.html">cograph</a></span><span class="op">(</span><span class="va">adj</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/sn_theme.html">sn_theme</a></span><span class="op">(</span><span class="st">"dark"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: FALSE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: dark </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): A, B, C, D, E</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 10 (density: 70.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [1.000, 1.000]  |  mean: 1.000</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     A -- B  1.000</span></span>
+<span><span class="co">#&gt;     A -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- D  1.000</span></span>
+<span><span class="co">#&gt;     C -- D  1.000</span></span>
+<span><span class="co">#&gt; Layout: set</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="minimal-theme">Minimal Theme<a class="anchor" aria-label="anchor" href="#minimal-theme"></a>
 </h3>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cograph.html">cograph</a></span><span class="op">(</span><span class="va">adj</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/sn_theme.html">sn_theme</a></span><span class="op">(</span><span class="st">"minimal"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: FALSE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: minimal </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): A, B, C, D, E</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 10 (density: 70.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [1.000, 1.000]  |  mean: 1.000</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     A -- B  1.000</span></span>
+<span><span class="co">#&gt;     A -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- D  1.000</span></span>
+<span><span class="co">#&gt;     C -- D  1.000</span></span>
+<span><span class="co">#&gt; Layout: set</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="colorblind-friendly-theme">Colorblind-Friendly Theme<a class="anchor" aria-label="anchor" href="#colorblind-friendly-theme"></a>
 </h3>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cograph.html">cograph</a></span><span class="op">(</span><span class="va">adj</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/sn_theme.html">sn_theme</a></span><span class="op">(</span><span class="st">"colorblind"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Cograph Network</span></span>
-<span><span class="co">#&gt; ==============</span></span>
-<span><span class="co">#&gt; Nodes: 5 </span></span>
-<span><span class="co">#&gt; Edges: 7 </span></span>
-<span><span class="co">#&gt; Directed: FALSE </span></span>
-<span><span class="co">#&gt; Weighted: FALSE </span></span>
-<span><span class="co">#&gt; Layout: computed </span></span>
-<span><span class="co">#&gt; Theme: colorblind </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Use plot() or sn_render() to visualize</span></span>
-<span><span class="co">#&gt; Use sn_ggplot() to convert to ggplot2</span></span></code></pre></div>
+<span><span class="co">#&gt; Cograph network: 5 nodes, 7 edges ( undirected )</span></span>
+<span><span class="co">#&gt; Source: matrix </span></span>
+<span><span class="co">#&gt;   Nodes (5): A, B, C, D, E</span></span>
+<span><span class="co">#&gt;   Edges: 7 / 10 (density: 70.0%)</span></span>
+<span><span class="co">#&gt;   Weights: [1.000, 1.000]  |  mean: 1.000</span></span>
+<span><span class="co">#&gt;   Strongest edges:</span></span>
+<span><span class="co">#&gt;     A -- B  1.000</span></span>
+<span><span class="co">#&gt;     A -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- C  1.000</span></span>
+<span><span class="co">#&gt;     B -- D  1.000</span></span>
+<span><span class="co">#&gt;     C -- D  1.000</span></span>
+<span><span class="co">#&gt; Layout: set</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -440,6 +447,11 @@ weights:</p>
 customization:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'ggplot2'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:cograph':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     get_theme</span></span>
 <span></span>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cograph.html">cograph</a></span><span class="op">(</span><span class="va">adj</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/sn_nodes.html">sn_nodes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"coral"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -451,7 +463,7 @@ customization:</p>
 <span>    subtitle <span class="op">=</span> <span class="st">"Created with cograph"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="introduction_files/figure-html/ggplot-conversion-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="introduction_files/figure-html/ggplot-conversion-1.png" class="r-plt" alt="" width="360"></p>
 </div>
 <div class="section level2">
 <h2 id="complete-example">Complete Example<a class="anchor" aria-label="anchor" href="#complete-example"></a>
@@ -483,7 +495,7 @@ customization:</p>
 <span>  <span class="fu"><a href="../reference/sn_edges.html">sn_edges</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">1.5</span>, alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/sn_theme.html">sn_theme</a></span><span class="op">(</span><span class="st">"minimal"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/soplot.html">sn_render</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Social Network"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="introduction_files/figure-html/complete-example-1.png" class="r-plt" alt="" width="100%"></p>
+<p><img src="introduction_files/figure-html/complete-example-1.png" class="r-plt" alt="" width="360"></p>
 </div>
 <div class="section level2">
 <h2 id="saving-plots">Saving Plots<a class="anchor" aria-label="anchor" href="#saving-plots"></a>

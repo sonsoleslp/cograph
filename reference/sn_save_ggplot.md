@@ -48,7 +48,7 @@ sn_save_ggplot(
 
 ## Value
 
-Invisible filename.
+The output `filename`, invisibly.
 
 ## Examples
 
@@ -57,6 +57,6 @@ Invisible filename.
 adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
 net <- cograph(adj)
 sn_save_ggplot(net, file.path(tempdir(), "network.pdf"))
-#> Saved to: /tmp/RtmpRvUwrU/network.pdf
+#> Saved to: /tmp/Rtmpseh1Vm/network.pdf
 # }
 ```

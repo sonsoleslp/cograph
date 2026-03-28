@@ -1,7 +1,6 @@
 # Get Edges from Cograph Network
 
-Extracts the edges data frame from a cograph_network object. For the new
-format, builds a data frame from the from/to/weight vectors.
+Extracts the edges data frame from a cograph_network object.
 
 ## Usage
 

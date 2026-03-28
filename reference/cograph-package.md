@@ -1,4 +1,4 @@
-# cograph: Modern Network Visualization
+# cograph: Modern Network Visualization for R
 
 A modern, extensible network visualization package that provides
 high-quality static and interactive network plots. cograph accepts
@@ -60,14 +60,17 @@ Useful links:
 
 - <https://sonsoles.me/cograph/>
 
+- <https://github.com/sonsoleslp/cograph>
+
 - Report bugs at <https://github.com/sonsoleslp/cograph/issues>
 
 ## Author
 
 **Maintainer**: Sonsoles López-Pernas <sonsoles.lopez@uef.fi>
+\[copyright holder\]
 
 Authors:
 
-- Mohammed Saqr
+- Mohammed Saqr \[copyright holder\]
 
 - Santtu Tikka

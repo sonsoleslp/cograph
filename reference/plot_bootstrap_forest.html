@@ -102,6 +102,32 @@ shown when <code>show_nonsig = TRUE</code>).</p>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S3 method for class 'tna_bootstrap'</span></span>
+<span><span class="fu">plot_bootstrap_forest</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"linear"</span>, <span class="st">"circular"</span>, <span class="st">"grouped"</span><span class="op">)</span>,</span>
+<span>  interval <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ci"</span>, <span class="st">"cr"</span>, <span class="st">"both"</span><span class="op">)</span>,</span>
+<span>  show_nonsig <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  sort_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"estimate"</span>, <span class="st">"significance"</span>, <span class="st">"name"</span><span class="op">)</span>,</span>
+<span>  n_top <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  node_colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sig_color <span class="op">=</span> <span class="st">"#2C6E8A"</span>,</span>
+<span>  cr_color <span class="op">=</span> <span class="st">"#D4829A"</span>,</span>
+<span>  nonsig_color <span class="op">=</span> <span class="st">"#CCCCCC"</span>,</span>
+<span>  ring_color <span class="op">=</span> <span class="st">"#C8C8C8"</span>,</span>
+<span>  median_color <span class="op">=</span> <span class="st">"#AAAAAA"</span>,</span>
+<span>  label_size <span class="op">=</span> <span class="fl">2.9</span>,</span>
+<span>  label_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  point_size <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg</a></span><span class="op">(</span><span class="va">layout</span><span class="op">)</span> <span class="op">==</span> <span class="st">"circular"</span><span class="op">)</span> <span class="fl">2</span> <span class="kw">else</span> <span class="fl">3</span>,</span>
+<span>  r_inner <span class="op">=</span> <span class="fl">0.38</span>,</span>
+<span>  r_outer <span class="op">=</span> <span class="fl">0.72</span>,</span>
+<span>  gap_rad <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  subtitle <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S3 method for class 'boot_glasso'</span></span>
 <span><span class="fu">plot_bootstrap_forest</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
@@ -149,7 +175,8 @@ shown when <code>show_nonsig = TRUE</code>).</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A <code>net_bootstrap</code> or <code>boot_glasso</code> object.</p></dd>
+<dd><p>A <code>tna_bootstrap</code> (from <code><a href="http://sonsoles.me/tna/reference/bootstrap.html" class="external-link">tna::bootstrap</a></code>),
+<code>net_bootstrap</code>, or <code>boot_glasso</code> object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

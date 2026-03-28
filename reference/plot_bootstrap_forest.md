@@ -42,6 +42,32 @@ plot_bootstrap_forest(
   ...
 )
 
+# S3 method for class 'tna_bootstrap'
+plot_bootstrap_forest(
+  x,
+  alpha = NULL,
+  layout = c("linear", "circular", "grouped"),
+  interval = c("ci", "cr", "both"),
+  show_nonsig = TRUE,
+  sort_by = c("estimate", "significance", "name"),
+  n_top = NULL,
+  node_colors = NULL,
+  sig_color = "#2C6E8A",
+  cr_color = "#D4829A",
+  nonsig_color = "#CCCCCC",
+  ring_color = "#C8C8C8",
+  median_color = "#AAAAAA",
+  label_size = 2.9,
+  label_color = NULL,
+  point_size = if (match.arg(layout) == "circular") 2 else 3,
+  r_inner = 0.38,
+  r_outer = 0.72,
+  gap_rad = 0.1,
+  title = NULL,
+  subtitle = NULL,
+  ...
+)
+
 # S3 method for class 'boot_glasso'
 plot_bootstrap_forest(
   x,
@@ -88,7 +114,9 @@ plot_bootstrap_forest(
 
 - x:
 
-  A `net_bootstrap` or `boot_glasso` object.
+  A `tna_bootstrap` (from
+  [`tna::bootstrap`](http://sonsoles.me/tna/reference/bootstrap.md)),
+  `net_bootstrap`, or `boot_glasso` object.
 
 - ...:
 

@@ -57,6 +57,6 @@ The output `filename`, invisibly.
 adj <- matrix(c(0, 1, 1, 1, 0, 1, 1, 1, 0), nrow = 3)
 net <- cograph(adj)
 sn_save_ggplot(net, file.path(tempdir(), "network.pdf"))
-#> Saved to: /tmp/RtmpaqMeEx/network.pdf
+#> Saved to: /tmp/RtmpO4wrdi/network.pdf
 # }
 ```

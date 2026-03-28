@@ -91,12 +91,16 @@ shown when <code>show_nonsig = TRUE</code>).</p>
 <span>  nonsig_color <span class="op">=</span> <span class="st">"#CCCCCC"</span>,</span>
 <span>  ring_color <span class="op">=</span> <span class="st">"#C8C8C8"</span>,</span>
 <span>  median_color <span class="op">=</span> <span class="st">"#AAAAAA"</span>,</span>
-<span>  label_size <span class="op">=</span> <span class="fl">2.9</span>,</span>
+<span>  label_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  label_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  point_size <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg</a></span><span class="op">(</span><span class="va">layout</span><span class="op">)</span> <span class="op">==</span> <span class="st">"circular"</span><span class="op">)</span> <span class="fl">2</span> <span class="kw">else</span> <span class="fl">3</span>,</span>
-<span>  r_inner <span class="op">=</span> <span class="fl">0.38</span>,</span>
-<span>  r_outer <span class="op">=</span> <span class="fl">0.72</span>,</span>
-<span>  gap_rad <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  point_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  r_inner <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  r_outer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gap_rad <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  label_offset <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  src_label_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  margins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  scale <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subtitle <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -117,12 +121,16 @@ shown when <code>show_nonsig = TRUE</code>).</p>
 <span>  nonsig_color <span class="op">=</span> <span class="st">"#CCCCCC"</span>,</span>
 <span>  ring_color <span class="op">=</span> <span class="st">"#C8C8C8"</span>,</span>
 <span>  median_color <span class="op">=</span> <span class="st">"#AAAAAA"</span>,</span>
-<span>  label_size <span class="op">=</span> <span class="fl">2.9</span>,</span>
+<span>  label_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  label_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  point_size <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg</a></span><span class="op">(</span><span class="va">layout</span><span class="op">)</span> <span class="op">==</span> <span class="st">"circular"</span><span class="op">)</span> <span class="fl">2</span> <span class="kw">else</span> <span class="fl">3</span>,</span>
-<span>  r_inner <span class="op">=</span> <span class="fl">0.38</span>,</span>
-<span>  r_outer <span class="op">=</span> <span class="fl">0.72</span>,</span>
-<span>  gap_rad <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  point_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  r_inner <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  r_outer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gap_rad <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  label_offset <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  src_label_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  margins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  scale <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subtitle <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -143,12 +151,16 @@ shown when <code>show_nonsig = TRUE</code>).</p>
 <span>  nonsig_color <span class="op">=</span> <span class="st">"#CCCCCC"</span>,</span>
 <span>  ring_color <span class="op">=</span> <span class="st">"#C8C8C8"</span>,</span>
 <span>  median_color <span class="op">=</span> <span class="st">"#AAAAAA"</span>,</span>
-<span>  label_size <span class="op">=</span> <span class="fl">2.9</span>,</span>
+<span>  label_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  label_color <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  point_size <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg</a></span><span class="op">(</span><span class="va">layout</span><span class="op">)</span> <span class="op">==</span> <span class="st">"circular"</span><span class="op">)</span> <span class="fl">2</span> <span class="kw">else</span> <span class="fl">3</span>,</span>
-<span>  r_inner <span class="op">=</span> <span class="fl">0.38</span>,</span>
-<span>  r_outer <span class="op">=</span> <span class="fl">0.72</span>,</span>
-<span>  gap_rad <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  point_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  r_inner <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  r_outer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  gap_rad <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  label_offset <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  src_label_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  margins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  scale <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subtitle <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -249,6 +261,37 @@ inherits the edge colour (teal for significant, grey for non-significant).</p></
 
 <dt id="arg-point-size">point_size<a class="anchor" aria-label="anchor" href="#arg-point-size"></a></dt>
 <dd><p>Size of the estimate square. Default <code>3</code> (linear) or <code>2</code> (radial).</p></dd>
+
+
+<dt id="arg-r-inner">r_inner<a class="anchor" aria-label="anchor" href="#arg-r-inner"></a></dt>
+<dd><p>Inner ring radius (grouped layout). Default <code>NULL</code> (auto).</p></dd>
+
+
+<dt id="arg-r-outer">r_outer<a class="anchor" aria-label="anchor" href="#arg-r-outer"></a></dt>
+<dd><p>Outer ring radius (grouped layout). Default <code>NULL</code> (auto).</p></dd>
+
+
+<dt id="arg-gap-rad">gap_rad<a class="anchor" aria-label="anchor" href="#arg-gap-rad"></a></dt>
+<dd><p>Gap in radians between sectors (grouped layout). Default <code>NULL</code> (auto).</p></dd>
+
+
+<dt id="arg-label-offset">label_offset<a class="anchor" aria-label="anchor" href="#arg-label-offset"></a></dt>
+<dd><p>Distance between outer ring and labels (grouped layout). Default <code>NULL</code> (auto).</p></dd>
+
+
+<dt id="arg-src-label-size">src_label_size<a class="anchor" aria-label="anchor" href="#arg-src-label-size"></a></dt>
+<dd><p>Text size for source node labels in the center (grouped layout).
+Default <code>NULL</code> (auto, <code>label_size * 0.80</code>).</p></dd>
+
+
+<dt id="arg-margins">margins<a class="anchor" aria-label="anchor" href="#arg-margins"></a></dt>
+<dd><p>Margins as <code>c(bottom, left, top, right)</code> fractions (grouped layout).
+Default <code>c(0.1, 0.1, 0.1, 0.1)</code>.</p></dd>
+
+
+<dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
+<dd><p>Scaling factor applied to all text and point sizes (grouped layout).
+Default <code>1</code>. Use values &gt; 1 for high-DPI output, &lt; 1 for small devices.</p></dd>
 
 
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>

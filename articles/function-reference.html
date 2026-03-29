@@ -66,7 +66,7 @@
       <h1>Function Reference</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/cograph/blob/main/vignettes/function-reference.Rmd" class="external-link"><code>vignettes/function-reference.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/cograph/blob/main/vignettes/articles/function-reference.Rmd" class="external-link"><code>vignettes/articles/function-reference.Rmd</code></a></small>
       <div class="d-none name"><code>function-reference.Rmd</code></div>
     </div>
 
@@ -92,7 +92,7 @@
 <span></span>
 <span><span class="co"># Plot from adjacency matrix</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">adj_matrix</span>, title <span class="op">=</span> <span class="st">"From Matrix"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/quick-start-1.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/quick-start-1.png" class="r-plt" alt="" width="1800"></p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># With customization</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">adj_matrix</span>,</span>
@@ -100,11 +100,11 @@
 <span>      node_fill <span class="op">=</span> <span class="st">"steelblue"</span>,</span>
 <span>      edge_color <span class="op">=</span> <span class="st">"gray50"</span>,</span>
 <span>      title <span class="op">=</span> <span class="st">"Customized Network"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/quick-start-2.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/quick-start-2.png" class="r-plt" alt="" width="1800"></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/graph_from_adjacency_matrix.html" class="external-link">graph_from_adjacency_matrix</a></span><span class="op">(</span><span class="va">adj_matrix</span>, mode <span class="op">=</span> <span class="st">"undirected"</span>, weighted <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">g</span>, title <span class="op">=</span> <span class="st">"From igraph"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/unnamed-chunk-1-1.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/unnamed-chunk-1-1.png" class="r-plt" alt="" width="1800"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># From TNA model (requires tna package)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sonsoleslp/tna/" class="external-link">tna</a></span><span class="op">)</span></span>
@@ -114,7 +114,7 @@
 <span></span>
 <span><span class="co"># Plot directly from TNA model</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">tna_model</span>, title <span class="op">=</span> <span class="st">"From TNA Model"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/quick-start-tna-1.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/quick-start-tna-1.png" class="r-plt" alt="" width="1800"></p>
 <hr>
 </div>
 <div class="section level2">
@@ -146,12 +146,12 @@
 <span></span>
 <span><span class="co"># Basic splot</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">net</span>, title <span class="op">=</span> <span class="st">"Basic splot()"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/basic-plots-1.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/basic-plots-1.png" class="r-plt" alt="" width="1800"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># With layout and styling</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">net</span>, layout <span class="op">=</span> <span class="st">"circle"</span>, node_fill <span class="op">=</span> <span class="st">"coral"</span>, title <span class="op">=</span> <span class="st">"Circle Layout"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/basic-plots-2.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/basic-plots-2.png" class="r-plt" alt="" width="1800"></p>
 </div>
 <div class="section level3">
 <h3 id="specialized-network-plots">Specialized Network Plots<a class="anchor" aria-label="anchor" href="#specialized-network-plots"></a>
@@ -243,12 +243,12 @@
 <span><span class="co"># Green edges: net1 &gt; net2 (positive difference)</span></span>
 <span><span class="co"># Red edges: net1 &lt; net2 (negative difference)</span></span>
 <span><span class="fu">cograph</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_compare.html">plot_compare</a></span><span class="op">(</span><span class="va">net1</span>, <span class="va">net2</span>, title <span class="op">=</span> <span class="st">"Network Comparison (net1 - net2)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/comparison-plots-1.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/comparison-plots-1.png" class="r-plt" alt="" width="1800"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Basic heatmap</span></span>
 <span><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">net1</span>, title <span class="op">=</span> <span class="st">"Network Heatmap"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/comparison-plots-2.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/comparison-plots-2.png" class="r-plt" alt="" width="1800"></p>
 <hr>
 </div>
 </div>
@@ -307,14 +307,14 @@ group_tna)</p>
 <span><span class="op">)</span></span>
 <span><span class="va">net_from_edges</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_cograph.html">as_cograph</a></span><span class="op">(</span><span class="va">edges</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">net_from_edges</span>, title <span class="op">=</span> <span class="st">"From Edge List"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/import-1.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/import-1.png" class="r-plt" alt="" width="1800"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># From igraph</span></span>
 <span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/make_ring.html" class="external-link">make_ring</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/V.html" class="external-link">V</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span><span class="op">$</span><span class="va">name</span> <span class="op">&lt;-</span> <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
 <span><span class="va">net_from_igraph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as_cograph.html">as_cograph</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">net_from_igraph</span>, title <span class="op">=</span> <span class="st">"From igraph Ring"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="1800"></p>
 </div>
 <div class="section level3">
 <h3 id="export">Export<a class="anchor" aria-label="anchor" href="#export"></a>
@@ -435,7 +435,7 @@ group_tna)</p>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">mat</span>,</span>
 <span>      node_fill <span class="op">=</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/communities.html" class="external-link">membership</a></span><span class="op">(</span><span class="va">comm_louvain</span><span class="op">)</span>,</span>
 <span>      title <span class="op">=</span> <span class="st">"Zachary Karate Club - Louvain Communities"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/community-detection-1.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/community-detection-1.png" class="r-plt" alt="" width="1800"></p>
 </div>
 <div class="section level3">
 <h3 id="edge-filtering">Edge Filtering<a class="anchor" aria-label="anchor" href="#edge-filtering"></a>
@@ -466,7 +466,7 @@ group_tna)</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">weighted_net</span>, title <span class="op">=</span> <span class="st">"Original Network"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">strong_net</span>, title <span class="op">=</span> <span class="st">"Strong Edges Only (&gt; 0.5)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/edge-filtering-1.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/edge-filtering-1.png" class="r-plt" alt="" width="1800"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <hr>
@@ -515,7 +515,7 @@ group_tna)</p>
 <span>  <span class="fu"><a href="../reference/sn_nodes.html">sn_nodes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"steelblue"</span>, size <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/sn_edges.html">sn_edges</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"gray40"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/soplot.html">sn_render</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Piped Network"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/piping-1.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/piping-1.png" class="r-plt" alt="" width="1800"></p>
 <hr>
 </div>
 <div class="section level2">
@@ -731,7 +731,7 @@ with <code><a href="../reference/sn_theme.html">sn_theme()</a></code>.</p>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">adj_matrix</span>, theme <span class="op">=</span> <span class="st">"classic"</span>, title <span class="op">=</span> <span class="st">"Classic"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">adj_matrix</span>, theme <span class="op">=</span> <span class="st">"dark"</span>, title <span class="op">=</span> <span class="st">"Dark"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">adj_matrix</span>, theme <span class="op">=</span> <span class="st">"minimal"</span>, title <span class="op">=</span> <span class="st">"Minimal"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/themes-1.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/themes-1.png" class="r-plt" alt="" width="1800"></p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -747,7 +747,7 @@ with <code><a href="../reference/sn_theme.html">sn_theme()</a></code>.</p>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">adj_matrix</span>, node_shape <span class="op">=</span> <span class="st">"circle"</span>, title <span class="op">=</span> <span class="st">"Circle"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">adj_matrix</span>, node_shape <span class="op">=</span> <span class="st">"square"</span>, title <span class="op">=</span> <span class="st">"Square"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">adj_matrix</span>, node_shape <span class="op">=</span> <span class="st">"diamond"</span>, title <span class="op">=</span> <span class="st">"Diamond"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="function-reference_files/figure-html/shapes-1.png" class="r-plt" alt="" width="300"></p>
+<p><img src="function-reference_files/figure-html/shapes-1.png" class="r-plt" alt="" width="1800"></p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <hr>

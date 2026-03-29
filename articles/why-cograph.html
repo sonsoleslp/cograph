@@ -66,7 +66,7 @@
       <h1>Why cograph?</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/cograph/blob/main/vignettes/why-cograph.Rmd" class="external-link"><code>vignettes/why-cograph.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/cograph/blob/main/vignettes/articles/why-cograph.Rmd" class="external-link"><code>vignettes/articles/why-cograph.Rmd</code></a></small>
       <div class="d-none name"><code>why-cograph.Rmd</code></div>
     </div>
 
@@ -547,13 +547,13 @@ directly:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://sonsoles.me/tna/reference/build_model.html" class="external-link">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
-<p><img src="why-cograph_files/figure-html/unnamed-chunk-29-1.png" class="r-plt" alt="" width="400"></p>
+<p><img src="why-cograph_files/figure-html/unnamed-chunk-29-1.png" class="r-plt" alt="" width="2400"></p>
 <p>Bootstrap results render automatically — significant transitions as
 solid edges, non-significant as dashed:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://sonsoles.me/tna/reference/bootstrap.html" class="external-link">bootstrap</a></span><span class="op">(</span><span class="va">model</span>, iter <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></code></pre></div>
-<p><img src="why-cograph_files/figure-html/unnamed-chunk-30-1.png" class="r-plt" alt="" width="400"></p>
+<p><img src="why-cograph_files/figure-html/unnamed-chunk-30-1.png" class="r-plt" alt="" width="2400"></p>
 <p>Permutation test results get color-coded by group effect:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model1</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://sonsoles.me/tna/reference/build_model.html" class="external-link">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>,<span class="op">]</span><span class="op">)</span></span>
@@ -561,7 +561,7 @@ solid edges, non-significant as dashed:</p>
 <span></span>
 <span><span class="va">perm</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://sonsoles.me/tna/reference/permutation_test.html" class="external-link">permutation_test</a></span><span class="op">(</span><span class="va">model1</span>, <span class="va">model2</span>, iter <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">perm</span><span class="op">)</span></span></code></pre></div>
-<p><img src="why-cograph_files/figure-html/unnamed-chunk-31-1.png" class="r-plt" alt="" width="400"></p>
+<p><img src="why-cograph_files/figure-html/unnamed-chunk-31-1.png" class="r-plt" alt="" width="2400"></p>
 <p>Group comparisons with <code><a href="../reference/plot_compare.html">plot_compare()</a></code> show element-wise
 probability differences, with donuts on nodes for initial state
 shifts.</p>

@@ -2,15 +2,15 @@ pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
-  comparison-plots-demo: comparison-plots-demo.html
-  function-reference: function-reference.html
+  articles/comparison-plots-demo: comparison-plots-demo.html
+  articles/function-reference: function-reference.html
   input-formats: input-formats.html
   introduction: introduction.html
-  mcml-examples: mcml-examples.html
-  network-structure-and-groups: network-structure-and-groups.html
-  plotting-tna-models: plotting-tna-models.html
-  why-cograph: why-cograph.html
-last_built: 2026-03-29T09:39Z
+  articles/mcml-examples: mcml-examples.html
+  articles/network-structure-and-groups: network-structure-and-groups.html
+  articles/plotting-tna-models: plotting-tna-models.html
+  articles/why-cograph: why-cograph.html
+last_built: 2026-03-29T17:04Z
 urls:
   reference: http://sonsoles.me/cograph/reference
   article: http://sonsoles.me/cograph/articles

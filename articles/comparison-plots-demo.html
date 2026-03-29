@@ -107,7 +107,7 @@ between networks computed through permutation testing</li>
 <span>             layout <span class="op">=</span> <span class="st">"oval"</span>,</span>
 <span>             node_size <span class="op">=</span> <span class="fl">8</span>,</span>
 <span>             title <span class="op">=</span> <span class="st">"Network Difference (m1 - m2)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/compare-basic-1.png" class="r-plt" alt="" width="480"></p>
+<p><img src="comparison-plots-demo_files/figure-html/compare-basic-1.png" class="r-plt" alt="" width="400"></p>
 </div>
 <div class="section level3">
 <h3 id="with-initial-probability-differences">1.2 With Initial Probability Differences<a class="anchor" aria-label="anchor" href="#with-initial-probability-differences"></a>
@@ -122,7 +122,7 @@ between networks computed through permutation testing</li>
 <span>             layout <span class="op">=</span> <span class="st">"oval"</span>,</span>
 <span>             node_size <span class="op">=</span> <span class="fl">8</span>,</span>
 <span>             title <span class="op">=</span> <span class="st">"With Initial Probability Donuts"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/compare-donuts-1.png" class="r-plt" alt="" width="480"></p>
+<p><img src="comparison-plots-demo_files/figure-html/compare-donuts-1.png" class="r-plt" alt="" width="400"></p>
 </div>
 <div class="section level3">
 <h3 id="tna-model-comparison">1.3 TNA Model Comparison<a class="anchor" aria-label="anchor" href="#tna-model-comparison"></a>
@@ -135,7 +135,7 @@ between networks computed through permutation testing</li>
 <span>             layout <span class="op">=</span> <span class="st">"oval"</span>,</span>
 <span>             node_size <span class="op">=</span> <span class="fl">8</span>,</span>
 <span>             title <span class="op">=</span> <span class="st">"TNA Model Comparison"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/compare-tna-1.png" class="r-plt" alt="" width="480">
+<p><img src="comparison-plots-demo_files/figure-html/compare-tna-1.png" class="r-plt" alt="" width="400">
 ## 1.4 TNA Permutation testing</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">permutation_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://sonsoles.me/tna/reference/permutation_test.html" class="external-link">permutation_test</a></span><span class="op">(</span><span class="va">model_x</span>, <span class="va">model_y</span><span class="op">)</span></span>
@@ -143,12 +143,12 @@ between networks computed through permutation testing</li>
 <span>             layout <span class="op">=</span> <span class="st">"oval"</span>,</span>
 <span>             node_size <span class="op">=</span> <span class="fl">8</span>,</span>
 <span>             title <span class="op">=</span> <span class="st">"TNA Permutation test results"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/compare-tna-permutation-1.png" class="r-plt" alt="" width="480">
+<p><img src="comparison-plots-demo_files/figure-html/compare-tna-permutation-1.png" class="r-plt" alt="" width="400">
 ## 1.5 Group TNA (All Pairs)</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">group_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://sonsoles.me/tna/reference/group_model.html" class="external-link">group_model</a></span><span class="op">(</span><span class="va">group_regulation</span>, group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"H"</span>,<span class="fl">1000</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"L"</span>,<span class="fl">1000</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_compare.html">plot_compare</a></span><span class="op">(</span><span class="va">group_model</span>, node_size <span class="op">=</span> <span class="fl">7</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/compare-group-tna-1.png" class="r-plt" alt="" width="840"></p>
+<p><img src="comparison-plots-demo_files/figure-html/compare-group-tna-1.png" class="r-plt" alt="" width="700"></p>
 <hr>
 </div>
 </div>
@@ -176,7 +176,7 @@ between networks computed through permutation testing</li>
 <span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">mat</span>, layout <span class="op">=</span> <span class="st">"oval"</span>, node_size <span class="op">=</span> <span class="fl">8</span>, directed <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>      curvature <span class="op">=</span> <span class="fl">0.25</span>, title <span class="op">=</span> <span class="st">"Curved Edges"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/edge-styles-1.png" class="r-plt" alt="" width="720"></p>
+<p><img src="comparison-plots-demo_files/figure-html/edge-styles-1.png" class="r-plt" alt="" width="600"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -191,7 +191,7 @@ between networks computed through permutation testing</li>
 <span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">mat</span>, layout <span class="op">=</span> <span class="st">"oval"</span>, node_size <span class="op">=</span> <span class="fl">8</span>, directed <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>      arrow_size <span class="op">=</span> <span class="fl">1.5</span>, title <span class="op">=</span> <span class="st">"Large Arrows"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/arrow-sizes-1.png" class="r-plt" alt="" width="720"></p>
+<p><img src="comparison-plots-demo_files/figure-html/arrow-sizes-1.png" class="r-plt" alt="" width="600"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -206,7 +206,7 @@ between networks computed through permutation testing</li>
 <span>      edge_width <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>      curvature <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>      title <span class="op">=</span> <span class="st">"Thicker Edges with Curve"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/edge-width-1.png" class="r-plt" alt="" width="480"></p>
+<p><img src="comparison-plots-demo_files/figure-html/edge-width-1.png" class="r-plt" alt="" width="400"></p>
 <hr>
 </div>
 </div>
@@ -230,7 +230,7 @@ between networks computed through permutation testing</li>
 <span>      donut_fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">0.3</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>      donut_color <span class="op">=</span> <span class="st">"steelblue"</span>,</span>
 <span>      title <span class="op">=</span> <span class="st">"Mixed Shapes with Donut Fill"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/shapes-donut-1.png" class="r-plt" alt="" width="480"></p>
+<p><img src="comparison-plots-demo_files/figure-html/shapes-donut-1.png" class="r-plt" alt="" width="400"></p>
 </div>
 <div class="section level3">
 <h3 id="shapes-with-pie-charts">3.2 Shapes with Pie Charts<a class="anchor" aria-label="anchor" href="#shapes-with-pie-charts"></a>
@@ -244,7 +244,7 @@ between networks computed through permutation testing</li>
 <span>      pie_values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>      pie_colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#E8E8E8"</span>, <span class="st">"#A0A0A0"</span>, <span class="st">"#505050"</span><span class="op">)</span>,</span>
 <span>      title <span class="op">=</span> <span class="st">"Polygon Shapes with Pie Charts"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/shapes-pie-1.png" class="r-plt" alt="" width="480"></p>
+<p><img src="comparison-plots-demo_files/figure-html/shapes-pie-1.png" class="r-plt" alt="" width="400"></p>
 </div>
 <div class="section level3">
 <h3 id="donut-pie-combined">3.3 Donut + Pie Combined<a class="anchor" aria-label="anchor" href="#donut-pie-combined"></a>
@@ -260,7 +260,7 @@ between networks computed through permutation testing</li>
 <span>      pie_values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>      pie_colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#D4D4D4"</span>, <span class="st">"#909090"</span>, <span class="st">"#4A4A4A"</span><span class="op">)</span>,</span>
 <span>      title <span class="op">=</span> <span class="st">"Mixed Shapes: Donut Ring + Pie Center"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/shapes-donut-pie-1.png" class="r-plt" alt="" width="480"></p>
+<p><img src="comparison-plots-demo_files/figure-html/shapes-donut-pie-1.png" class="r-plt" alt="" width="400"></p>
 <hr>
 </div>
 </div>
@@ -272,20 +272,20 @@ between networks computed through permutation testing</li>
 </h3>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">m1</span>, title <span class="op">=</span> <span class="st">"Network Heatmap"</span>, colors <span class="op">=</span> <span class="st">"viridis"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/heatmap-single-1.png" class="r-plt" alt="" width="480"></p>
+<p><img src="comparison-plots-demo_files/figure-html/heatmap-single-1.png" class="r-plt" alt="" width="400"></p>
 </div>
 <div class="section level3">
 <h3 id="comparison-heatmaps">4.2 Comparison Heatmaps<a class="anchor" aria-label="anchor" href="#comparison-heatmaps"></a>
 </h3>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">m1</span>, title <span class="op">=</span> <span class="st">"Network 1"</span>, colors <span class="op">=</span> <span class="st">"blues"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/heatmap-compare-1.png" class="r-plt" alt="" width="720"></p>
+<p><img src="comparison-plots-demo_files/figure-html/heatmap-compare-1.png" class="r-plt" alt="" width="600"></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">m2</span>, title <span class="op">=</span> <span class="st">"Network 2"</span>, colors <span class="op">=</span> <span class="st">"blues"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/heatmap-compare-2.png" class="r-plt" alt="" width="720"></p>
+<p><img src="comparison-plots-demo_files/figure-html/heatmap-compare-2.png" class="r-plt" alt="" width="600"></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_comparison_heatmap.html">plot_comparison_heatmap</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m2</span>, type <span class="op">=</span> <span class="st">"difference"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/heatmap-compare-3.png" class="r-plt" alt="" width="720"></p>
+<p><img src="comparison-plots-demo_files/figure-html/heatmap-compare-3.png" class="r-plt" alt="" width="600"></p>
 </div>
 <div class="section level3">
 <h3 id="group-tna-supra-adjacency">4.3 Group TNA Supra-Adjacency<a class="anchor" aria-label="anchor" href="#group-tna-supra-adjacency"></a>
@@ -294,7 +294,7 @@ between networks computed through permutation testing</li>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_heatmap.html">plot_heatmap</a></span><span class="op">(</span><span class="va">group_model</span>,</span>
 <span>             colors <span class="op">=</span> <span class="st">"viridis"</span>,</span>
 <span>             title <span class="op">=</span> <span class="st">"Supra-Adjacency Matrix"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/heatmap-group-1.png" class="r-plt" alt="" width="540"></p>
+<p><img src="comparison-plots-demo_files/figure-html/heatmap-group-1.png" class="r-plt" alt="" width="450"></p>
 <hr>
 </div>
 </div>
@@ -356,7 +356,7 @@ initial probability.</p>
 <span>      label_size <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span></span>
 <span>      title <span class="op">=</span> <span class="st">"Transition Network with Confidence Intervals\n(Donut = Precision, Pie = Initial Probability)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/ci-example-1.png" class="r-plt" alt="" width="600"></p>
+<p><img src="comparison-plots-demo_files/figure-html/ci-example-1.png" class="r-plt" alt="" width="500"></p>
 <div class="section level3">
 <h3 id="ci-legend-explanation">5.1 CI Legend Explanation<a class="anchor" aria-label="anchor" href="#ci-legend-explanation"></a>
 </h3>
@@ -401,7 +401,7 @@ initial probability.</p>
 <span>      labels <span class="op">=</span> <span class="st">""</span>,</span>
 <span>      mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span><span class="op">)</span>,</span>
 <span>      title <span class="op">=</span> <span class="st">"Low Precision\n(Wide CI)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="comparison-plots-demo_files/figure-html/ci-legend-1.png" class="r-plt" alt="" width="600"></p>
+<p><img src="comparison-plots-demo_files/figure-html/ci-legend-1.png" class="r-plt" alt="" width="500"></p>
 <hr>
 </div>
 </div>

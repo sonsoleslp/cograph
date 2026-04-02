@@ -16,6 +16,28 @@ install.packages("cograph")
 devtools::install_github("sonsoleslp/cograph")
 ```
 
+## How to use it?
+
+- [Introduction to
+  cograph](http://sonsoles.me/cograph/articles/introduction.md)
+- [Network Visualization with cograph: A Complete Plotting
+  Guide](http://sonsoles.me/cograph/articles/1_cograph-tutorial-plotting.md)
+- [Why cograph?](http://sonsoles.me/cograph/articles/2_why-cograph.md)
+- [Plotting TNA Models with
+  splot](http://sonsoles.me/cograph/articles/plotting-tna-models.md)
+- [Visualization of communities and hyper order
+  networks](http://sonsoles.me/cograph/articles/cograph-tutorial-communities.md)
+- [Network Estimation and Visualization with Nestimate +
+  cograph](http://sonsoles.me/cograph/articles/cograph-tutorial-nestimate.md)
+- [Network Comparison and
+  Visualization](http://sonsoles.me/cograph/articles/comparison-plots-demo.md)
+- [Advanced
+  examples](http://sonsoles.me/cograph/articles/mcml-examples.md)
+- [Bootstrap Forest
+  Plots](http://sonsoles.me/cograph/articles/bootstrap-forest.md)
+- [Migrating from qgraph to
+  splot](http://sonsoles.me/cograph/articles/qgraph-to-splot.md)
+
 ## Features
 
 ### Network Plotting

@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Plotting TNA Models with splot • cograph</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -33,22 +38,17 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/basic_example.html">Basic example</a></li>
+<li><a class="dropdown-item" href="../articles/1_cograph-tutorial-plotting.html">Network Visualization with cograph: A Complete Plotting Guide</a></li>
+    <li><a class="dropdown-item" href="../articles/2_why-cograph.html">Why cograph?</a></li>
     <li><a class="dropdown-item" href="../articles/bootstrap-forest.html">Bootstrap Forest Plots</a></li>
-    <li><a class="dropdown-item" href="../articles/co_pvalue.html">Confidence Interval and p-value Demo</a></li>
     <li><a class="dropdown-item" href="../articles/cograph-tutorial-communities.html">Visualization of communities and hyper order networks</a></li>
     <li><a class="dropdown-item" href="../articles/cograph-tutorial-nestimate.html">Network Estimation and Visualization with Nestimate + cograph</a></li>
-    <li><a class="dropdown-item" href="../articles/cograph-tutorial-plotting.html">Network Visualization with cograph: A Complete Plotting Guide</a></li>
     <li><a class="dropdown-item" href="../articles/cograph-tutorial.html">Network Analysis and Visualization with cograph</a></li>
     <li><a class="dropdown-item" href="../articles/comparison-plots-demo.html">Network Comparison and Visualization</a></li>
     <li><a class="dropdown-item" href="../articles/introduction.html">Introduction to cograph</a></li>
-    <li><a class="dropdown-item" href="../articles/mcml-examples.html">Examples</a></li>
-    <li><a class="dropdown-item" href="../articles/multi_network.html">Multi-Group, Multi-Cluster, and Multilevel Networks</a></li>
-    <li><a class="dropdown-item" href="../articles/network-structure-and-groups.html">Network Structure and Node Groups</a></li>
-    <li><a class="dropdown-item" href="../articles/pie_donut_guide.html">Pie &amp; Donut Nodes in cograph</a></li>
+    <li><a class="dropdown-item" href="../articles/mcml-examples.html">Advanced examples</a></li>
     <li><a class="dropdown-item" href="../articles/plotting-tna-models.html">Plotting TNA Models with splot</a></li>
     <li><a class="dropdown-item" href="../articles/qgraph-to-splot.html">Migrating from qgraph to splot</a></li>
-    <li><a class="dropdown-item" href="../articles/why-cograph.html">Why cograph?</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -81,529 +81,151 @@
     
     
 <div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<h2 id="single-tna-model-group_regulation">1. Single TNA Model — group_regulation<a class="anchor" aria-label="anchor" href="#single-tna-model-group_regulation"></a>
 </h2>
-<p>The <code>cograph</code> package provides network visualization for
-Transition Network Analysis (TNA) models through <code><a href="../reference/splot.html">splot()</a></code>.
-This vignette showcases node styling, shapes, fonts, and creative
-layouts.</p>
-</div>
-<div class="section level2">
-<h2 id="loading-data">Loading Data<a class="anchor" aria-label="anchor" href="#loading-data"></a>
-</h2>
+<p>Build a TNA model from the <code>group_regulation</code> dataset
+(2000 sequences, 9 states).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://sonsoles.me/tna/reference/build_model.html" class="external-link">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="va">weights</span> <span class="op">&lt;-</span> <span class="va">model</span><span class="op">$</span><span class="va">weights</span></span>
-<span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="va">model</span><span class="op">$</span><span class="va">labels</span></span>
-<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">labels</span><span class="op">)</span></span>
-<span><span class="va">initial_probs</span> <span class="op">&lt;-</span> <span class="va">model</span><span class="op">$</span><span class="va">initial_probs</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="basic-plot">Basic Plot<a class="anchor" aria-label="anchor" href="#basic-plot"></a>
-</h2>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://sonsoles.me/tna/reference/build_model.html" class="external-link">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="basic-network-plot">Basic Network Plot<a class="anchor" aria-label="anchor" href="#basic-network-plot"></a>
+</h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/basic-plot-1.png" class="r-plt" alt="Default TNA plot" width="1800"><p class="caption">
-Default TNA plot
-</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
+<span>      title <span class="op">=</span> <span class="st">"Group Regulation TNA"</span>,</span>
+<span>      minimum <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
+<p><img src="plotting-tna-models_files/figure-html/plot-basic-1.png" class="r-plt" alt="" width="2700"></p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="node-shapes-gallery">Node Shapes Gallery<a class="anchor" aria-label="anchor" href="#node-shapes-gallery"></a>
+<h2 id="bootstrap-analysis">2. Bootstrap Analysis<a class="anchor" aria-label="anchor" href="#bootstrap-analysis"></a>
 </h2>
-<p>Available shapes: <code>"circle"</code>, <code>"square"</code>,
-<code>"triangle"</code>, <code>"diamond"</code>,
-<code>"pentagon"</code>, <code>"hexagon"</code>, <code>"ellipse"</code>,
-<code>"heart"</code>, <code>"star"</code></p>
+<p>Run bootstrap resampling (1000 iterations) to assess edge
+significance and confidence intervals.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Hexagons - modern technical look</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, node_shape <span class="op">=</span> <span class="st">"hexagon"</span>, node_size <span class="op">=</span> <span class="fl">5</span>, node_fill <span class="op">=</span> <span class="st">"#37474F"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/shapes-gallery-1.png" class="r-plt" alt="Node shape gallery" width="1800"><p class="caption">
-Node shape gallery
-</p>
-</div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="va">boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://sonsoles.me/tna/reference/bootstrap.html" class="external-link">bootstrap</a></span><span class="op">(</span><span class="va">model</span>, iter <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Diamonds - elegant emphasis</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, node_shape <span class="op">=</span> <span class="st">"diamond"</span>, node_size <span class="op">=</span> <span class="fl">5</span>, node_fill <span class="op">=</span> <span class="st">"#6A1B9A"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/shapes-gallery-2.png" class="r-plt" alt="Node shape gallery" width="1800"><p class="caption">
-Node shape gallery
-</p>
-</div>
+<code class="sourceCode R"><span><span class="va">sig_edges</span> <span class="op">&lt;-</span> <span class="va">boot</span><span class="op">$</span><span class="va">summary</span><span class="op">[</span><span class="va">boot</span><span class="op">$</span><span class="va">summary</span><span class="op">$</span><span class="va">sig</span>, <span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Significant edges: %d / %d\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">sig_edges</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">boot</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Significant edges: 51 / 78</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sig_edges</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">sig_edges</span><span class="op">$</span><span class="va">p_value</span><span class="op">)</span>, <span class="op">]</span>, <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          from        to     weight     p_value  sig   cr_lower   cr_upper</span></span>
+<span><span class="co">#&gt; 5     discuss     adapt 0.07137434 0.000999001 TRUE 0.05353075 0.08921792</span></span>
+<span><span class="co">#&gt; 9   synthesis     adapt 0.23466258 0.000999001 TRUE 0.17599693 0.29332822</span></span>
+<span><span class="co">#&gt; 10      adapt  cohesion 0.27308448 0.000999001 TRUE 0.20481336 0.34135560</span></span>
+<span><span class="co">#&gt; 14    discuss  cohesion 0.04758289 0.000999001 TRUE 0.03568717 0.05947861</span></span>
+<span><span class="co">#&gt; 15    emotion  cohesion 0.32534367 0.000999001 TRUE 0.24400775 0.40667959</span></span>
+<span><span class="co">#&gt; 17       plan  cohesion 0.02517460 0.000999001 TRUE 0.01888095 0.03146825</span></span>
+<span><span class="co">#&gt; 19      adapt consensus 0.47740668 0.000999001 TRUE 0.35805501 0.59675835</span></span>
+<span><span class="co">#&gt; 20   cohesion consensus 0.49793510 0.000999001 TRUE 0.37345133 0.62241888</span></span>
+<span><span class="co">#&gt; 21  consensus consensus 0.08200348 0.000999001 TRUE 0.06150261 0.10250435</span></span>
+<span><span class="co">#&gt; 22 coregulate consensus 0.13451777 0.000999001 TRUE 0.10088832 0.16814721</span></span>
+<span><span class="co">#&gt;      ci_lower   ci_upper</span></span>
+<span><span class="co">#&gt; 5  0.06380715 0.08001081</span></span>
+<span><span class="co">#&gt; 9  0.20156075 0.26888806</span></span>
+<span><span class="co">#&gt; 10 0.23990971 0.31203056</span></span>
+<span><span class="co">#&gt; 14 0.04110513 0.05353159</span></span>
+<span><span class="co">#&gt; 15 0.30902433 0.34318567</span></span>
+<span><span class="co">#&gt; 17 0.02145591 0.02934643</span></span>
+<span><span class="co">#&gt; 19 0.43274713 0.51731885</span></span>
+<span><span class="co">#&gt; 20 0.47293205 0.52218913</span></span>
+<span><span class="co">#&gt; 21 0.07575667 0.08881174</span></span>
+<span><span class="co">#&gt; 22 0.11951905 0.14968376</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="bootstrap-significant-edges-only">Bootstrap — Significant Edges Only<a class="anchor" aria-label="anchor" href="#bootstrap-significant-edges-only"></a>
+</h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Stars - highlight key nodes</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, node_shape <span class="op">=</span> <span class="st">"star"</span>, node_size <span class="op">=</span> <span class="fl">6</span>, node_fill <span class="op">=</span> <span class="st">"#FF6F00"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/shapes-gallery-3.png" class="r-plt" alt="Node shape gallery" width="1800"><p class="caption">
-Node shape gallery
-</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">boot</span>,</span>
+<span>      display <span class="op">=</span> <span class="st">"significant"</span>,</span>
+<span>      title <span class="op">=</span> <span class="st">"Bootstrap — Significant Edges"</span>,</span>
+<span>      show_stars <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="plotting-tna-models_files/figure-html/plot-boot-sig-1.png" class="r-plt" alt="" width="2700"></p>
 </div>
+<div class="section level3">
+<h3 id="bootstrap-full-network-with-styling">Bootstrap — Full Network with Styling<a class="anchor" aria-label="anchor" href="#bootstrap-full-network-with-styling"></a>
+</h3>
+<p>Non-significant edges shown as dashed gray lines.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Pentagons - distinctive grouping</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, node_shape <span class="op">=</span> <span class="st">"pentagon"</span>, node_size <span class="op">=</span> <span class="fl">5</span>, node_fill <span class="op">=</span> <span class="st">"#00695C"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/shapes-gallery-4.png" class="r-plt" alt="Node shape gallery" width="1800"><p class="caption">
-Node shape gallery
-</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">boot</span>,</span>
+<span>      display <span class="op">=</span> <span class="st">"styled"</span>,</span>
+<span>      title <span class="op">=</span> <span class="st">"Bootstrap — Styled (sig=solid, nonsig=dashed)"</span>,</span>
+<span>      show_stars <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>      threshold  <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span></span></code></pre></div>
+<p><img src="plotting-tna-models_files/figure-html/plot-boot-styled-1.png" class="r-plt" alt="" width="2700"></p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="shape-groupings">Shape Groupings<a class="anchor" aria-label="anchor" href="#shape-groupings"></a>
-</h2>
-<p>Use shapes to encode node categories:</p>
+<div class="section level3">
+<h3 id="bootstrap-confidence-intervals">Bootstrap — Confidence Intervals<a class="anchor" aria-label="anchor" href="#bootstrap-confidence-intervals"></a>
+</h3>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Binary grouping (e.g., regulatory vs non-regulatory)</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
-<span>      node_shape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"circle"</span>, <span class="st">"square"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span>,</span>
-<span>      node_fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#1976D2"</span>, <span class="st">"#D32F2F"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span>,</span>
-<span>      node_size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/shape-groupings-1.png" class="r-plt" alt="Shape-based categorization" width="1800"><p class="caption">
-Shape-based categorization
-</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">boot</span>,</span>
+<span>      display <span class="op">=</span> <span class="st">"ci"</span>,</span>
+<span>      title <span class="op">=</span> <span class="st">"Bootstrap — With Confidence Intervals"</span>,</span>
+<span>      show_ci <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>      minimum <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
+<p><img src="plotting-tna-models_files/figure-html/plot-boot-ci-1.png" class="r-plt" alt="" width="2700"></p>
 </div>
+</div>
+<div class="section level2">
+<h2 id="simulated-group-tna-permutation-test">3. Simulated Group TNA + Permutation Test<a class="anchor" aria-label="anchor" href="#simulated-group-tna-permutation-test"></a>
+</h2>
+<p>Generate two group TNA networks then compare with permutation
+testing.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Three-category grouping</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
-<span>      node_shape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hexagon"</span>, <span class="st">"diamond"</span>, <span class="st">"triangle"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span>,</span>
-<span>      node_fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#2E7D32"</span>, <span class="st">"#F57C00"</span>, <span class="st">"#7B1FA2"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span>,</span>
-<span>      node_border_color <span class="op">=</span> <span class="st">"white"</span>,</span>
-<span>      node_border_width <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>      node_size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/shape-groupings-2.png" class="r-plt" alt="Shape-based categorization" width="1800"><p class="caption">
-Shape-based categorization
-</p>
-</div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="va">group_models</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://sonsoles.me/tna/reference/group_model.html" class="external-link">group_tna</a></span><span class="op">(</span><span class="va">group_regulation</span>, </span>
+<span>                          group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"H"</span>, <span class="fl">1000</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"L"</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="plot-each-group">Plot Each Group<a class="anchor" aria-label="anchor" href="#plot-each-group"></a>
+</h3>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Four-category with varied shapes</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
-<span>      node_shape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"circle"</span>, <span class="st">"square"</span>, <span class="st">"pentagon"</span>, <span class="st">"star"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span>,</span>
-<span>      node_fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#0288D1"</span>, <span class="st">"#C2185B"</span>, <span class="st">"#689F38"</span>, <span class="st">"#FFA000"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span>,</span>
-<span>      node_size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/shape-groupings-3.png" class="r-plt" alt="Shape-based categorization" width="1800"><p class="caption">
-Shape-based categorization
-</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">group_models</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, title <span class="op">=</span> <span class="st">"Group 1"</span>, minimum <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">group_models</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, title <span class="op">=</span> <span class="st">"Group 2"</span>, minimum <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
+<p><img src="plotting-tna-models_files/figure-html/plot-groups-1.png" class="r-plt" alt="" width="4200"></p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="font-styling">Font Styling<a class="anchor" aria-label="anchor" href="#font-styling"></a>
-</h2>
+<div class="section level3">
+<h3 id="difference-network">Difference Network<a class="anchor" aria-label="anchor" href="#difference-network"></a>
+</h3>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Bold labels with custom color</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
-<span>      node_size <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>      label_size <span class="op">=</span> <span class="fl">1.1</span>,</span>
-<span>      label_fontface <span class="op">=</span> <span class="st">"bold"</span>,</span>
-<span>      label_color <span class="op">=</span> <span class="st">"#1A237E"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/fonts-1.png" class="r-plt" alt="Font customization" width="1800"><p class="caption">
-Font customization
-</p>
+<code class="sourceCode R"><span><span class="fu">cograph</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_compare.html">plot_compare</a></span><span class="op">(</span></span>
+<span>  <span class="va">group_models</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">group_models</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  title <span class="op">=</span> <span class="st">"Group 1 vs Group 2 — Difference Network"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="plotting-tna-models_files/figure-html/plot-compare-1.png" class="r-plt" alt="" width="2700"></p>
 </div>
+<div class="section level3">
+<h3 id="permutation-test">Permutation Test<a class="anchor" aria-label="anchor" href="#permutation-test"></a>
+</h3>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Italic labels below nodes</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
-<span>      node_size <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>      label_position <span class="op">=</span> <span class="st">"below"</span>,</span>
-<span>      label_size <span class="op">=</span> <span class="fl">0.9</span>,</span>
-<span>      label_fontface <span class="op">=</span> <span class="st">"italic"</span>,</span>
-<span>      label_color <span class="op">=</span> <span class="st">"#424242"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/fonts-2.png" class="r-plt" alt="Font customization" width="1800"><p class="caption">
-Font customization
-</p>
-</div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="va">perm</span> <span class="op">&lt;-</span> <span class="fu">tna</span><span class="fu">::</span><span class="fu"><a href="http://sonsoles.me/tna/reference/permutation_test.html" class="external-link">permutation_test</a></span><span class="op">(</span><span class="va">group_models</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">group_models</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, iter <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Bold italic with colored nodes</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
-<span>      node_shape <span class="op">=</span> <span class="st">"hexagon"</span>,</span>
-<span>      node_fill <span class="op">=</span> <span class="st">"#263238"</span>,</span>
-<span>      node_size <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>      label_size <span class="op">=</span> <span class="fl">1.0</span>,</span>
-<span>      label_fontface <span class="op">=</span> <span class="st">"bold.italic"</span>,</span>
-<span>      label_color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/fonts-3.png" class="r-plt" alt="Font customization" width="1800"><p class="caption">
-Font customization
-</p>
+<code class="sourceCode R"><span><span class="va">perm</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 81 × 4</span></span></span>
+<span><span class="co">#&gt;    edge_name           diff_true effect_size  p_value</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> adapt -&gt; adapt       0           <span style="color: #BB0000;">NaN</span>      1       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> cohesion -&gt; adapt    0.005<span style="text-decoration: underline;">33</span>       2.03   0.052<span style="text-decoration: underline;">9</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> consensus -&gt; adapt  -<span style="color: #BB0000;">0.001</span><span style="color: #BB0000; text-decoration: underline;">32</span>      -<span style="color: #BB0000;">0.764</span>  0.417   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> coregulate -&gt; adapt  0.011<span style="text-decoration: underline;">2</span>        1.99   0.045<span style="text-decoration: underline;">0</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> discuss -&gt; adapt    -<span style="color: #BB0000;">0.096</span><span style="color: #BB0000; text-decoration: underline;">2</span>      -<span style="color: #BB0000;">11.5</span>    0.000<span style="text-decoration: underline;">999</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> emotion -&gt; adapt     0.001<span style="text-decoration: underline;">67</span>       0.913  0.443   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> monitor -&gt; adapt    -<span style="color: #BB0000;">0.000</span><span style="color: #BB0000; text-decoration: underline;">192</span>     -<span style="color: #BB0000;">0.035</span><span style="color: #BB0000; text-decoration: underline;">1</span> 0.946   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> plan -&gt; adapt        0.000<span style="text-decoration: underline;">771</span>      0.942  0.241   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> synthesis -&gt; adapt  -<span style="color: #BB0000;">0.158</span>        -<span style="color: #BB0000;">4.83</span>   0.000<span style="text-decoration: underline;">999</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> adapt -&gt; cohesion   -<span style="color: #BB0000;">0.014</span><span style="color: #BB0000; text-decoration: underline;">8</span>       -<span style="color: #BB0000;">0.381</span>  0.699   </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 71 more rows</span></span></span></code></pre></div>
 </div>
-</div>
-<div class="section level2">
-<h2 id="layout-algorithms">Layout Algorithms<a class="anchor" aria-label="anchor" href="#layout-algorithms"></a>
-</h2>
 <div class="section level3">
-<h3 id="circle-layout">Circle Layout<a class="anchor" aria-label="anchor" href="#circle-layout"></a>
+<h3 id="permutation-test-network">Permutation Test — Network<a class="anchor" aria-label="anchor" href="#permutation-test-network"></a>
 </h3>
-<p>Nodes arranged in a circle - ideal for cyclic processes:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, layout <span class="op">=</span> <span class="st">"circle"</span>, node_size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/layout-circle-1.png" class="r-plt" alt="Circle layout" width="1800"><p class="caption">
-Circle layout
-</p>
+<code class="sourceCode R"><span><span class="fu">cograph</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_permutation.html">plot_permutation</a></span><span class="op">(</span><span class="va">perm</span>,</span>
+<span>      title <span class="op">=</span> <span class="st">"Permutation Test — Significant Differences"</span>,</span>
+<span>      show_nonsig <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="plotting-tna-models_files/figure-html/plot-perm-1.png" class="r-plt" alt="" width="2700"></p>
 </div>
-</div>
-<div class="section level3">
-<h3 id="spring-layout">Spring Layout<a class="anchor" aria-label="anchor" href="#spring-layout"></a>
-</h3>
-<p>Force-directed layout reveals natural clusters:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, layout <span class="op">=</span> <span class="st">"spring"</span>, node_size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/layout-spring-1.png" class="r-plt" alt="Spring (force-directed) layout" width="1800"><p class="caption">
-Spring (force-directed) layout
-</p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="oval-layout">Oval Layout<a class="anchor" aria-label="anchor" href="#oval-layout"></a>
-</h3>
-<p>Default TNA layout - wider than circle:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, layout <span class="op">=</span> <span class="st">"oval"</span>, node_size <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/layout-oval-1.png" class="r-plt" alt="Oval layout" width="1800"><p class="caption">
-Oval layout
-</p>
-</div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="custom-layouts">Custom Layouts<a class="anchor" aria-label="anchor" href="#custom-layouts"></a>
-</h2>
-<div class="section level3">
-<h3 id="two-row-layout">Two-Row Layout<a class="anchor" aria-label="anchor" href="#two-row-layout"></a>
-</h3>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">layout_2row</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling</a></span><span class="op">(</span><span class="va">n</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span><span class="op">]</span>,</span>
-<span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="op">-</span><span class="fl">0.5</span><span class="op">)</span>, each <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling</a></span><span class="op">(</span><span class="va">n</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span><span class="op">]</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, layout <span class="op">=</span> <span class="va">layout_2row</span>, node_size <span class="op">=</span> <span class="fl">4</span>, layout_scale <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/layout-two-row-1.png" class="r-plt" alt="Two-row horizontal layout" width="1800"><p class="caption">
-Two-row horizontal layout
-</p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="three-row-layout">Three-Row Layout<a class="anchor" aria-label="anchor" href="#three-row-layout"></a>
-</h3>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rows</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span>
-<span><span class="va">layout_3row</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">row_nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">rows</span> <span class="op">==</span> <span class="va">rows</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span></span>
-<span>    <span class="va">pos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">row_nodes</span> <span class="op">==</span> <span class="va">i</span><span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">row_nodes</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">pos</span><span class="op">]</span></span>
-<span>  <span class="op">}</span><span class="op">)</span>,</span>
-<span>  y <span class="op">=</span> <span class="op">(</span><span class="fl">2</span> <span class="op">-</span> <span class="va">rows</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.7</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, layout <span class="op">=</span> <span class="va">layout_3row</span>, node_size <span class="op">=</span> <span class="fl">4</span>, layout_scale <span class="op">=</span> <span class="fl">1.3</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/layout-three-row-1.png" class="r-plt" alt="Three-row hierarchical layout" width="1800"><p class="caption">
-Three-row hierarchical layout
-</p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="diamond-layout">Diamond Layout<a class="anchor" aria-label="anchor" href="#diamond-layout"></a>
-</h3>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">angles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">*</span><span class="va">pi</span>, length.out <span class="op">=</span> <span class="va">n</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span><span class="op">]</span> <span class="op">+</span> <span class="va">pi</span><span class="op">/</span><span class="fl">4</span></span>
-<span><span class="va">radii</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">1</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span>
-<span><span class="va">layout_diamond</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="va">radii</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="va">angles</span><span class="op">)</span>,</span>
-<span>  y <span class="op">=</span> <span class="va">radii</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="va">angles</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, layout <span class="op">=</span> <span class="va">layout_diamond</span>, node_size <span class="op">=</span> <span class="fl">4</span>, layout_scale <span class="op">=</span> <span class="fl">1.1</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/layout-diamond-1.png" class="r-plt" alt="Diamond formation" width="1800"><p class="caption">
-Diamond formation
-</p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="spiral-layout">Spiral Layout<a class="anchor" aria-label="anchor" href="#spiral-layout"></a>
-</h3>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2.5</span><span class="op">*</span><span class="va">pi</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span>
-<span><span class="va">layout_spiral</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="va">t</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span>,</span>
-<span>  y <span class="op">=</span> <span class="va">t</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, layout <span class="op">=</span> <span class="va">layout_spiral</span>, node_size <span class="op">=</span> <span class="fl">4</span>, layout_scale <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/layout-spiral-1.png" class="r-plt" alt="Spiral arrangement" width="1800"><p class="caption">
-Spiral arrangement
-</p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="grid-layout">Grid Layout<a class="anchor" aria-label="anchor" href="#grid-layout"></a>
-</h3>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ncol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">nrow</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">ceiling</a></span><span class="op">(</span><span class="va">n</span> <span class="op">/</span> <span class="va">ncol</span><span class="op">)</span></span>
-<span><span class="va">layout_grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="op">(</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span> <span class="va">ncol</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">ncol</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">-</span> <span class="fl">1</span>,</span>
-<span>  y <span class="op">=</span> <span class="op">-</span><span class="op">(</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%/%</a></span> <span class="va">ncol</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">nrow</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">+</span> <span class="fl">1</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, layout <span class="op">=</span> <span class="va">layout_grid</span>, node_size <span class="op">=</span> <span class="fl">4</span>, layout_scale <span class="op">=</span> <span class="fl">1.1</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/layout-grid-1.png" class="r-plt" alt="Grid arrangement" width="1800"><p class="caption">
-Grid arrangement
-</p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="radial-clusters">Radial Clusters<a class="anchor" aria-label="anchor" href="#radial-clusters"></a>
-</h3>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Central node with outer ring</span></span>
-<span><span class="va">layout_radial</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,  <span class="co"># Central node</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">*</span><span class="va">pi</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">*</span><span class="va">pi</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="va">n</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
-<span>      layout <span class="op">=</span> <span class="va">layout_radial</span>,</span>
-<span>      node_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">4</span>, <span class="va">n</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>      node_fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#D32F2F"</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"#1976D2"</span>, <span class="va">n</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>      layout_scale <span class="op">=</span> <span class="fl">1.1</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/layout-radial-1.png" class="r-plt" alt="Radial cluster layout" width="1800"><p class="caption">
-Radial cluster layout
-</p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="arc-layout">Arc Layout<a class="anchor" aria-label="anchor" href="#arc-layout"></a>
-</h3>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">angles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">pi</span><span class="op">/</span><span class="fl">6</span>, <span class="fl">5</span><span class="op">*</span><span class="va">pi</span><span class="op">/</span><span class="fl">6</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span>
-<span><span class="va">layout_arc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="va">angles</span><span class="op">)</span>,</span>
-<span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="va">angles</span><span class="op">)</span> <span class="op">-</span> <span class="fl">0.3</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, layout <span class="op">=</span> <span class="va">layout_arc</span>, node_size <span class="op">=</span> <span class="fl">4</span>, layout_scale <span class="op">=</span> <span class="fl">1.3</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/layout-arc-1.png" class="r-plt" alt="Arc arrangement" width="1800"><p class="caption">
-Arc arrangement
-</p>
-</div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="combining-elements">Combining Elements<a class="anchor" aria-label="anchor" href="#combining-elements"></a>
-</h2>
-<div class="section level3">
-<h3 id="shapes-layout-fonts">Shapes + Layout + Fonts<a class="anchor" aria-label="anchor" href="#shapes-layout-fonts"></a>
-</h3>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
-<span>      layout <span class="op">=</span> <span class="st">"circle"</span>,</span>
-<span>      node_shape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hexagon"</span>, <span class="st">"diamond"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span>,</span>
-<span>      node_fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#1565C0"</span>, <span class="st">"#C62828"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">)</span>,</span>
-<span>      node_border_color <span class="op">=</span> <span class="st">"white"</span>,</span>
-<span>      node_border_width <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>      node_size <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>      label_fontface <span class="op">=</span> <span class="st">"bold"</span>,</span>
-<span>      label_size <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/combined-1-1.png" class="r-plt" alt="Combined styling: shapes, layout, fonts" width="1800"><p class="caption">
-Combined styling: shapes, layout, fonts
-</p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="hierarchical-with-donuts">Hierarchical with Donuts<a class="anchor" aria-label="anchor" href="#hierarchical-with-donuts"></a>
-</h3>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
-<span>      layout <span class="op">=</span> <span class="va">layout_3row</span>,</span>
-<span>      layout_scale <span class="op">=</span> <span class="fl">1.3</span>,</span>
-<span>      donut_fill <span class="op">=</span> <span class="va">initial_probs</span>,</span>
-<span>      donut_color <span class="op">=</span> <span class="st">"#1976D2"</span>,</span>
-<span>      donut_inner_ratio <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>      node_size <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>      label_position <span class="op">=</span> <span class="st">"below"</span>,</span>
-<span>      label_fontface <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/combined-2-1.png" class="r-plt" alt="Hierarchical layout with donut charts" width="1800"><p class="caption">
-Hierarchical layout with donut charts
-</p>
-</div>
-</div>
-<div class="section level3">
-<h3 id="radial-with-categories">Radial with Categories<a class="anchor" aria-label="anchor" href="#radial-with-categories"></a>
-</h3>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
-<span>      layout <span class="op">=</span> <span class="va">layout_radial</span>,</span>
-<span>      layout_scale <span class="op">=</span> <span class="fl">1.2</span>,</span>
-<span>      node_shape <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"star"</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"circle"</span>, <span class="st">"square"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>      node_fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#FF5722"</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#2196F3"</span>, <span class="st">"#4CAF50"</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">n</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>      node_size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">4</span>, <span class="va">n</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>      label_fontface <span class="op">=</span> <span class="st">"bold"</span>,</span>
-<span>      edge_start_style <span class="op">=</span> <span class="st">"dotted"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/combined-3-1.png" class="r-plt" alt="Radial layout with shape categories" width="1800"><p class="caption">
-Radial layout with shape categories
-</p>
-</div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="edge-styling">Edge Styling<a class="anchor" aria-label="anchor" href="#edge-styling"></a>
-</h2>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Dotted start segments show direction</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
-<span>      layout <span class="op">=</span> <span class="st">"circle"</span>,</span>
-<span>      node_size <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>      edge_start_style <span class="op">=</span> <span class="st">"dotted"</span>,</span>
-<span>      edge_start_length <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>      edge_color <span class="op">=</span> <span class="st">"#546E7A"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/edges-1.png" class="r-plt" alt="Edge customization" width="1800"><p class="caption">
-Edge customization
-</p>
-</div>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Arrows with custom styling</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
-<span>      layout <span class="op">=</span> <span class="st">"spring"</span>,</span>
-<span>      node_shape <span class="op">=</span> <span class="st">"hexagon"</span>,</span>
-<span>      node_size <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>      show_arrows <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>      arrow_size <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>      curvature <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/edges-2.png" class="r-plt" alt="Edge customization" width="1800"><p class="caption">
-Edge customization
-</p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="themes">Themes<a class="anchor" aria-label="anchor" href="#themes"></a>
-</h2>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Dark theme for presentations</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, theme <span class="op">=</span> <span class="st">"dark"</span>, node_size <span class="op">=</span> <span class="fl">4</span>, layout <span class="op">=</span> <span class="st">"circle"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/themes-1.png" class="r-plt" alt="Built-in themes" width="1800"><p class="caption">
-Built-in themes
-</p>
-</div>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Grayscale for print</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>, theme <span class="op">=</span> <span class="st">"gray"</span>, node_size <span class="op">=</span> <span class="fl">4</span>, layout <span class="op">=</span> <span class="st">"spring"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/themes-2.png" class="r-plt" alt="Built-in themes" width="1800"><p class="caption">
-Built-in themes
-</p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="publication-example">Publication Example<a class="anchor" aria-label="anchor" href="#publication-example"></a>
-</h2>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">model</span>,</span>
-<span>      <span class="co"># Layout</span></span>
-<span>      layout <span class="op">=</span> <span class="st">"circle"</span>,</span>
-<span>      layout_scale <span class="op">=</span> <span class="fl">1.2</span>,</span>
-<span></span>
-<span>      <span class="co"># Nodes</span></span>
-<span>      node_shape <span class="op">=</span> <span class="st">"hexagon"</span>,</span>
-<span>      node_size <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>      donut_fill <span class="op">=</span> <span class="va">initial_probs</span>,</span>
-<span>      donut_color <span class="op">=</span> <span class="st">"#1976D2"</span>,</span>
-<span>      donut_inner_ratio <span class="op">=</span> <span class="fl">0.55</span>,</span>
-<span>      donut_border_color <span class="op">=</span> <span class="st">"white"</span>,</span>
-<span></span>
-<span>      <span class="co"># Labels</span></span>
-<span>      label_size <span class="op">=</span> <span class="fl">0.9</span>,</span>
-<span>      label_fontface <span class="op">=</span> <span class="st">"bold"</span>,</span>
-<span>      label_color <span class="op">=</span> <span class="st">"gray20"</span>,</span>
-<span></span>
-<span>      <span class="co"># Edges</span></span>
-<span>      edge_start_style <span class="op">=</span> <span class="st">"dotted"</span>,</span>
-<span>      edge_start_length <span class="op">=</span> <span class="fl">0.15</span>,</span>
-<span>      edge_width_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">4</span><span class="op">)</span>,</span>
-<span>      curvature <span class="op">=</span> <span class="fl">0.3</span>,</span>
-<span>      threshold <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span></span>
-<span>      <span class="co"># Title</span></span>
-<span>      title <span class="op">=</span> <span class="st">"Group Regulation Transitions"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="plotting-tna-models_files/figure-html/publication-1.png" class="r-plt" alt="Publication-ready visualization" width="2400"><p class="caption">
-Publication-ready visualization
-</p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
-</h2>
-<table class="table">
-<colgroup>
-<col width="42%">
-<col width="57%">
-</colgroup>
-<thead><tr class="header">
-<th>Feature</th>
-<th>Parameters</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>Shapes</td>
-<td>
-<code>node_shape</code>: circle, square, triangle, diamond,
-pentagon, hexagon, star</td>
-</tr>
-<tr class="even">
-<td>Fonts</td>
-<td>
-<code>label_fontface</code>: plain, bold, italic, bold.italic</td>
-</tr>
-<tr class="odd">
-<td>Layouts</td>
-<td>
-<code>layout</code>: circle, spring, oval, or custom matrix</td>
-</tr>
-<tr class="even">
-<td>Donuts</td>
-<td>
-<code>donut_fill</code>, <code>donut_color</code>,
-<code>donut_inner_ratio</code>
-</td>
-</tr>
-<tr class="odd">
-<td>Edges</td>
-<td>
-<code>edge_start_style</code>, <code>show_arrows</code>,
-<code>curvature</code>
-</td>
-</tr>
-</tbody>
-</table>
-<p>See <code><a href="../reference/splot.html">?splot</a></code> for the complete parameter reference.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

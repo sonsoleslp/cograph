@@ -10,8 +10,17 @@
 
 - [Why cograph?](http://sonsoles.me/cograph/articles/2_why-cograph.md):
 
+- [Plotting TNA Models with
+  splot](http://sonsoles.me/cograph/articles/3_plotting-tna-models.md):
+
 - [Bootstrap Forest
   Plots](http://sonsoles.me/cograph/articles/bootstrap-forest.md):
+
+- [Network Analysis with cograph: Import, Utilities, Centralities &
+  Communities](http://sonsoles.me/cograph/articles/cograph-tutorial-analysis.md):
+
+  From raw data to complete network analysis in R — no boilerplate
+  required
 
 - [Visualization of communities and hyper order
   networks](http://sonsoles.me/cograph/articles/cograph-tutorial-communities.md):
@@ -26,12 +35,6 @@
   — build, bootstrap, compare, and visualize using Nestimate and cograph
   together.
 
-- [Network Analysis and Visualization with
-  cograph](http://sonsoles.me/cograph/articles/cograph-tutorial.md):
-
-  From raw data to publication-ready network plots, centrality analysis,
-  community detection, and statistical testing — all in one package.
-
 - [Network Comparison and
   Visualization](http://sonsoles.me/cograph/articles/comparison-plots-demo.md):
 
@@ -40,9 +43,6 @@
 
 - [Advanced
   examples](http://sonsoles.me/cograph/articles/mcml-examples.md):
-
-- [Plotting TNA Models with
-  splot](http://sonsoles.me/cograph/articles/plotting-tna-models.md):
 
 - [Migrating from qgraph to
   splot](http://sonsoles.me/cograph/articles/qgraph-to-splot.md):

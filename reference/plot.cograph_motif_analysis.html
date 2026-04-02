@@ -76,24 +76,41 @@ of triads, bar plots of type distributions, and significance plots.</p>
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
-<dd><p>Plot type: "triads" (default network diagrams), "types" (bar plot),
-"significance" (z-score plot), or "patterns" (abstract MAN patterns)</p></dd>
+<dd><p>Plot type:</p><dl><dt><code>"triads"</code></dt>
+<dd><p>(default) Network diagrams of specific named triads,
+arranged in a grid. Each cell shows the three nodes and their edges.</p></dd>
+
+<dt><code>"types"</code></dt>
+<dd><p>Bar chart of MAN type frequencies.</p></dd>
+
+<dt><code>"significance"</code></dt>
+<dd><p>Z-score plot showing over- and under-represented
+types. Requires <code>significance = TRUE</code> in <code><a href="extract_motifs.html">extract_motifs()</a></code>.</p></dd>
+
+<dt><code>"patterns"</code></dt>
+<dd><p>Abstract MAN pattern diagrams showing edge
+structure of each triad type without specific node labels.</p></dd>
+
+
+</dl></dd>
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
-<dd><p>Number of triads to show. Default 20.</p></dd>
+<dd><p>Number of triads/patterns to show. Default 20.</p></dd>
 
 
 <dt id="arg-colors">colors<a class="anchor" aria-label="anchor" href="#arg-colors"></a></dt>
-<dd><p>Colors for visualization. Default blue/red.</p></dd>
+<dd><p>Two-element color vector for the types/significance plots:
+first color for over-represented, second for under-represented.
+Default <code>c("#2166AC", "#B2182B")</code> (blue/red).</p></dd>
 
 
 <dt id="arg-res">res<a class="anchor" aria-label="anchor" href="#arg-res"></a></dt>
-<dd><p>Resolution for scaling (not used with grid graphics). Default 72.</p></dd>
+<dd><p>Resolution for scaling (kept for backwards compatibility). Default 72.</p></dd>
 
 
 <dt id="arg-node-size">node_size<a class="anchor" aria-label="anchor" href="#arg-node-size"></a></dt>
-<dd><p>Size of nodes (1-10 scale, like splot). Default 5.</p></dd>
+<dd><p>Size of nodes in triad diagrams (1-10 scale). Default 5.</p></dd>
 
 
 <dt id="arg-label-size">label_size<a class="anchor" aria-label="anchor" href="#arg-label-size"></a></dt>
@@ -113,24 +130,26 @@ of triads, bar plots of type distributions, and significance plots.</p>
 
 
 <dt id="arg-legend">legend<a class="anchor" aria-label="anchor" href="#arg-legend"></a></dt>
-<dd><p>Logical, show abbreviation legend at bottom? Default TRUE.</p></dd>
+<dd><p>Show abbreviation legend at bottom? Default TRUE.</p></dd>
 
 
 <dt id="arg-color">color<a class="anchor" aria-label="anchor" href="#arg-color"></a></dt>
-<dd><p>Color for nodes, edges, and labels. Default "#800020" (maroon).</p></dd>
+<dd><p>Color for nodes, edges, and labels in triad diagrams.
+Default <code>"#800020"</code> (maroon).</p></dd>
 
 
 <dt id="arg-spacing">spacing<a class="anchor" aria-label="anchor" href="#arg-spacing"></a></dt>
-<dd><p>Spacing multiplier between cells (0.5-2). Default 1.</p></dd>
+<dd><p>Spacing multiplier between grid cells (0.5-2). Default 1.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments (unused)</p></dd>
+<dd><p>Additional arguments (unused).</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Invisibly returns NULL for triad plots, or a ggplot2 object for other types.</p>
+    <p>Invisibly returns NULL for triad plots, or a ggplot2 object for
+types/significance/patterns plots.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

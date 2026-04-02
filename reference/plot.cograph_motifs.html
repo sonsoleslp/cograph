@@ -65,19 +65,32 @@
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
-<dd><p>Plot type: "bar" (default), "heatmap", or "network"</p></dd>
+<dd><p>Plot type:</p><dl><dt><code>"bar"</code></dt>
+<dd><p>(default) Bar chart of motif frequencies, colored by
+significance direction (over/under-represented).</p></dd>
+
+<dt><code>"heatmap"</code></dt>
+<dd><p>Heatmap of z-scores across motif types.</p></dd>
+
+<dt><code>"network"</code></dt>
+<dd><p>Network diagrams of the top motifs by |z-score|.</p></dd>
+
+
+</dl></dd>
 
 
 <dt id="arg-show-nonsig">show_nonsig<a class="anchor" aria-label="anchor" href="#arg-show-nonsig"></a></dt>
-<dd><p>Show non-significant motifs? Default FALSE</p></dd>
+<dd><p>Show non-significant motifs? Default FALSE.</p></dd>
 
 
 <dt id="arg-top-n">top_n<a class="anchor" aria-label="anchor" href="#arg-top-n"></a></dt>
-<dd><p>Show only top N motifs by |z-score|. Default NULL (all)</p></dd>
+<dd><p>Show only top N motifs by |z-score|. Default NULL (all).</p></dd>
 
 
 <dt id="arg-colors">colors<a class="anchor" aria-label="anchor" href="#arg-colors"></a></dt>
-<dd><p>Colors for under/neutral/over-represented. Default blue/gray/red.</p></dd>
+<dd><p>Three-element color vector for under-represented, neutral, and
+over-represented motifs. Default <code>c("#2166AC", "#999999", "#B2182B")</code>
+(blue/gray/red).</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

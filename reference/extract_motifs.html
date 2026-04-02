@@ -70,7 +70,10 @@ analysis (with matrices or networks).</p>
 <span>  significance <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  n_perm <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'cograph_motif_analysis'</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, n <span class="op">=</span> <span class="fl">20</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -167,8 +170,9 @@ NULL returns all results. Default NULL.</p></dd>
 
 
 <dt id="arg-min-transitions">min_transitions<a class="anchor" aria-label="anchor" href="#arg-min-transitions"></a></dt>
-<dd><p>Minimum total transitions for a person to be included
-(individual level) or minimum triad weight (aggregate). Default 5.</p></dd>
+<dd><p>At individual level: minimum total transitions for a
+person to be included in the analysis. At aggregate level: minimum triad
+weight to count as present. Default 5.</p></dd>
 
 
 <dt id="arg-significance">significance<a class="anchor" aria-label="anchor" href="#arg-significance"></a></dt>

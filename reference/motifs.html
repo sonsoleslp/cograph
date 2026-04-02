@@ -83,6 +83,9 @@ exchangeable.</p></li>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'cograph_motif_result'</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'cograph_motif_result'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"triads"</span>, <span class="st">"types"</span>, <span class="st">"significance"</span>, <span class="st">"patterns"</span><span class="op">)</span>,</span>
@@ -126,7 +129,24 @@ Only used when <code>window</code> is set.</p></dd>
 
 
 <dt id="arg-pattern">pattern<a class="anchor" aria-label="anchor" href="#arg-pattern"></a></dt>
-<dd><p>Pattern filter: "triangle" (default), "network", "closed", "all".</p></dd>
+<dd><p>Which MAN triad types to include in the analysis:</p><dl><dt><code>"triangle"</code></dt>
+<dd><p>(default) Only the 7 closed triangle types:
+030C, 030T, 120C, 120D, 120U, 210, 300. Excludes trivial open patterns
+(empty triads, single edges, chains, stars, mutual pairs).</p></dd>
+
+<dt><code>"network"</code></dt>
+<dd><p>All types except trivially open ones. Excludes
+003 (empty), 012 (single edge), 021C (chain).</p></dd>
+
+<dt><code>"closed"</code></dt>
+<dd><p>Like <code>"network"</code> but also excludes 120C
+(mixed regulated). Excludes 003, 012, 021C, 120C.</p></dd>
+
+<dt><code>"all"</code></dt>
+<dd><p>All 16 MAN types, including empty and trivial patterns.</p></dd>
+
+
+</dl></dd>
 
 
 <dt id="arg-include">include<a class="anchor" aria-label="anchor" href="#arg-include"></a></dt>
@@ -174,25 +194,43 @@ Default 5.</p></dd>
 <dd><p>Random seed for reproducibility.</p></dd>
 
 
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional arguments passed to internal plot helpers.</p></dd>
+
+
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
-<dd><p>Plot type: "triads" (network diagrams), "types" (bar chart),
-"significance" (z-score plot), "patterns" (abstract MAN diagrams).</p></dd>
+<dd><p>Plot type:</p><dl><dt><code>"triads"</code></dt>
+<dd><p>Network diagrams of specific node triples (instance
+mode) or falls back to patterns (census mode). Arranged in a grid.</p></dd>
+
+<dt><code>"types"</code></dt>
+<dd><p>Bar chart of MAN type frequencies.</p></dd>
+
+<dt><code>"significance"</code></dt>
+<dd><p>Z-score plot showing over- and
+under-represented types relative to a null model. Requires
+<code>significance = TRUE</code> in the <code>motifs()</code> call.</p></dd>
+
+<dt><code>"patterns"</code></dt>
+<dd><p>Abstract MAN pattern diagrams showing the edge
+structure of each triad type.</p></dd>
+
+
+</dl></dd>
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
-<dd><p>Number of items to plot. Default 15.</p></dd>
+<dd><p>Maximum number of items to plot. Default 15.</p></dd>
 
 
 <dt id="arg-ncol">ncol<a class="anchor" aria-label="anchor" href="#arg-ncol"></a></dt>
-<dd><p>Number of columns in triad grid. Default 5.</p></dd>
+<dd><p>Number of columns in the triad/pattern grid. Default 5.</p></dd>
 
 
 <dt id="arg-colors">colors<a class="anchor" aria-label="anchor" href="#arg-colors"></a></dt>
-<dd><p>Colors for visualization. Default blue/red.</p></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to plot helpers.</p></dd>
+<dd><p>Two-element color vector: first color for over-represented or
+positive values, second for under-represented or negative values.
+Default <code>c("#2166AC", "#B2182B")</code> (blue/red).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -217,7 +255,8 @@ Instances: triad, type, observed, (z, p, sig).</p></dd>
 <dd><p>List of parameters used</p></dd>
 
 
-</dl></div>
+</dl><p>Invisibly returns the input <code>x</code>.</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Detects input type and analysis level automatically. For inputs with

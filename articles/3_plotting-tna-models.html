@@ -38,15 +38,13 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/1_cograph-tutorial-plotting.html">Network Visualization with cograph: A Complete Plotting Guide</a></li>
+<li><a class="dropdown-item" href="../articles/0_introduction.html">Introduction to cograph</a></li>
+    <li><a class="dropdown-item" href="../articles/1_cograph-tutorial-plotting.html">Network Visualization with cograph: A Complete Plotting Guide</a></li>
     <li><a class="dropdown-item" href="../articles/2_why-cograph.html">Why cograph?</a></li>
     <li><a class="dropdown-item" href="../articles/3_plotting-tna-models.html">Plotting TNA Models with splot</a></li>
     <li><a class="dropdown-item" href="../articles/bootstrap-forest.html">Bootstrap Forest Plots</a></li>
-    <li><a class="dropdown-item" href="../articles/cograph-tutorial-analysis.html">Network Analysis with cograph: Import, Utilities, Centralities &amp; Communities</a></li>
     <li><a class="dropdown-item" href="../articles/cograph-tutorial-communities.html">Visualization of communities and hyper order networks</a></li>
     <li><a class="dropdown-item" href="../articles/cograph-tutorial-nestimate.html">Network Estimation and Visualization with Nestimate + cograph</a></li>
-    <li><a class="dropdown-item" href="../articles/comparison-plots-demo.html">Network Comparison and Visualization</a></li>
-    <li><a class="dropdown-item" href="../articles/introduction.html">Introduction to cograph</a></li>
     <li><a class="dropdown-item" href="../articles/mcml-examples.html">Advanced examples</a></li>
     <li><a class="dropdown-item" href="../articles/qgraph-to-splot.html">Migrating from qgraph to splot</a></li>
   </ul>
@@ -164,6 +162,10 @@ significance and confidence intervals.</p>
 <span>      show_ci <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>      minimum <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
 <p><img src="3_plotting-tna-models_files/figure-html/plot-boot-ci-1.png" class="r-plt" alt="" width="2700"></p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_bootstrap_forest.html">plot_bootstrap_forest</a></span><span class="op">(</span><span class="va">boot</span>, layout <span class="op">=</span> <span class="st">"grouped"</span>,</span>
+<span>  title <span class="op">=</span> <span class="st">"Human-AI Interaction — Grouped by Source Node"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="3_plotting-tna-models_files/figure-html/tna-grouped-1.png" class="r-plt" alt="" width="50%" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div class="section level2">
@@ -171,14 +173,14 @@ significance and confidence intervals.</p>
 </h2>
 <p>Generate two group TNA networks then compare with permutation
 testing.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">group_models</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://sonsoles.me/tna/reference/group_model.html" class="external-link">group_tna</a></span><span class="op">(</span><span class="va">group_regulation</span>, </span>
 <span>                          group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"H"</span>, <span class="fl">1000</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"L"</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="plot-each-group">Plot Each Group<a class="anchor" aria-label="anchor" href="#plot-each-group"></a>
 </h3>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">group_models</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, title <span class="op">=</span> <span class="st">"Group 1"</span>, minimum <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">group_models</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, title <span class="op">=</span> <span class="st">"Group 2"</span>, minimum <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
@@ -187,7 +189,7 @@ testing.</p>
 <div class="section level3">
 <h3 id="difference-network">Difference Network<a class="anchor" aria-label="anchor" href="#difference-network"></a>
 </h3>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">cograph</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_compare.html">plot_compare</a></span><span class="op">(</span></span>
 <span>  <span class="va">group_models</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">group_models</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  title <span class="op">=</span> <span class="st">"Group 1 vs Group 2 — Difference Network"</span><span class="op">)</span></span></code></pre></div>
@@ -196,10 +198,10 @@ testing.</p>
 <div class="section level3">
 <h3 id="permutation-test">Permutation Test<a class="anchor" aria-label="anchor" href="#permutation-test"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">perm</span> <span class="op">&lt;-</span> <span class="fu">tna</span><span class="fu">::</span><span class="fu"><a href="http://sonsoles.me/tna/reference/permutation_test.html" class="external-link">permutation_test</a></span><span class="op">(</span><span class="va">group_models</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">group_models</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, iter <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">perm</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 81 × 4</span></span></span>
 <span><span class="co">#&gt;    edge_name           diff_true effect_size  p_value</span></span>
@@ -219,7 +221,7 @@ testing.</p>
 <div class="section level3">
 <h3 id="permutation-test-network">Permutation Test — Network<a class="anchor" aria-label="anchor" href="#permutation-test-network"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">cograph</span><span class="fu">::</span><span class="fu"><a href="../reference/plot_permutation.html">plot_permutation</a></span><span class="op">(</span><span class="va">perm</span>,</span>
 <span>      title <span class="op">=</span> <span class="st">"Permutation Test — Significant Differences"</span>,</span>
 <span>      show_nonsig <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>

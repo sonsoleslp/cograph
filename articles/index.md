@@ -2,6 +2,9 @@
 
 ### All vignettes
 
+- [Introduction to
+  cograph](http://sonsoles.me/cograph/articles/0_introduction.md):
+
 - [Network Visualization with cograph: A Complete Plotting
   Guide](http://sonsoles.me/cograph/articles/1_cograph-tutorial-plotting.md):
 
@@ -16,12 +19,6 @@
 - [Bootstrap Forest
   Plots](http://sonsoles.me/cograph/articles/bootstrap-forest.md):
 
-- [Network Analysis with cograph: Import, Utilities, Centralities &
-  Communities](http://sonsoles.me/cograph/articles/cograph-tutorial-analysis.md):
-
-  From raw data to complete network analysis in R — no boilerplate
-  required
-
 - [Visualization of communities and hyper order
   networks](http://sonsoles.me/cograph/articles/cograph-tutorial-communities.md):
 
@@ -34,12 +31,6 @@
   From raw sequence data to publication-ready statistical network plots
   — build, bootstrap, compare, and visualize using Nestimate and cograph
   together.
-
-- [Network Comparison and
-  Visualization](http://sonsoles.me/cograph/articles/comparison-plots-demo.md):
-
-- [Introduction to
-  cograph](http://sonsoles.me/cograph/articles/introduction.md):
 
 - [Advanced
   examples](http://sonsoles.me/cograph/articles/mcml-examples.md):

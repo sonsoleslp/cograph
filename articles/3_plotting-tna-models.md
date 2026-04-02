@@ -96,6 +96,13 @@ splot(boot,
 
 ![](3_plotting-tna-models_files/figure-html/plot-boot-ci-1.png)
 
+``` r
+plot_bootstrap_forest(boot, layout = "grouped",
+  title = "Human-AI Interaction — Grouped by Source Node")
+```
+
+![](3_plotting-tna-models_files/figure-html/tna-grouped-1.png)
+
 ## 3. Simulated Group TNA + Permutation Test
 
 Generate two group TNA networks then compare with permutation testing.

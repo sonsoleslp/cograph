@@ -520,7 +520,7 @@ Figure 16: MAN triad pattern diagrams
 <div class="cell-output cell-output-stdout">
 <pre><code>
 normal   over  under
-  1984    524     76 </code></pre>
+  1921    546    117 </code></pre>
 </div>
 </div>
 <div class="cell">
@@ -528,15 +528,24 @@ normal   over  under
 <code class="sourceCode R"><span><span class="va">over</span> <span class="op">&lt;-</span> <span class="va">hypa</span><span class="op">$</span><span class="va">scores</span><span class="op">[</span><span class="va">hypa</span><span class="op">$</span><span class="va">scores</span><span class="op">$</span><span class="va">anomaly</span> <span class="op">==</span> <span class="st">"over"</span>, <span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">over</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">over</span><span class="op">$</span><span class="va">ratio</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"path"</span>, <span class="st">"ratio"</span>, <span class="st">"observed"</span>, <span class="st">"expected"</span><span class="op">)</span><span class="op">]</span>, <span class="fl">8</span><span class="op">)</span></span></code></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                                             path    ratio observed   expected
-1        synthesis -&gt; adapt -&gt; monitor -&gt; discuss 76.45996        7 0.09155119
-2         plan -&gt; consensus -&gt; adapt -&gt; consensus 57.45136        5 0.08703014
-3         plan -&gt; consensus -&gt; synthesis -&gt; adapt 48.61269        5 0.10285380
-4         monitor -&gt; discuss -&gt; plan -&gt; consensus 39.49781        5 0.12658930
-5 discuss -&gt; synthesis -&gt; coregulate -&gt; consensus 38.46743        5 0.12998008
-6      discuss -&gt; synthesis -&gt; coregulate -&gt; plan 38.46743        6 0.15597610
-7    consensus -&gt; coregulate -&gt; adapt -&gt; cohesion 36.11228        6 0.16614845
-8   discuss -&gt; synthesis -&gt; cohesion -&gt; consensus 35.18896        7 0.19892604</code></pre>
+<pre><code>                                                path    ratio observed
+114         synthesis -&gt; adapt -&gt; monitor -&gt; discuss 76.45996        7
+386          plan -&gt; consensus -&gt; adapt -&gt; consensus 57.45136        5
+806          plan -&gt; consensus -&gt; synthesis -&gt; adapt 48.61269        5
+1457         monitor -&gt; discuss -&gt; plan -&gt; consensus 39.49781        5
+2530 discuss -&gt; synthesis -&gt; coregulate -&gt; consensus 38.46743        5
+2535      discuss -&gt; synthesis -&gt; coregulate -&gt; plan 38.46743        6
+822     consensus -&gt; coregulate -&gt; adapt -&gt; cohesion 36.11228        6
+2492   discuss -&gt; synthesis -&gt; cohesion -&gt; consensus 35.18896        7
+       expected
+114  0.09155119
+386  0.08703014
+806  0.10285380
+1457 0.12658930
+2530 0.12998008
+2535 0.15597610
+822  0.16614845
+2492 0.19892604</code></pre>
 </div>
 </div>
 </section><section class="level2" data-number="8.3"><h3 data-number="8.3" id="simplicial-visualization">

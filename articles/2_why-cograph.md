@@ -702,7 +702,8 @@ present, the cograph name wins.
 
 ### Nestimate integration
 
-cograph also plots [Nestimate](https://mohsaqr.r-universe.dev/Nestimate)
+cograph also plots
+[Nestimate](https://cran.r-project.org/web/packages/Nestimate/index.html)
 objects (bootstrap forests, permutation results, glasso networks)
 without importing the package — dispatch is by class name only.
 

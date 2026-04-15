@@ -262,19 +262,13 @@ splot(tna_models$G1)
 # -----------------------------------------------------
 # Centrality analysis via tna (optional dependency)
 # -----------------------------------------------------
-# \donttest{
+if (FALSE) { # \dontrun{
 if (requireNamespace("tna", quietly = TRUE)) {
   tna::centralities(tna_models$macro)
   tna::centralities(tna_models$G1)
   tna::centralities(tna_models$G2)
 }
-#> # A tibble: 2 × 10
-#>   state OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
-#> * <fct>       <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
-#> 1 C               1          1           1            1         1           0
-#> 2 D               1          1           1            1         1           0
-#> # ℹ 3 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>
-# }
+} # }
 
 if (FALSE) { # \dontrun{
 # Bootstrap requires a tna object built from raw sequence data (has $data)

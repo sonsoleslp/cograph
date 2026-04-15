@@ -368,22 +368,31 @@ table(hypa$scores$anomaly)
 ```
 
     normal   over  under
-      1984    524     76 
+      1921    546    117 
 
 ``` r
 over <- hypa$scores[hypa$scores$anomaly == "over", ]
 head(over[order(-over$ratio), c("path", "ratio", "observed", "expected")], 8)
 ```
 
-                                                 path    ratio observed   expected
-    1        synthesis -> adapt -> monitor -> discuss 76.45996        7 0.09155119
-    2         plan -> consensus -> adapt -> consensus 57.45136        5 0.08703014
-    3         plan -> consensus -> synthesis -> adapt 48.61269        5 0.10285380
-    4         monitor -> discuss -> plan -> consensus 39.49781        5 0.12658930
-    5 discuss -> synthesis -> coregulate -> consensus 38.46743        5 0.12998008
-    6      discuss -> synthesis -> coregulate -> plan 38.46743        6 0.15597610
-    7    consensus -> coregulate -> adapt -> cohesion 36.11228        6 0.16614845
-    8   discuss -> synthesis -> cohesion -> consensus 35.18896        7 0.19892604
+                                                    path    ratio observed
+    114         synthesis -> adapt -> monitor -> discuss 76.45996        7
+    386          plan -> consensus -> adapt -> consensus 57.45136        5
+    806          plan -> consensus -> synthesis -> adapt 48.61269        5
+    1457         monitor -> discuss -> plan -> consensus 39.49781        5
+    2530 discuss -> synthesis -> coregulate -> consensus 38.46743        5
+    2535      discuss -> synthesis -> coregulate -> plan 38.46743        6
+    822     consensus -> coregulate -> adapt -> cohesion 36.11228        6
+    2492   discuss -> synthesis -> cohesion -> consensus 35.18896        7
+           expected
+    114  0.09155119
+    386  0.08703014
+    806  0.10285380
+    1457 0.12658930
+    2530 0.12998008
+    2535 0.15597610
+    822  0.16614845
+    2492 0.19892604
 
 ### 8.3 Simplicial visualization
 

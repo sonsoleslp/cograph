@@ -1003,19 +1003,19 @@ Requires the <strong>Nestimate</strong> package.</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code><a href="https://rdrr.io/pkg/Nestimate/man/build_hon.html" class="external-link">build_hon()</a></code></td>
+<td><code>build_hon()</code></td>
 <td>Higher-Order Network construction</td>
 </tr>
 <tr class="even">
-<td><code><a href="https://rdrr.io/pkg/Nestimate/man/build_hypa.html" class="external-link">build_hypa()</a></code></td>
+<td><code>build_hypa()</code></td>
 <td>Path anomaly detection (hypergeometric null)</td>
 </tr>
 <tr class="odd">
-<td><code><a href="https://rdrr.io/pkg/Nestimate/man/build_mogen.html" class="external-link">build_mogen()</a></code></td>
+<td><code>build_mogen()</code></td>
 <td>Multi-order model selection (AIC/BIC)</td>
 </tr>
 <tr class="even">
-<td><code><a href="https://rdrr.io/pkg/Nestimate/man/path_counts.html" class="external-link">path_counts()</a></code></td>
+<td><code>path_counts()</code></td>
 <td>k-step path frequencies</td>
 </tr>
 <tr class="odd">
@@ -1023,82 +1023,20 @@ Requires the <strong>Nestimate</strong> package.</p>
 <td>Visualize pathways as blob overlays</td>
 </tr>
 <tr class="even">
-<td><code><a href="https://rdrr.io/pkg/Nestimate/man/build_simplicial.html" class="external-link">build_simplicial()</a></code></td>
+<td><code>build_simplicial()</code></td>
 <td>Simplicial complex from cliques</td>
 </tr>
 <tr class="odd">
-<td><code><a href="https://rdrr.io/pkg/Nestimate/man/persistent_homology.html" class="external-link">persistent_homology()</a></code></td>
+<td><code>persistent_homology()</code></td>
 <td>Topological persistence across thresholds</td>
 </tr>
 <tr class="even">
-<td><code><a href="https://rdrr.io/pkg/Nestimate/man/q_analysis.html" class="external-link">q_analysis()</a></code></td>
+<td><code>q_analysis()</code></td>
 <td>Multi-level structural connectivity</td>
 </tr>
 <tr class="odd">
-<td><code><a href="https://rdrr.io/pkg/Nestimate/man/verify_simplicial.html" class="external-link">verify_simplicial()</a></code></td>
+<td><code>verify_simplicial()</code></td>
 <td>Cross-validate via Euler-Poincare theorem</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level2">
-<h2 id="nestimate-integration">Nestimate integration<a class="anchor" aria-label="anchor" href="#nestimate-integration"></a>
-</h2>
-<p><strong>Nestimate</strong> estimates networks from sequence data. Its
-objects dispatch through <code><a href="../reference/splot.html">splot()</a></code> automatically.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mohsaqr/Nestimate" class="external-link">Nestimate</a></span><span class="op">)</span></span>
-<span><span class="va">net</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Nestimate/man/build_network.html" class="external-link">build_network</a></span><span class="op">(</span><span class="va">data</span>, method <span class="op">=</span> <span class="st">"relative"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">net</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Nestimate/man/bootstrap_network.html" class="external-link">bootstrap_network</a></span><span class="op">(</span><span class="va">net</span>, iter <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_bootstrap_forest.html">plot_bootstrap_forest</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_bootstrap_forest.html">plot_bootstrap_forest</a></span><span class="op">(</span><span class="va">boot</span>, layout <span class="op">=</span> <span class="st">"circular"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_bootstrap_forest.html">plot_bootstrap_forest</a></span><span class="op">(</span><span class="va">boot</span>, layout <span class="op">=</span> <span class="st">"grouped"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Nestimate/man/build_network.html" class="external-link">build_network</a></span><span class="op">(</span><span class="va">data</span>, method <span class="op">=</span> <span class="st">"relative"</span>, group <span class="op">=</span> <span class="st">"condition"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">grp</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">perm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Nestimate/man/permutation_test.html" class="external-link">permutation_test</a></span><span class="op">(</span><span class="va">grp</span><span class="op">$</span><span class="va">A</span>, <span class="va">grp</span><span class="op">$</span><span class="va">B</span>, iter <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/splot.html">splot</a></span><span class="op">(</span><span class="va">perm</span><span class="op">)</span></span></code></pre></div>
-<p>Estimation methods: <code>"relative"</code>,
-<code>"frequency"</code>, <code>"attention"</code>,
-<code>"glasso"</code>, <code>"pcor"</code>,
-<code>"co_occurrence"</code>.</p>
-<table class="table">
-<colgroup>
-<col width="32%">
-<col width="68%">
-</colgroup>
-<thead><tr class="header">
-<th>Object</th>
-<th>splot() produces</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td><code>netobject</code></td>
-<td>Network plot (TNA styling)</td>
-</tr>
-<tr class="even">
-<td><code>net_bootstrap</code></td>
-<td>Stability-styled (solid = stable, dashed = unstable)</td>
-</tr>
-<tr class="odd">
-<td><code>netobject_group</code></td>
-<td>Multi-panel grid (one per group)</td>
-</tr>
-<tr class="even">
-<td><code>net_permutation</code></td>
-<td>Colored difference network</td>
-</tr>
-<tr class="odd">
-<td><code>boot_glasso</code></td>
-<td>GLASSO bootstrap stability</td>
-</tr>
-<tr class="even">
-<td><code>wtna_mixed</code></td>
-<td>Mixed window TNA</td>
 </tr>
 </tbody>
 </table>
@@ -1185,7 +1123,7 @@ objects dispatch through <code><a href="../reference/splot.html">splot()</a></co
 </h2>
 <p>The <code>sn_*</code> functions provide a chainable builder for the
 grid/ggplot2 rendering path.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mat</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/cograph.html">cograph</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/sn_layout.html">sn_layout</a></span><span class="op">(</span><span class="st">"spring"</span><span class="op">)</span> <span class="op">|&gt;</span></span>

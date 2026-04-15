@@ -138,8 +138,7 @@ rownames(mat) <- colnames(mat) <- c("Plan","Execute","Monitor","Adapt")
 m <- extract_motifs(mat, significance = FALSE)
 plot(m)
 
-# \donttest{
+if (FALSE) { # \dontrun{
   plot(m, type = "types")
-
-# }
+} # }
 ```

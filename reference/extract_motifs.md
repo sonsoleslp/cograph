@@ -245,7 +245,7 @@ print(m)
 #> 3  Plan - Execute - Monitor 030T        1
 #> 4    Plan - Monitor - Adapt 030C        1
 
-# \donttest{
+if (FALSE) { # \dontrun{
 if (requireNamespace("tna", quietly = TRUE)) {
   Mod <- tna::tna(tna::group_regulation)
 
@@ -256,5 +256,5 @@ if (requireNamespace("tna", quietly = TRUE)) {
   # Filter to feed-forward loops only
   m <- extract_motifs(Mod, include_types = "030T", significance = FALSE)
 }
-# }
+} # }
 ```

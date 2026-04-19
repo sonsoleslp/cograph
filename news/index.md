@@ -2,6 +2,8 @@
 
 ## cograph 2.1.1
 
+CRAN release: 2026-04-15
+
 ### Plotting
 
 - `splot.netobject` now routes on the Nestimate `$method` slot rather

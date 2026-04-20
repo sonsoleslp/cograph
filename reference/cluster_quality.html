@@ -100,19 +100,19 @@ Supports both binary and weighted networks.</p>
 <span class="r-in"><span><span class="va">q</span> <span class="op">&lt;-</span> <span class="fu">cluster_quality</span><span class="op">(</span><span class="va">mat</span>, <span class="va">clusters</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">q</span><span class="op">$</span><span class="va">per_cluster</span>   <span class="co"># Per-cluster metrics</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   cluster cluster_name n_nodes internal_edges cut_edges internal_density</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1            1       3       2.043959  21.44976        0.3406598</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       2            2       3       3.016079  23.13639        0.5026799</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       3            3       4       9.159230  23.36489        0.7632691</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1            1       3       2.937610  20.93125        0.4896017</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       2            2       3       3.206718  22.67670        0.5344529</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       3            3       4       6.574337  25.20272        0.5478615</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   avg_internal_degree expansion cut_ratio conductance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1            1.362639  7.149920 1.0214171   0.8399260</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2            2.010720  7.712130 1.1017328   0.7931965</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3            4.579615  5.841223 0.9735371   0.5605329</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            1.958407  6.977083 0.9967262   0.7808283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2            2.137812  7.558900 1.0798429   0.7795323</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3            3.287169  6.300679 1.0501132   0.6571526</span>
 <span class="r-in"><span><span class="va">q</span><span class="op">$</span><span class="va">global</span>        <span class="co"># Modularity, coverage</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $modularity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.05272447</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.07088779</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $coverage</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2950375</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2698978</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $n_clusters</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3</span>
@@ -124,19 +124,19 @@ Supports both binary and weighted networks.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> =======================</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global metrics:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Modularity: -0.0673 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Coverage:   0.271 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Modularity: -0.0916 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Coverage:   0.2489 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Clusters:   3 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Per-cluster metrics:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  cluster cluster_name n_nodes internal_edges cut_edges internal_density</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        1            1       3       4.392079  21.96938        0.7320132</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        2            2       3       2.757767  22.01327        0.4596278</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        3            3       4       5.831567  25.85041        0.4859639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        1            1       3       3.573873  22.84317        0.5956454</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        2            2       3       2.872407  23.35599        0.4787344</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        3            3       4       5.932966  28.49671        0.4944138</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  avg_internal_degree expansion cut_ratio conductance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             2.928053  7.323126  1.046161   0.7143691</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             1.838511  7.337758  1.048251   0.7996450</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             2.915783  6.462602  1.077100   0.6890954</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             2.382582  7.614389  1.087770   0.7616696</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             1.914938  7.785328  1.112190   0.8025892</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             2.966483  7.124178  1.187363   0.7060170</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

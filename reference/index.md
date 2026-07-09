@@ -471,11 +471,13 @@
 - [`plot_chord()`](https://sonsoles.me/cograph/reference/plot_chord.md)
   : Chord Diagram
 - [`plot_compare()`](https://sonsoles.me/cograph/reference/plot_compare.md)
-  : Plot Network Difference
+  : Plot Network Difference (alias of plot_difference)
 - [`plot_comparison_heatmap()`](https://sonsoles.me/cograph/reference/plot_comparison_heatmap.md)
   : Plot Comparison Heatmap
 - [`plot_degree_correlation()`](https://sonsoles.me/cograph/reference/plot_degree_correlation.md)
   : Plot Degree-Degree Correlation
+- [`plot_difference()`](https://sonsoles.me/cograph/reference/plot_difference.md)
+  : Plot Network Difference
 - [`plot_edge_diff_forest()`](https://sonsoles.me/cograph/reference/plot_edge_diff_forest.md)
   : Forest Plot for Bootstrap Edge Differences
 - [`plot_edge_weights()`](https://sonsoles.me/cograph/reference/plot_edge_weights.md)
@@ -690,8 +692,12 @@
   : Disparity Filter
 - [`dispersion()`](https://sonsoles.me/cograph/reference/dispersion.md)
   : Dispersion (Backstrom-Kleinberg 2014)
+- [`dyad_census()`](https://sonsoles.me/cograph/reference/dyad_census.md)
+  : Dyad Census
 - [`edge_reciprocity()`](https://sonsoles.me/cograph/reference/edge_reciprocity.md)
   : Edge Reciprocity
+- [`ego_networks()`](https://sonsoles.me/cograph/reference/ego_networks.md)
+  : Ego-Network Metrics
 - [`estrada_index()`](https://sonsoles.me/cograph/reference/estrada_index.md)
   : Estrada Index
 - [`fit_degree_distribution()`](https://sonsoles.me/cograph/reference/fit_degree_distribution.md)
@@ -735,8 +741,12 @@
   : Group-based Layout
 - [`layout_oval()`](https://sonsoles.me/cograph/reference/layout_oval.md)
   : Oval Layout
+- [`layout_saqr()`](https://sonsoles.me/cograph/reference/layout_saqr.md)
+  : Saqr Layout (Start/End transition flow)
 - [`layout_spring()`](https://sonsoles.me/cograph/reference/layout_spring.md)
   : Fruchterman-Reingold Spring Layout
+- [`layout_target()`](https://sonsoles.me/cograph/reference/layout_target.md)
+  : Target Layout (focal-node, topological)
 - [`list_layouts()`](https://sonsoles.me/cograph/reference/list_layouts.md)
   : List Available Layouts
 - [`list_palettes()`](https://sonsoles.me/cograph/reference/list_palettes.md)

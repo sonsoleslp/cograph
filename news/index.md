@@ -1,5 +1,216 @@
 # Changelog
 
+## cograph 2.4.4
+
+### New features
+
+- **Producer-supplied splot metadata** (`x$meta$splot`): packages that
+  create cograph-plottable objects can now attach a small rendering
+  contract — `renderer` (resolved through a cograph-maintained whitelist
+  of existing renderers; arbitrary function names are never evaluated),
+  `weight` (which stored edge quantity to render: an edge column keeps
+  the producer’s edge set, a matrix redefines the drawn network from its
+  nonzero cells, aligned by dimnames), and `defaults` (renderer
+  arguments). Precedence is always
+  `user arguments > meta$splot$defaults > cograph defaults`; on the
+  regular network path this includes deprecated argument aliases (a
+  user-supplied `positive_color` still beats a metadata
+  `edge_positive_color` default). See
+  [`?splot`](https://sonsoles.me/cograph/reference/splot.md), section
+  “Producer-Supplied splot Metadata”.
+
+### Bug fixes / changes
+
+- `plot_edge_diff_forest(layout = "chord")` no longer emits a spurious
+  “row names were found from a short variable and have been discarded”
+  warning for every node arc it draws.
+
+- [`detect_communities()`](https://sonsoles.me/cograph/reference/detect_communities.md)
+  with the `"louvain"` (the default) or `"leiden"` method no longer
+  errors on a **directed** graph. These igraph algorithms are
+  undirected-only, so `detect_communities(tna_object)` — a tna model is
+  always directed — aborted with “Multi-level community detection works
+  for undirected graphs only”. It now collapses the directed edges to
+  undirected (mean, as the `"fast_greedy"` method already did) with a
+  message, so the package’s primary object type works with the default
+  algorithm. This also fixes `plot_htna(x, community = "louvain")` and
+  other internal callers that ran community detection on a directed
+  model.
+
+- [`splot()`](https://sonsoles.me/cograph/reference/splot.md) on a
+  Nestimate `netdifference` (from `subtract_networks()` /
+  `as_netdifference()`) now routes to
+  [`plot_difference()`](https://sonsoles.me/cograph/reference/plot_difference.md).
+  Previously it fell through to the `netobject` path, which styles by
+  `$method` — “difference” is not a TNA-family method, so the asymmetric
+  difference matrix was drawn with undirected psych styling: no
+  arrowheads and one triangle of each asymmetric edge pair silently
+  dropped. `splot(d, minimum = 3)` is now the straightforward call for a
+  signed difference network.
+
+- The `netdifference` routing excludes `net_permutation`-family objects:
+  `net_bayes` carries both classes and must keep reaching
+  `splot.net_permutation`, whose per-edge CI/star arrays are aligned by
+  `Nestimate::plot.net_bayes` to that renderer’s edge ordering.
+
+- [`plot_difference()`](https://sonsoles.me/cograph/reference/plot_difference.md)
+  on a `netdifference` now draws the display matrix (`$weights` —
+  e.g. only the credible differences when coerced with
+  `as_netdifference(b, significant_only = TRUE)`), falling back to
+  `$difference_matrix`. For `subtract_networks()` results the two are
+  identical, so nothing changes there.
+
+- [`plot_permutation()`](https://sonsoles.me/cograph/reference/plot_permutation.md)
+  /
+  [`splot.net_permutation()`](https://sonsoles.me/cograph/reference/splot.md):
+  the `title` and `layout` defaults now use exact `[[` indexing.
+  `args$title` on a dots-list holding `title_size` (but no `title`)
+  partially matched `title_size`, so the default title was silently
+  skipped and no title was drawn — this is why
+  `Nestimate::plot.net_bayes()` output had no title. Same latent hazard
+  fixed for `layout` / `layout_scale`.
+
+- Edge label templates gain a `{p_diff}` placeholder (probability of the
+  difference, for Bayesian comparisons), fed by the new
+  `edge_label_p_diff` argument — a per-edge vector or a full
+  node-by-node matrix (the matrix is indexed at each drawn edge, so it
+  survives `minimum`/`threshold` filtering, and is aligned by dimnames
+  so it may be supplied in any node order). Filled automatically from
+  `$p_difference` by `splot.net_permutation` and by
+  [`plot_difference()`](https://sonsoles.me/cograph/reference/plot_difference.md)
+  on Bayesian `netdifference` coercions. Template example:
+  `edge_label_template = "{est} (P={p_diff})"`.
+
+- [`splot.netobject()`](https://sonsoles.me/cograph/reference/splot.md)
+  styling classifier: `"edge_betweenness"` networks are now styled by
+  their directedness. A directed edge-betweenness network previously
+  fell into psych styling — drawn undirected, silently losing one
+  direction of each asymmetric pair; it now gets the TNA presets with
+  arrows. An undirected one (from a correlation-family source —
+  Nestimate preserves the source’s directedness) keeps the psych look.
+
+- Nestimate producers now use the `meta$splot` contract: `netdifference`
+  objects carry `renderer = "difference"` and `net_bayes` carries
+  `renderer = "permutation"`, so metadata routing (which runs before
+  class dispatch) selects the renderer; the `netdifference` class branch
+  remains as a fallback for objects built without metadata.
+
+## cograph 2.4.3
+
+### Bug fixes / changes
+
+- [`plot_difference()`](https://sonsoles.me/cograph/reference/plot_difference.md)
+  no longer hides small difference edges: it defaults `minimum = 0` (the
+  style presets otherwise injected `minimum = 0.01`, silently dropping
+  edges with `|x - y| < 0.01`). An explicit `minimum` still wins.
+
+- `plot_difference(x, y, difference = TRUE)` now warns that `y` is
+  ignored and uses `x` as the difference network, instead of silently
+  computing `x - y`.
+
+## cograph 2.4.2
+
+### Bug fixes / changes
+
+- [`plot_compare()`](https://sonsoles.me/cograph/reference/plot_compare.md)
+  is **no longer deprecated** — it is a plain alias of
+  [`plot_difference()`](https://sonsoles.me/cograph/reference/plot_difference.md).
+  [`tna::plot_compare()`](http://sonsoles.me/tna/reference/plot_compare.md)
+  delegates to it by name (`cograph::plot_compare(x, y, ...)`), so
+  deprecating it wrongly made every
+  [`tna::plot_compare()`](http://sonsoles.me/tna/reference/plot_compare.md)
+  call emit a warning; the warning is removed. Both names call the same
+  implementation;
+  [`plot_difference()`](https://sonsoles.me/cograph/reference/plot_difference.md)
+  is the preferred spelling for new cograph code.
+
+- [`plot_difference()`](https://sonsoles.me/cograph/reference/plot_difference.md)
+  also auto-detects a Nestimate `netdifference` object (or any object
+  exposing `$difference_matrix`), alongside `tna_comparison`.
+
+## cograph 2.4.1
+
+### New features
+
+- [`plot_difference()`](https://sonsoles.me/cograph/reference/plot_difference.md)
+  can now consume a **pre-computed difference network**: a
+  `tna_comparison` object (from
+  [`tna::compare()`](http://sonsoles.me/tna/reference/compare.md)) is
+  detected automatically and its `$difference_matrix` is plotted, and
+  `difference = TRUE` treats `x` as an already-subtracted matrix/network
+  (no `y` needed). The two-network `plot_difference(x, y)` path is
+  unchanged.
+
+## cograph 2.4.0
+
+### New features
+
+- Two focal-node flow layouts, usable anywhere a layout name is accepted
+  (`splot(x, layout = "target")` / `layout = "saqr"`):
+  - [`layout_target()`](https://sonsoles.me/cograph/reference/layout_target.md)
+    ports qgraph’s [`flow()`](https://rdrr.io/pkg/qgraph/man/flow.html)
+    — places one node of interest (`target =`) on the left and every
+    other node in columns by unweighted BFS distance (hops). Unlike
+    qgraph it handles disconnected graphs (isolated nodes go to a
+    trailing column) instead of erroring.
+  - [`layout_saqr()`](https://sonsoles.me/cograph/reference/layout_saqr.md)
+    ports the Dynalytics Desktop “saqr” transition layout (Saqr et al.,
+    LAK25): Start on top, End on bottom, middle nodes ranked by outgoing
+    weight from Start and split into 2–3 sine-enveloped rows with a
+    zig-zag first row (`start =`, `end =`, `jitter =`).
+
+### Bug fixes / changes
+
+- [`plot_difference()`](https://sonsoles.me/cograph/reference/plot_difference.md)
+  now **styles the difference network automatically** instead of drawing
+  bare default-blue nodes: an undirected difference gets the
+  psychometric look (Okabe-Ito node palette, no arrows, thin edges), a
+  directed difference gets the TNA look (TNA palette, arrows). Node size
+  uses the calibrated preset (previously nodes could render
+  near-invisible), and edges stay coloured by the sign of the
+  difference. Explicit `node_*` arguments still override the preset.
+
+- [`plot_difference()`](https://sonsoles.me/cograph/reference/plot_difference.md)
+  is added as the preferred name for the difference-network plotter.
+  [`plot_compare()`](https://sonsoles.me/cograph/reference/plot_compare.md)
+  remains a first-class alias of it
+  ([`tna::plot_compare()`](http://sonsoles.me/tna/reference/plot_compare.md)
+  delegates to
+  [`cograph::plot_compare()`](https://sonsoles.me/cograph/reference/plot_compare.md)
+  by name, so the name must keep working).
+
+- [`plot_difference()`](https://sonsoles.me/cograph/reference/plot_difference.md)
+  (the renamed difference-network plotter) now treats an S3
+  `cograph_network` (which is itself a list — e.g. a `psychnet` fit, a
+  Nestimate `netobject`, or any
+  [`as_cograph()`](https://sonsoles.me/cograph/reference/as_cograph.md)
+  result) as a single network. Previously such an object fell into the
+  “plain list of networks” branch and was misread as a list of
+  sub-networks, failing with “x must be a matrix, cograph_network, tna,
+  or igraph object”. Comparing two psychnet/netobject networks with
+  `plot_difference(net1, net2)` now works.
+
+## cograph 2.3.11
+
+### New features
+
+- [`dyad_census()`](https://sonsoles.me/cograph/reference/dyad_census.md)
+  classifies every dyad of a directed network into mutual (M),
+  asymmetric (A), or null (N), returning a tidy one-row-per-type
+  data.frame with counts and proportions and a dyad-based reciprocity
+  (`2M / (2M + A)`) attribute. It is the dyad-level companion to
+  [`triad_census()`](https://sonsoles.me/cograph/reference/triad_census.md).
+  Undirected input counts every edge as a mutual dyad.
+
+- [`ego_networks()`](https://sonsoles.me/cograph/reference/ego_networks.md)
+  reports tidy per-ego personal-network metrics — size, ego/alter tie
+  counts and densities, and Burt’s structural-hole measures
+  (`effective_size`, `constraint`, `order = 1` only) — with one row per
+  ego. The structural-hole columns reuse the same implementations as
+  [`centrality()`](https://sonsoles.me/cograph/reference/centrality.md),
+  so they match
+  `centrality(x, measures = c("effective_size", "constraint"))` exactly.
+
 ## cograph 2.3.10
 
 ### Bug fixes / changes
@@ -341,8 +552,7 @@ CRAN release: 2026-05-31
   relative to node labels. User-explicit `edge_label_size` still wins
   and receives the same (capped) visual-scale compensation as before;
   only the default path changed.
-- Edge-label visual_scale resolution moved from
-  [`render_edges_splot()`](https://sonsoles.me/cograph/reference/render_edges_splot.md)
+- Edge-label visual_scale resolution moved from `render_edges_splot()`
   into `splot.R` so the final cex is produced in a single place.
 
 ### Plotting — device-aware visual scaling
@@ -370,13 +580,12 @@ CRAN release: 2026-05-31
   `cograph.visual_scale` (the multiplier list) and
   `cograph.node_diam_in` (the representative node diameter in inches at
   the rendered device).
-- The splot-internal
-  [`render_legend_splot()`](https://sonsoles.me/cograph/reference/render_legend_splot.md)
-  plus the new shared `.render_legend_base()`
-  (`R/render-legend-shared.R`) replace the ad-hoc legend cex/pt.cex
-  handling with a single compensated path. `plot_htna`, `plot_mtna`,
-  `plot_mlna`, `plot_mcml` still use their historical scale multiplier
-  arguments; Phase 2 will migrate them to the shared helper.
+- The splot-internal `render_legend_splot()` plus the new shared
+  `.render_legend_base()` (`R/render-legend-shared.R`) replace the
+  ad-hoc legend cex/pt.cex handling with a single compensated path.
+  `plot_htna`, `plot_mtna`, `plot_mlna`, `plot_mcml` still use their
+  historical scale multiplier arguments; Phase 2 will migrate them to
+  the shared helper.
 
 ### Plotting
 
@@ -410,18 +619,16 @@ CRAN release: 2026-05-31
 
 ### Correctness fixes (audit-driven)
 
-- [`detect_duplicate_edges()`](https://sonsoles.me/cograph/reference/detect_duplicate_edges.md),
-  [`aggregate_duplicate_edges()`](https://sonsoles.me/cograph/reference/aggregate_duplicate_edges.md),
+- `detect_duplicate_edges()`, `aggregate_duplicate_edges()`,
   [`simplify.cograph_network()`](https://sonsoles.me/cograph/reference/simplify.md),
-  and the internal
-  [`check_duplicate_edges()`](https://sonsoles.me/cograph/reference/check_duplicate_edges.md)
-  helper now respect directed vs undirected semantics. Previously the
-  canonical (min/max) endpoint key collapsed `A -> B` and `B -> A` into
-  one edge even on directed graphs, matching
+  and the internal `check_duplicate_edges()` helper now respect directed
+  vs undirected semantics. Previously the canonical (min/max) endpoint
+  key collapsed `A -> B` and `B -> A` into one edge even on directed
+  graphs, matching
   [`igraph::simplify()`](https://r.igraph.org/reference/simplify.html)
   ground truth.
-- [`.compute_modularity()`](https://sonsoles.me/cograph/reference/dot-compute_modularity.md)
-  replaces a nested for loop with cluster-wise vectorization
+- `.compute_modularity()` replaces a nested for loop with cluster-wise
+  vectorization
   (`sum(A[idx, idx]) - sum(k_out[idx]) * sum(k_in[idx]) / m`), per the
   project “no for loops” rule. Results verified bit-exact against
   [`igraph::modularity()`](https://r.igraph.org/reference/modularity.igraph.html).

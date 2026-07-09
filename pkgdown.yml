@@ -1,8 +1,9 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   articles/bootstrap-forest: bootstrap-forest.html
+  centrality-catalogue: centrality-catalogue.html
   articles/cograph-tutorial-communities: cograph-tutorial-communities.html
   articles/cograph-tutorial-mcml: cograph-tutorial-mcml.html
   articles/cograph-tutorial-nestimate: cograph-tutorial-nestimate.html
@@ -13,7 +14,7 @@ articles:
   articles/plotting-tna-models: plotting-tna-models.html
   articles/qgraph-to-splot: qgraph-to-splot.html
   articles/why-cograph: why-cograph.html
-last_built: 2026-06-15T17:04Z
+last_built: 2026-07-09T15:43Z
 urls:
   reference: https://sonsoles.me/cograph/reference
   article: https://sonsoles.me/cograph/articles

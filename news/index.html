@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cograph</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.4.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,6 +19,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">Introduction to cograph</a></li>
+    <li><a class="dropdown-item" href="../articles/centrality-catalogue.html">Centrality catalogue</a></li>
     <li><a class="dropdown-item" href="../articles/why-cograph.html">Why cograph?</a></li>
     <li><a class="dropdown-item" href="../articles/plotting-tna-models.html">Plotting TNA Models with splot</a></li>
     <li><a class="dropdown-item" href="../articles/mcml-examples.html">Advanced examples</a></li>
@@ -42,6 +43,76 @@
       <small>Source: <a href="https://github.com/sonsoleslp/cograph/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.4.4" id="cograph-244">cograph 2.4.4<a class="anchor" aria-label="anchor" href="#cograph-244"></a></h2>
+<div class="section level3">
+<h3 id="new-features-2-4-4">New features<a class="anchor" aria-label="anchor" href="#new-features-2-4-4"></a></h3>
+<ul><li>
+<strong>Producer-supplied splot metadata</strong> (<code>x$meta$splot</code>): packages that create cograph-plottable objects can now attach a small rendering contract — <code>renderer</code> (resolved through a cograph-maintained whitelist of existing renderers; arbitrary function names are never evaluated), <code>weight</code> (which stored edge quantity to render: an edge column keeps the producer’s edge set, a matrix redefines the drawn network from its nonzero cells, aligned by dimnames), and <code>defaults</code> (renderer arguments). Precedence is always <code>user arguments &gt; meta$splot$defaults &gt; cograph defaults</code>; on the regular network path this includes deprecated argument aliases (a user-supplied <code>positive_color</code> still beats a metadata <code>edge_positive_color</code> default). See <code><a href="../reference/splot.html">?splot</a></code>, section “Producer-Supplied splot Metadata”.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes--changes-2-4-4">Bug fixes / changes<a class="anchor" aria-label="anchor" href="#bug-fixes--changes-2-4-4"></a></h3>
+<ul><li><p><code>plot_edge_diff_forest(layout = "chord")</code> no longer emits a spurious “row names were found from a short variable and have been discarded” warning for every node arc it draws.</p></li>
+<li><p><code><a href="../reference/detect_communities.html">detect_communities()</a></code> with the <code>"louvain"</code> (the default) or <code>"leiden"</code> method no longer errors on a <strong>directed</strong> graph. These igraph algorithms are undirected-only, so <code>detect_communities(tna_object)</code> — a tna model is always directed — aborted with “Multi-level community detection works for undirected graphs only”. It now collapses the directed edges to undirected (mean, as the <code>"fast_greedy"</code> method already did) with a message, so the package’s primary object type works with the default algorithm. This also fixes <code>plot_htna(x, community = "louvain")</code> and other internal callers that ran community detection on a directed model.</p></li>
+<li><p><code><a href="../reference/splot.html">splot()</a></code> on a Nestimate <code>netdifference</code> (from <code>subtract_networks()</code> / <code>as_netdifference()</code>) now routes to <code><a href="../reference/plot_difference.html">plot_difference()</a></code>. Previously it fell through to the <code>netobject</code> path, which styles by <code>$method</code> — “difference” is not a TNA-family method, so the asymmetric difference matrix was drawn with undirected psych styling: no arrowheads and one triangle of each asymmetric edge pair silently dropped. <code>splot(d, minimum = 3)</code> is now the straightforward call for a signed difference network.</p></li>
+<li><p>The <code>netdifference</code> routing excludes <code>net_permutation</code>-family objects: <code>net_bayes</code> carries both classes and must keep reaching <code>splot.net_permutation</code>, whose per-edge CI/star arrays are aligned by <code>Nestimate::plot.net_bayes</code> to that renderer’s edge ordering.</p></li>
+<li><p><code><a href="../reference/plot_difference.html">plot_difference()</a></code> on a <code>netdifference</code> now draws the display matrix (<code>$weights</code> — e.g. only the credible differences when coerced with <code>as_netdifference(b, significant_only = TRUE)</code>), falling back to <code>$difference_matrix</code>. For <code>subtract_networks()</code> results the two are identical, so nothing changes there.</p></li>
+<li><p><code><a href="../reference/plot_permutation.html">plot_permutation()</a></code> / <code><a href="../reference/splot.html">splot.net_permutation()</a></code>: the <code>title</code> and <code>layout</code> defaults now use exact <code>[[</code> indexing. <code>args$title</code> on a dots-list holding <code>title_size</code> (but no <code>title</code>) partially matched <code>title_size</code>, so the default title was silently skipped and no title was drawn — this is why <code>Nestimate::plot.net_bayes()</code> output had no title. Same latent hazard fixed for <code>layout</code> / <code>layout_scale</code>.</p></li>
+<li><p>Edge label templates gain a <code>{p_diff}</code> placeholder (probability of the difference, for Bayesian comparisons), fed by the new <code>edge_label_p_diff</code> argument — a per-edge vector or a full node-by-node matrix (the matrix is indexed at each drawn edge, so it survives <code>minimum</code>/<code>threshold</code> filtering, and is aligned by dimnames so it may be supplied in any node order). Filled automatically from <code>$p_difference</code> by <code>splot.net_permutation</code> and by <code><a href="../reference/plot_difference.html">plot_difference()</a></code> on Bayesian <code>netdifference</code> coercions. Template example: <code>edge_label_template = "{est} (P={p_diff})"</code>.</p></li>
+<li><p><code><a href="../reference/splot.html">splot.netobject()</a></code> styling classifier: <code>"edge_betweenness"</code> networks are now styled by their directedness. A directed edge-betweenness network previously fell into psych styling — drawn undirected, silently losing one direction of each asymmetric pair; it now gets the TNA presets with arrows. An undirected one (from a correlation-family source — Nestimate preserves the source’s directedness) keeps the psych look.</p></li>
+<li><p>Nestimate producers now use the <code>meta$splot</code> contract: <code>netdifference</code> objects carry <code>renderer = "difference"</code> and <code>net_bayes</code> carries <code>renderer = "permutation"</code>, so metadata routing (which runs before class dispatch) selects the renderer; the <code>netdifference</code> class branch remains as a fallback for objects built without metadata.</p></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.4.3" id="cograph-243">cograph 2.4.3<a class="anchor" aria-label="anchor" href="#cograph-243"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes--changes-2-4-3">Bug fixes / changes<a class="anchor" aria-label="anchor" href="#bug-fixes--changes-2-4-3"></a></h3>
+<ul><li><p><code><a href="../reference/plot_difference.html">plot_difference()</a></code> no longer hides small difference edges: it defaults <code>minimum = 0</code> (the style presets otherwise injected <code>minimum = 0.01</code>, silently dropping edges with <code>|x - y| &lt; 0.01</code>). An explicit <code>minimum</code> still wins.</p></li>
+<li><p><code>plot_difference(x, y, difference = TRUE)</code> now warns that <code>y</code> is ignored and uses <code>x</code> as the difference network, instead of silently computing <code>x - y</code>.</p></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.4.2" id="cograph-242">cograph 2.4.2<a class="anchor" aria-label="anchor" href="#cograph-242"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes--changes-2-4-2">Bug fixes / changes<a class="anchor" aria-label="anchor" href="#bug-fixes--changes-2-4-2"></a></h3>
+<ul><li><p><code><a href="../reference/plot_compare.html">plot_compare()</a></code> is <strong>no longer deprecated</strong> — it is a plain alias of <code><a href="../reference/plot_difference.html">plot_difference()</a></code>. <code><a href="http://sonsoles.me/tna/reference/plot_compare.html" class="external-link">tna::plot_compare()</a></code> delegates to it by name (<code>cograph::plot_compare(x, y, ...)</code>), so deprecating it wrongly made every <code><a href="http://sonsoles.me/tna/reference/plot_compare.html" class="external-link">tna::plot_compare()</a></code> call emit a warning; the warning is removed. Both names call the same implementation; <code><a href="../reference/plot_difference.html">plot_difference()</a></code> is the preferred spelling for new cograph code.</p></li>
+<li><p><code><a href="../reference/plot_difference.html">plot_difference()</a></code> also auto-detects a Nestimate <code>netdifference</code> object (or any object exposing <code>$difference_matrix</code>), alongside <code>tna_comparison</code>.</p></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.4.1" id="cograph-241">cograph 2.4.1<a class="anchor" aria-label="anchor" href="#cograph-241"></a></h2>
+<div class="section level3">
+<h3 id="new-features-2-4-1">New features<a class="anchor" aria-label="anchor" href="#new-features-2-4-1"></a></h3>
+<ul><li>
+<code><a href="../reference/plot_difference.html">plot_difference()</a></code> can now consume a <strong>pre-computed difference network</strong>: a <code>tna_comparison</code> object (from <code><a href="http://sonsoles.me/tna/reference/compare.html" class="external-link">tna::compare()</a></code>) is detected automatically and its <code>$difference_matrix</code> is plotted, and <code>difference = TRUE</code> treats <code>x</code> as an already-subtracted matrix/network (no <code>y</code> needed). The two-network <code>plot_difference(x, y)</code> path is unchanged.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.4.0" id="cograph-240">cograph 2.4.0<a class="anchor" aria-label="anchor" href="#cograph-240"></a></h2>
+<div class="section level3">
+<h3 id="new-features-2-4-0">New features<a class="anchor" aria-label="anchor" href="#new-features-2-4-0"></a></h3>
+<ul><li>Two focal-node flow layouts, usable anywhere a layout name is accepted (<code>splot(x, layout = "target")</code> / <code>layout = "saqr"</code>):
+<ul><li>
+<code><a href="../reference/layout_target.html">layout_target()</a></code> ports qgraph’s <code><a href="https://rdrr.io/pkg/qgraph/man/flow.html" class="external-link">flow()</a></code> — places one node of interest (<code>target =</code>) on the left and every other node in columns by unweighted BFS distance (hops). Unlike qgraph it handles disconnected graphs (isolated nodes go to a trailing column) instead of erroring.</li>
+<li>
+<code><a href="../reference/layout_saqr.html">layout_saqr()</a></code> ports the Dynalytics Desktop “saqr” transition layout (Saqr et al., LAK25): Start on top, End on bottom, middle nodes ranked by outgoing weight from Start and split into 2–3 sine-enveloped rows with a zig-zag first row (<code>start =</code>, <code>end =</code>, <code>jitter =</code>).</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes--changes-2-4-0">Bug fixes / changes<a class="anchor" aria-label="anchor" href="#bug-fixes--changes-2-4-0"></a></h3>
+<ul><li><p><code><a href="../reference/plot_difference.html">plot_difference()</a></code> now <strong>styles the difference network automatically</strong> instead of drawing bare default-blue nodes: an undirected difference gets the psychometric look (Okabe-Ito node palette, no arrows, thin edges), a directed difference gets the TNA look (TNA palette, arrows). Node size uses the calibrated preset (previously nodes could render near-invisible), and edges stay coloured by the sign of the difference. Explicit <code>node_*</code> arguments still override the preset.</p></li>
+<li><p><code><a href="../reference/plot_difference.html">plot_difference()</a></code> is added as the preferred name for the difference-network plotter. <code><a href="../reference/plot_compare.html">plot_compare()</a></code> remains a first-class alias of it (<code><a href="http://sonsoles.me/tna/reference/plot_compare.html" class="external-link">tna::plot_compare()</a></code> delegates to <code><a href="../reference/plot_compare.html">cograph::plot_compare()</a></code> by name, so the name must keep working).</p></li>
+<li><p><code><a href="../reference/plot_difference.html">plot_difference()</a></code> (the renamed difference-network plotter) now treats an S3 <code>cograph_network</code> (which is itself a list — e.g. a <code>psychnet</code> fit, a Nestimate <code>netobject</code>, or any <code><a href="../reference/as_cograph.html">as_cograph()</a></code> result) as a single network. Previously such an object fell into the “plain list of networks” branch and was misread as a list of sub-networks, failing with “x must be a matrix, cograph_network, tna, or igraph object”. Comparing two psychnet/netobject networks with <code>plot_difference(net1, net2)</code> now works.</p></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.3.11" id="cograph-2311">cograph 2.3.11<a class="anchor" aria-label="anchor" href="#cograph-2311"></a></h2>
+<div class="section level3">
+<h3 id="new-features-2-3-11">New features<a class="anchor" aria-label="anchor" href="#new-features-2-3-11"></a></h3>
+<ul><li><p><code><a href="../reference/dyad_census.html">dyad_census()</a></code> classifies every dyad of a directed network into mutual (M), asymmetric (A), or null (N), returning a tidy one-row-per-type data.frame with counts and proportions and a dyad-based reciprocity (<code>2M / (2M + A)</code>) attribute. It is the dyad-level companion to <code><a href="../reference/triad_census.html">triad_census()</a></code>. Undirected input counts every edge as a mutual dyad.</p></li>
+<li><p><code><a href="../reference/ego_networks.html">ego_networks()</a></code> reports tidy per-ego personal-network metrics — size, ego/alter tie counts and densities, and Burt’s structural-hole measures (<code>effective_size</code>, <code>constraint</code>, <code>order = 1</code> only) — with one row per ego. The structural-hole columns reuse the same implementations as <code><a href="../reference/centrality.html">centrality()</a></code>, so they match <code>centrality(x, measures = c("effective_size", "constraint"))</code> exactly.</p></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.3.10" id="cograph-2310">cograph 2.3.10<a class="anchor" aria-label="anchor" href="#cograph-2310"></a></h2>
 <div class="section level3">
@@ -174,7 +245,7 @@
 <div class="section level3">
 <h3 id="plotting--edge-label-cex-coupling-phase-2-3-0">Plotting — edge-label cex coupling (Phase 2)<a class="anchor" aria-label="anchor" href="#plotting--edge-label-cex-coupling-phase-2-3-0"></a></h3>
 <ul><li>Default <code>edge_label_size</code> is now coupled to the node label cex at a fixed 0.55 fraction (<code>edge_cex = 0.55 * mean(node_label_cex)</code>) so the node-to-edge-label ratio stays a stable ~1.82x across canvases. This replaces the previous <code>EDGE_LABEL_SCALE_CAP</code>-based compensation, which let the ratio drift from 2.5x at reference to 3.6x at poster canvases because edge labels were clamped to a tighter 1.6 ceiling while node labels scaled freely to 2.3. The visible effect: edge weight annotations are now readable at poster sizes instead of shrinking relative to node labels. User-explicit <code>edge_label_size</code> still wins and receives the same (capped) visual-scale compensation as before; only the default path changed.</li>
-<li>Edge-label visual_scale resolution moved from <code><a href="../reference/render_edges_splot.html">render_edges_splot()</a></code> into <code>splot.R</code> so the final cex is produced in a single place.</li>
+<li>Edge-label visual_scale resolution moved from <code>render_edges_splot()</code> into <code>splot.R</code> so the final cex is produced in a single place.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="plotting--device-aware-visual-scaling-2-3-0">Plotting — device-aware visual scaling<a class="anchor" aria-label="anchor" href="#plotting--device-aware-visual-scaling-2-3-0"></a></h3>
@@ -183,7 +254,7 @@
 <li>New <code>scaling = "fixed"</code> mode on <code><a href="../reference/splot.html">splot()</a></code> — and corresponding global option <code>options(cograph.visual_scaling = FALSE)</code> — disables device compensation for reproducibility-sensitive workflows that calibrated against the previous behaviour.</li>
 <li>
 <code><a href="../reference/splot.html">splot()</a></code> return value now carries two attributes for downstream tooling: <code>cograph.visual_scale</code> (the multiplier list) and <code>cograph.node_diam_in</code> (the representative node diameter in inches at the rendered device).</li>
-<li>The splot-internal <code><a href="../reference/render_legend_splot.html">render_legend_splot()</a></code> plus the new shared <code>.render_legend_base()</code> (<code>R/render-legend-shared.R</code>) replace the ad-hoc legend cex/pt.cex handling with a single compensated path. <code>plot_htna</code>, <code>plot_mtna</code>, <code>plot_mlna</code>, <code>plot_mcml</code> still use their historical scale multiplier arguments; Phase 2 will migrate them to the shared helper.</li>
+<li>The splot-internal <code>render_legend_splot()</code> plus the new shared <code>.render_legend_base()</code> (<code>R/render-legend-shared.R</code>) replace the ad-hoc legend cex/pt.cex handling with a single compensated path. <code>plot_htna</code>, <code>plot_mtna</code>, <code>plot_mlna</code>, <code>plot_mcml</code> still use their historical scale multiplier arguments; Phase 2 will migrate them to the shared helper.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="plotting-2-3-0">Plotting<a class="anchor" aria-label="anchor" href="#plotting-2-3-0"></a></h3>
@@ -199,9 +270,9 @@
 <div class="section level3">
 <h3 id="correctness-fixes-audit-driven-2-3-0">Correctness fixes (audit-driven)<a class="anchor" aria-label="anchor" href="#correctness-fixes-audit-driven-2-3-0"></a></h3>
 <ul><li>
-<code><a href="../reference/detect_duplicate_edges.html">detect_duplicate_edges()</a></code>, <code><a href="../reference/aggregate_duplicate_edges.html">aggregate_duplicate_edges()</a></code>, <code><a href="../reference/simplify.html">simplify.cograph_network()</a></code>, and the internal <code><a href="../reference/check_duplicate_edges.html">check_duplicate_edges()</a></code> helper now respect directed vs undirected semantics. Previously the canonical (min/max) endpoint key collapsed <code>A -&gt; B</code> and <code>B -&gt; A</code> into one edge even on directed graphs, matching <code><a href="https://r.igraph.org/reference/simplify.html" class="external-link">igraph::simplify()</a></code> ground truth.</li>
+<code>detect_duplicate_edges()</code>, <code>aggregate_duplicate_edges()</code>, <code><a href="../reference/simplify.html">simplify.cograph_network()</a></code>, and the internal <code>check_duplicate_edges()</code> helper now respect directed vs undirected semantics. Previously the canonical (min/max) endpoint key collapsed <code>A -&gt; B</code> and <code>B -&gt; A</code> into one edge even on directed graphs, matching <code><a href="https://r.igraph.org/reference/simplify.html" class="external-link">igraph::simplify()</a></code> ground truth.</li>
 <li>
-<code><a href="../reference/dot-compute_modularity.html">.compute_modularity()</a></code> replaces a nested for loop with cluster-wise vectorization (<code>sum(A[idx, idx]) - sum(k_out[idx]) * sum(k_in[idx]) / m</code>), per the project “no for loops” rule. Results verified bit-exact against <code><a href="https://r.igraph.org/reference/modularity.igraph.html" class="external-link">igraph::modularity()</a></code>.</li>
+<code>.compute_modularity()</code> replaces a nested for loop with cluster-wise vectorization (<code>sum(A[idx, idx]) - sum(k_out[idx]) * sum(k_in[idx]) / m</code>), per the project “no for loops” rule. Results verified bit-exact against <code><a href="https://r.igraph.org/reference/modularity.igraph.html" class="external-link">igraph::modularity()</a></code>.</li>
 <li>
 <code><a href="../reference/is_directed.html">is_directed()</a></code> now recognises <code>CographNetwork</code> R6 objects — previously only the <code>cograph_network</code> list format dispatched correctly.</li>
 <li>
@@ -625,7 +696,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

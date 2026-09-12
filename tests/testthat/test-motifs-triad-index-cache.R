@@ -174,12 +174,12 @@ test_that(".motif_validate_cores() enforces its contract and caps at detected", 
   expect_identical(cograph:::.motif_validate_cores(1), 1L)
   expect_identical(cograph:::.motif_validate_cores(2L), 2L)
 
-  expect_error(cograph:::.motif_validate_cores(0), "at least 1")
-  expect_error(cograph:::.motif_validate_cores(-3), "at least 1")
-  expect_error(cograph:::.motif_validate_cores(2.5), "whole number")
-  expect_error(cograph:::.motif_validate_cores(c(2, 4)), "at least 1")
-  expect_error(cograph:::.motif_validate_cores(NA_integer_), "at least 1")
-  expect_error(cograph:::.motif_validate_cores("2"), "at least 1")
+  # Assert the class, not the message text: messages change, classes are the
+  # contract.
+  for (bad in list(0, -3, 2.5, c(2, 4), NA_integer_, "2", NULL)) {
+    expect_error(cograph:::.motif_validate_cores(bad),
+                 class = "cograph_bad_cores")
+  }
 
   available <- parallel::detectCores()
   skip_if(is.na(available))
@@ -374,13 +374,13 @@ test_that("a failed replicate raises instead of corrupting the null", {
 
 test_that(".motif_check_replicates() passes clean results through", {
   good <- list(c(a = 1L), c(a = 2L))
-  expect_identical(cograph:::.motif_check_replicates(good, 2L), good)
+  expect_identical(cograph:::.motif_check_replicates(good, 2L, 1L), good)
 
   bare <- list(c(a = 1L), structure("failed", class = "try-error"))
-  expect_error(cograph:::.motif_check_replicates(bare, 2L),
+  expect_error(cograph:::.motif_check_replicates(bare, 2L, 1L),
                class = "cograph_parallel_failure")
   # A try-error with no recorded condition must still raise, not subscript-fail.
-  expect_error(cograph:::.motif_check_replicates(bare, 2L),
+  expect_error(cograph:::.motif_check_replicates(bare, 2L, 1L),
                "no condition recorded")
 })
 
@@ -437,4 +437,168 @@ test_that("the PSOCK backend receives the streams and matches serial", {
   # Results must not depend on how replicates were chunked across workers.
   expect_identical(cograph:::.motif_run_replicates(6L, 3L, streams, draw),
                    serial)
+})
+
+# ---- regression pins against the pre-refactor implementation ---------------
+
+test_that("seeded census results match the pre-refactor values exactly", {
+  skip_if_not_installed("tna")
+  # Computed from the implementation at a27b0958, before any of this work.
+  # Comparing a run to itself cannot catch a change that moves every number;
+  # these literals can.
+  model <- tna::tna(tna::group_regulation)
+  got <- motifs(model, n_perm = 9L, seed = 4)$results
+
+  expect_identical(got$type,
+                   c("120C", "030T", "120U", "210", "120D", "030C", "300"))
+  expect_identical(got$count, c(1481L, 620L, 190L, 581L, 178L, 1044L, 79L))
+  expect_equal(got$expected,
+               c(1010.9, 412.4, 138.1, 471.8, 128.2, 1081.6, 82),
+               tolerance = 1e-8)
+  expect_equal(got$p, c(0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.8), tolerance = 1e-8)
+})
+
+test_that("seeded instance results match the pre-refactor values exactly", {
+  skip_if_not_installed("tna")
+  model <- tna::tna(tna::group_regulation)
+  got <- extract_motifs(model, n_perm = 6L, seed = 8,
+                        significance = TRUE)$results
+  expect_identical(nrow(got), 302L)
+  expect_identical(got$observed[1], 1L)
+  expect_equal(got$expected[1], 0, tolerance = 1e-8)
+})
+
+# ---- a worker that vanishes must not be recycled into the null -------------
+
+test_that("a replicate that comes back malformed raises, never recycles", {
+  n_values <- 4L
+  good <- replicate(3L, seq_len(n_values), simplify = FALSE)
+
+  expect_identical(cograph:::.motif_check_replicates(good, 3L, n_values), good)
+
+  # A forked child killed by the OOM reaper yields NULL, not a try-error, and
+  # mclapply only warns. cbind() then drops those columns and the caller's
+  # `null_matrix[] <-` recycles the survivors to fill the gap.
+  killed <- list(good[[1L]], NULL, good[[3L]])
+  expect_error(cograph:::.motif_check_replicates(killed, 3L, n_values),
+               class = "cograph_parallel_failure")
+  expect_error(cograph:::.motif_check_replicates(killed, 3L, n_values),
+               "killed")
+
+  # A wrong-length replicate is recycled by cbind() without warning.
+  short <- list(good[[1L]], seq_len(2L), good[[3L]])
+  expect_error(cograph:::.motif_check_replicates(short, 3L, n_values),
+               class = "cograph_parallel_failure")
+  expect_error(cograph:::.motif_check_replicates(short, 3L, n_values),
+               "expected 4 numeric")
+
+  # NA would propagate into every downstream statistic.
+  nas <- list(good[[1L]], c(1, NA, 3, 4), good[[3L]])
+  expect_error(cograph:::.motif_check_replicates(nas, 3L, n_values),
+               class = "cograph_parallel_failure")
+
+  chr <- list(good[[1L]], letters[1:4], good[[3L]])
+  expect_error(cograph:::.motif_check_replicates(chr, 3L, n_values),
+               class = "cograph_parallel_failure")
+})
+
+test_that("the serial replicate path restores the caller's RNG", {
+  # one() installs a replicate's L'Ecuyer stream into the global RNG. In a
+  # worker that dies with the process; on the serial path it would leave the
+  # whole session on a different generator and silently change every later
+  # seeded result -- including other test files.
+  before_kind <- RNGkind()
+  streams <- cograph:::.motif_rng_streams(4L, seed = 7)
+
+  # .motif_rng_streams() seeds deliberately, so the SEED legitimately moves
+  # here; restoring it is motifs()' job. What must not survive is the
+  # generator swap, which would change every later seeded result.
+  set.seed(1234)
+  before_seed <- .Random.seed
+  invisible(cograph:::.motif_run_replicates(4L, 1L, streams,
+                                            function(p) c(x = 1), 1L))
+
+  expect_identical(RNGkind(), before_kind)
+  expect_identical(.Random.seed, before_seed)
+})
+
+test_that("motifs() leaves the caller's RNG untouched at any cores", {
+  skip_if_not_installed("tna")
+  model <- tna::tna(tna::group_regulation)
+
+  set.seed(321); before <- .Random.seed
+  invisible(motifs(model, n_perm = 4L, seed = 5, cores = 1))
+  expect_identical(.Random.seed, before)
+
+  skip_on_cran()
+  skip_if(is.na(parallel::detectCores()) || parallel::detectCores() < 2)
+  set.seed(321); before2 <- .Random.seed
+  invisible(motifs(model, n_perm = 4L, seed = 5, cores = 2))
+  expect_identical(.Random.seed, before2)
+  expect_identical(RNGkind()[1], "Mersenne-Twister")
+})
+
+# ---- branches the first round of tests left uncovered ---------------------
+
+test_that(".motif_triad_pair_counts() honours every edge rule", {
+  set.seed(31)
+  s <- 6L
+  arr <- array(stats::rpois(3L * s * s, 1.4), dim = c(3L, s, s))
+  for (u in 1:3) arr[u, , ][cbind(seq_len(s), seq_len(s))] <- 0L
+  idx <- cograph:::.triad_indices(s)
+  man <- cograph:::.triad_type_names()
+
+  for (method in c("any", "percent", "expected")) {
+    threshold <- if (method == "any") 0 else 1
+    bins <- cograph:::.motif_triad_pair_counts(
+      arr, 1:3, idx, method, threshold, "003", NULL
+    )
+    reference <- integer(length(bins))
+    for (u in 1:3) {
+      mat <- cograph:::.motif_unit_matrix(arr, u)
+      emat <- NULL
+      if (method == "expected") {
+        emat <- outer(rowSums(mat), colSums(mat)) / sum(mat)
+        emat[emat == 0] <- 0.001
+      }
+      td <- cograph:::.count_triads_matrix_vectorized(
+        mat, method, threshold, expected_mat = emat, exclude = "003"
+      )
+      if (is.null(td) || nrow(td) == 0) next
+      pos <- match(paste(td$i, td$j, td$k, sep = "\r"),
+                   paste(idx$i, idx$j, idx$k, sep = "\r"))
+      bin <- (match(td$type, man) - 1L) * idx$n + pos
+      reference[bin] <- reference[bin] + 1L
+    }
+    expect_identical(bins, reference, info = method)
+  }
+
+  # include and exclude together, which no earlier counter test exercised.
+  both <- cograph:::.motif_triad_pair_counts(
+    arr, 1:3, idx, "any", 0, exclude = "030T",
+    include = c("030T", "021C", "111D")
+  )
+  kept <- man[unique((which(both > 0) - 1L) %/% idx$n) + 1L]
+  expect_false("030T" %in% kept)
+  expect_true(all(kept %in% c("021C", "111D")))
+})
+
+test_that(".motif_rng_streams() works without a seed and caches at the boundary", {
+  # seed = NULL is reachable via motifs(seed = NULL, cores > 1).
+  set.seed(3)
+  a <- cograph:::.motif_rng_streams(3L, seed = NULL)
+  expect_length(a, 3L)
+  expect_false(identical(a[[1]], a[[2]]))
+  expect_identical(RNGkind()[1], "Mersenne-Twister")
+
+  # The cache boundary is s <= 64.
+  for (s in c(64L, 65L)) {
+    key <- paste0(".triad_idx_", s)
+    if (exists(key, envir = cograph:::.cograph_cache)) {
+      rm(list = key, envir = cograph:::.cograph_cache)
+    }
+    invisible(cograph:::.triad_indices(s))
+  }
+  expect_true(exists(".triad_idx_64", envir = cograph:::.cograph_cache))
+  expect_false(exists(".triad_idx_65", envir = cograph:::.cograph_cache))
 })

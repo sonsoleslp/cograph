@@ -467,17 +467,25 @@ motifs <- function(x,
         }
 
         if (cores <= 1L) {
-          # Serial path, unchanged: one RNG stream consumed in replicate then
-          # unit order, so a given `seed` reproduces historical results
-          # exactly. Parallel runs use independent per-replicate streams and
-          # deliberately do NOT reproduce these numbers.
+          # Serial path, unchanged. vapply() would express this, but the
+          # replicate-then-unit RNG consumption order IS the contract here --
+          # it is what makes a seed reproduce results from earlier versions --
+          # so the loop states that order explicitly.
           for (perm in seq_len(n_perm)) {
             null_matrix[, perm] <- replicate_fun(perm)
           }
         } else {
           streams <- .motif_rng_streams(n_perm, seed)
-          reps <- .motif_run_replicates(n_perm, cores, streams, replicate_fun)
-          null_matrix[] <- do.call(cbind, reps)
+          reps <- .motif_run_replicates(n_perm, cores, streams, replicate_fun,
+                                        n_values = nrow(results))
+          filled <- do.call(cbind, reps)
+          # Assert the shape before assigning: `null_matrix[] <- m` recycles
+          # silently whenever m is a whole fraction of the target.
+          stopifnot(
+            "parallel replicates did not fill the null matrix" =
+              identical(dim(filled), dim(null_matrix))
+          )
+          null_matrix[] <- filled
         }
 
         ns <- .motif_null_stats(results$count, t(null_matrix))

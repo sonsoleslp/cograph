@@ -57,19 +57,19 @@ test_that("igraph-dependent entry points guard instead of leaking the raw error"
   # motif_census() builds the graph itself and needs its own guard.
   expect_error(motif_census(mat), class = "cograph_missing_suggest")
 
-  # Whatever the class, no entry point may surface R's bare namespace error.
-  raw <- function(expr) {
-    msg <- tryCatch({ force(expr); "" }, error = conditionMessage)
-    grepl("there is no package called", msg, fixed = TRUE)
+  # Every entry point reached through to_igraph() inherits the guard. Assert
+  # the CLASS, not the absence of a message: mocking requireNamespace cannot
+  # stop `igraph::` itself, because `::` resolves through getNamespace() and
+  # the package is already loaded in this session. An assertion that merely
+  # checks "the raw namespace error did not appear" therefore passes against
+  # unguarded code too, and proves nothing.
+  for (call in list(
+    quote(detect_communities(mat)), quote(robustness(mat)),
+    quote(vulnerability(mat)), quote(rich_club(mat)),
+    quote(network_summary(mat)), quote(motifs(mat, n_perm = 10L, seed = 1))
+  )) {
+    expect_error(eval(call), class = "cograph_missing_suggest")
   }
-  expect_false(raw(to_igraph(mat)))
-  expect_false(raw(motif_census(mat)))
-  expect_false(raw(detect_communities(mat)))
-  expect_false(raw(motifs(mat, n_perm = 10L, seed = 1)))
-  expect_false(raw(robustness(mat)))
-  expect_false(raw(vulnerability(mat)))
-  expect_false(raw(rich_club(mat)))
-  expect_false(raw(network_summary(mat)))
 })
 
 test_that("paths needing no igraph keep working without it", {
@@ -113,14 +113,9 @@ test_that("igraph paths outside to_igraph() guard too", {
   expect_error(is_directed(structure(list(), class = "igraph")),
                class = "cograph_missing_suggest")
 
-  # These must not surface R's bare namespace error.
-  raw <- function(expr) {
-    msg <- tryCatch({ force(expr); "" }, error = conditionMessage)
-    grepl("there is no package called", msg, fixed = TRUE)
-  }
-  expect_false(raw(membership(list(a = 1))))
-  expect_false(raw(is_directed(structure(list(), class = "igraph"))))
-  expect_false(raw(to_network(structure(list(), class = "igraph"))))
+  # to_network() has no guard of its own; it inherits one because to_matrix()
+  # runs before it reaches igraph.
+  expect_error(to_network(structure(list(), class = "igraph")))
 })
 
 test_that("is_directed() still answers from cograph data without igraph", {

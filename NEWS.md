@@ -1,3 +1,21 @@
+# cograph 2.6.4
+
+## Fixes to the parallel motif null
+
+A permutation replicate that does not come back intact from a parallel worker
+now raises an error. Previously only an explicit worker error was caught; a
+worker killed by the operating system returns `NULL` for its whole chunk with
+only a warning, and those gaps were silently filled by recycling the surviving
+replicates -- part of a permutation null replaced by duplicates, with no
+warning and no error.
+
+The serial replicate path no longer leaves the session's random number
+generator switched to L'Ecuyer-CMRG. `motifs()` itself never used that path,
+but the package's own test suite did, which changed the random fixtures of
+every test file that ran afterwards.
+
+`cores` validation now raises a classed `cograph_bad_cores` condition.
+
 # cograph 2.6.3
 
 ## Clearer errors when igraph is not installed
@@ -48,8 +66,10 @@ Measured on 10,000 simulated sequences (10 states) at `n_perm = 400`:
 On Windows the null runs through a PSOCK cluster, which is exercised in the
 test suite on every platform.
 
-A replicate that fails in a worker raises a `cograph_parallel_failure` error
-naming the failure, rather than being folded into the null matrix. If the
+A replicate that does not come back intact from a worker -- an error, a NULL
+from a killed process, or a wrong-length result -- raises a
+`cograph_parallel_failure` error naming the problem, rather than being folded
+into the null matrix. If the
 available core count cannot be detected, `cores > 1` is used but reported
 with a `cograph_cores_undetected` warning.
 

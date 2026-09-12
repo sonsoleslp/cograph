@@ -716,8 +716,10 @@ extract_triads <- function(x, type = NULL, involving = NULL,
                                     exclude, include) {
   totals <- stats::setNames(integer(length(types)), types)
 
-  # Units are permuted one at a time: each draws its own stub shuffle, so the
-  # work cannot be expressed as a single vectorised call.
+  # Accumulates a running total across units. Reduce()/vapply() would express
+  # the same thing, but each unit's stub shuffle must consume the RNG in this
+  # exact order for a seed to reproduce earlier versions, and a loop makes that
+  # ordering obvious to the next reader rather than implicit in the functional.
   for (ind in valid) {
     rs <- rows_stubs[[ind]]
     cs <- cols_stubs[[ind]]
@@ -752,11 +754,14 @@ extract_triads <- function(x, type = NULL, involving = NULL,
 # the only path that reproduces a serial run's RNG stream exactly.
 # @noRd
 .motif_validate_cores <- function(cores) {
-  stopifnot(
-    "`cores` must be one finite whole number of at least 1" =
-      is.numeric(cores) && length(cores) == 1L && !is.na(cores) &&
-      is.finite(cores) && cores >= 1 && cores == floor(cores)
-  )
+  valid <- is.numeric(cores) && length(cores) == 1L && !is.na(cores) &&
+    is.finite(cores) && cores >= 1 && cores == floor(cores)
+  if (!valid) {
+    stop(errorCondition(
+      "`cores` must be one finite whole number of at least 1.",
+      class = "cograph_bad_cores", call = NULL
+    ))
+  }
   cores <- as.integer(cores)
   available <- parallel::detectCores()
   if (is.na(available)) {
@@ -796,7 +801,9 @@ extract_triads <- function(x, type = NULL, involving = NULL,
 
   streams <- vector("list", n)
   current <- .Random.seed
-  # nextRNGStream() is inherently a chain: stream p is defined by stream p-1.
+  # A scan: stream p is defined by stream p-1. Reduce(..., accumulate = TRUE)
+  # would do it, at the cost of building an intermediate list of every state;
+  # the loop fills the preallocated vector directly.
   for (p in seq_len(n)) {
     streams[[p]] <- current
     current <- parallel::nextRNGStream(current)
@@ -809,7 +816,8 @@ extract_triads <- function(x, type = NULL, involving = NULL,
 # falls back to a PSOCK cluster, which must ship the closure's environment to
 # each worker.
 # @noRd
-.motif_run_replicates <- function(n, cores, streams, fun) {
+.motif_run_replicates <- function(n, cores, streams, fun,
+                                   n_values = NULL) {
   # `streams` and `fun` are passed as arguments rather than captured from this
   # frame: a PSOCK worker does not receive the closure's enclosing environment,
   # so capturing them fails there with "object 'streams' not found". Arguments
@@ -823,6 +831,12 @@ extract_triads <- function(x, type = NULL, involving = NULL,
     .fn(p)
   }
   if (cores <= 1L) {
+    # `one()` installs a replicate's L'Ecuyer stream into the global RNG. In a
+    # worker that dies with the process; here it would leave the caller on a
+    # different generator, silently changing every later seeded result in the
+    # session.
+    saved_rng <- .save_rng()
+    on.exit(.restore_rng(saved_rng), add = TRUE)
     return(lapply(seq_len(n), one, .streams = streams, .fn = fun))
   }
 
@@ -834,7 +848,8 @@ extract_triads <- function(x, type = NULL, involving = NULL,
     on.exit(parallel::stopCluster(cl), add = TRUE)
     parallel::parLapply(cl, seq_len(n), one, .streams = streams, .fn = fun)
   }
-  .motif_check_replicates(reps, n)
+  if (is.null(n_values)) n_values <- length(reps[[1L]])
+  .motif_check_replicates(reps, n, n_values)
 }
 
 # A worker that dies leaves a "try-error" in the result list rather than
@@ -842,19 +857,7 @@ extract_triads <- function(x, type = NULL, involving = NULL,
 # matrix coerces the whole thing to character *silently*, so an unchecked
 # failure surfaces as corrupt statistics rather than an error. Fail here.
 # @noRd
-.motif_check_replicates <- function(reps, n) {
-  failed <- vapply(reps, function(r) inherits(r, "try-error"), logical(1))
-  if (any(failed)) {
-    cond <- attr(reps[[which(failed)[1L]]], "condition")
-    detail <- if (is.null(cond)) "no condition recorded" else
-      conditionMessage(cond)
-    stop(errorCondition(
-      sprintf(paste("%d of %d permutation replicates failed in a parallel",
-                    "worker; first error: %s"),
-              sum(failed), length(reps), detail),
-      class = "cograph_parallel_failure", call = NULL
-    ))
-  }
+.motif_check_replicates <- function(reps, n, n_values) {
   if (length(reps) != n) {
     stop(errorCondition( # nocov start
       sprintf("parallel backend returned %d replicates, expected %d.",
@@ -862,7 +865,39 @@ extract_triads <- function(x, type = NULL, involving = NULL,
       class = "cograph_parallel_failure", call = NULL
     )) # nocov end
   }
-  reps
+
+  # Every way a replicate can come back wrong, not just the one a try-error
+  # announces. A forked child killed by the OOM reaper does NOT produce a
+  # try-error: mclapply() returns NULL for every replicate in that child's
+  # chunk and only warns. Those NULLs are dropped by cbind(), and the caller's
+  # `null_matrix[] <-` then RECYCLES the surviving columns to fill the gap --
+  # half a permutation null silently replaced by duplicates of the other half.
+  bad <- vapply(
+    reps,
+    function(r) {
+      inherits(r, "try-error") || is.null(r) || !is.numeric(r) ||
+        length(r) != n_values || anyNA(r)
+    },
+    logical(1)
+  )
+  if (!any(bad)) return(reps)
+
+  first <- reps[[which(bad)[1L]]]
+  detail <- if (inherits(first, "try-error")) {
+    cond <- attr(first, "condition")
+    if (is.null(cond)) "no condition recorded" else conditionMessage(cond)
+  } else if (is.null(first)) {
+    "a worker returned NULL, which usually means the process was killed"
+  } else {
+    sprintf("a worker returned %d value(s) of type %s, expected %d numeric",
+            length(first), typeof(first), n_values)
+  }
+  stop(errorCondition(
+    sprintf(paste("%d of %d permutation replicates did not come back intact",
+                  "from a parallel worker; first problem: %s"),
+            sum(bad), length(reps), detail),
+    class = "cograph_parallel_failure", call = NULL
+  ))
 }
 
 # Per-unit occurrence counts of every (triple, MAN class) pair, laid out as one
@@ -891,8 +926,10 @@ extract_triads <- function(x, type = NULL, involving = NULL,
   type_index <- .triad_type_index()
   positions <- seq_len(nc)
 
-  # Units are counted one at a time: each has its own matrix, so there is no
-  # single vectorised form over units.
+  # Accumulates into one shared `bins` vector. Vectorising over units would
+  # materialise a bins column PER UNIT -- n_triples * 16 integers each, which
+  # at s = 64 is ~2.7 MB per unit and tens of GB across a large cohort. The
+  # loop keeps peak memory at one vector.
   for (ind in units) {
     mat <- .motif_unit_matrix(trans_array, ind)
     w <- .triad_edge_weights(mat, idx)

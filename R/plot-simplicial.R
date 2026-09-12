@@ -10,8 +10,9 @@
 #' labels auto-translated when \code{x} is a \code{tna}/\code{netobject}.
 #'
 #' @param x A network object: \code{tna}, \code{netobject}, matrix,
-#'   \code{igraph}, \code{cograph_network}, \code{net_hon}, or
-#'   \code{net_hypa}. When \code{x} is a \code{tna} or
+#'   \code{igraph}, \code{cograph_network}, \code{net_hon},
+#'   \code{net_hypa}, or \code{simplicial_complex} (an unordered
+#'   complex — see \code{ordered}). When \code{x} is a \code{tna} or
 #'   \code{netobject} with sequence data and \code{pathways} is
 #'   \code{NULL}, higher-order pathways are built automatically
 #'   using the \code{method} parameter.
@@ -91,6 +92,35 @@
 #'   in a grid layout.
 #' @param ncol Number of columns in the grid when \code{dismantled = TRUE}.
 #'   Default \code{NULL} auto-selects based on the number of pathways.
+#' @param ordered Is each higher-order structure a PATH or a SET?
+#'   \code{TRUE} treats the last state of every pathway as its target
+#'   (HON / HYPA / MOGen). \code{FALSE} treats every member as co-equal:
+#'   there is no target, so no node is painted with \code{target_color},
+#'   no direction cue is drawn, and the panel title is a member list
+#'   rather than an arrow. \code{NULL} (default) reads it off the input
+#'   — \code{net_association_rules} and \code{simplicial_complex} are
+#'   sets, everything else is a path.
+#' @param direction Draw the traversal inside each per-pathway panel:
+#'   a light-to-dark core ramp along the path, a ring whose gold peaks
+#'   on the side facing the next state, and an arrowhead just outside
+#'   each node aimed at its successor. \code{NULL} (default) enables
+#'   them exactly when \code{dismantled = TRUE}. A simplex is a set of
+#'   vertices, so the combined overlay — where blobs overlap and a state
+#'   can sit in several pathways at once — cannot express direction;
+#'   \code{direction = TRUE} with \code{dismantled = FALSE} is an
+#'   error rather than a silent no-op. Also forced off when the caller
+#'   has collapsed the source/target two-tone (undirected input such as
+#'   \code{net_association_rules}).
+#' @param direction_cues Which cues to draw, any of \code{"shade"},
+#'   \code{"ring"}, \code{"arrows"}. Default all three.
+#' @param node_radius Node core radius in data units, used only on the
+#'   directed path (rings and cores become polygons there so the ring
+#'   gradient and the arrow offset are expressible; \code{geom_point()}
+#'   sizes are device millimetres and cannot answer either).
+#'   \code{NULL} (default) scales it to the panel extent so the nodes
+#'   keep the size they have today.
+#' @param legend Draw the in-figure legend strip beneath a dismantled
+#'   grid. Default \code{TRUE} when \code{direction} is on.
 #' @param ... Additional arguments passed to
 #'   \code{Nestimate::build_hon()} or \code{Nestimate::build_hypa()}
 #'   when auto-building.
@@ -135,9 +165,27 @@ plot_simplicial <- function(x = NULL,
                             title = NULL,
                             dismantled = FALSE,
                             ncol = NULL,
+                            ordered = NULL,
+                            direction = NULL,
+                            direction_cues = c("shade", "ring", "arrows"),
+                            node_radius = NULL,
+                            legend = NULL,
                             ...) {
   anomaly_explicit <- !missing(anomaly)
   anomaly <- match.arg(anomaly)
+  direction_cues <- match.arg(direction_cues, several.ok = TRUE)
+  # `direction = TRUE` on the combined overlay is a contract the figure
+  # cannot keep: blobs overlap and one state can belong to several
+  # pathways, so a single node has no one successor to point at.
+  if (isTRUE(direction) && !isTRUE(dismantled)) {
+    stop(errorCondition(
+      paste0("`direction = TRUE` needs `dismantled = TRUE`: the combined ",
+             "overlay draws every pathway on one circle, so a node shared ",
+             "by two pathways has no single successor to point at."),
+      class = "cograph_direction_needs_panels", call = NULL
+    ))
+  }
+  direction <- isTRUE(direction %||% dismantled) && isTRUE(dismantled)
   hypa_used <- FALSE
 
   # If x is a pathways data.frame (e.g. Nestimate::mogen_transitions() output),
@@ -174,8 +222,16 @@ plot_simplicial <- function(x = NULL,
       return(invisible(NULL))
     }
     # Association rules are undirected itemsets — every node in a blob is
-    # co-equal (no source/target split). Collapse the two-tone coloring.
-    target_color <- node_color
+    # co-equal. Say so once; the absent target is what collapses the
+    # two-tone, rather than a colour assignment standing in for it.
+    ordered <- ordered %||% FALSE
+  } else if (inherits(pathways, "simplicial_complex")) {
+    pathways <- .extract_simplicial_pathways(pathways, max_pathways)
+    if (length(pathways) == 0L) {
+      message("No simplices of dimension >= 1 to plot.")
+      return(invisible(NULL))
+    }
+    ordered <- ordered %||% FALSE
   } else if (inherits(pathways, "net_link_prediction")) {
     pathways <- .extract_link_prediction_pathways(pathways)
     if (length(pathways) == 0L) {
@@ -215,8 +271,16 @@ plot_simplicial <- function(x = NULL,
         message("No association rules to plot.")
         return(invisible(NULL))
       }
-      # Association rules are undirected itemsets — collapse two-tone coloring.
-      target_color <- node_color
+      # Association rules are undirected itemsets (see above).
+      ordered <- ordered %||% FALSE
+      x <- NULL
+    } else if (inherits(x, "simplicial_complex")) {
+      pathways <- .extract_simplicial_pathways(x, max_pathways)
+      if (length(pathways) == 0L) {
+        message("No simplices of dimension >= 1 to plot.")
+        return(invisible(NULL))
+      }
+      ordered <- ordered %||% FALSE
       x <- NULL
     } else if (inherits(x, "net_link_prediction")) {
       pathways <- .extract_link_prediction_pathways(x)
@@ -247,13 +311,13 @@ plot_simplicial <- function(x = NULL,
           message("No association rules to plot.")
           return(invisible(NULL))
         }
-        # Association rules are undirected itemsets — collapse two-tone.
-        target_color <- node_color
+        # Association rules are undirected itemsets (see above).
+        ordered <- ordered %||% FALSE
       }
     } else {
       stop("'pathways' must be provided unless 'x' is a tna, netobject, ",
-           "net_hon, net_hypa, net_association_rules, or net_link_prediction ",
-           "object.", call. = FALSE)
+           "net_hon, net_hypa, net_association_rules, simplicial_complex, ",
+           "or net_link_prediction object.", call. = FALSE)
     }
   }
 
@@ -279,22 +343,25 @@ plot_simplicial <- function(x = NULL,
   }
 
   # Limit number of pathways
-  if (!is.null(max_pathways) && is.character(pathways) &&
-      length(pathways) > max_pathways) {
+  if (!is.null(max_pathways) && length(pathways) > max_pathways &&
+      (is.character(pathways) || is.list(pathways))) {
     pathways <- pathways[seq_len(max_pathways)]
   }
 
+  ordered <- isTRUE(ordered %||% TRUE)
+  # A set has no traversal to draw. This is now a fact about the input, not
+  # an inference from `target_color` happening to equal `node_color`.
+  if (!ordered) direction <- FALSE
+
   states <- .extract_blob_states(x)
-  pw_list <- .parse_pathways(pathways, states)
+  pw_list <- .parse_pathways(pathways, states, ordered = ordered)
   if (length(pw_list) == 0L) {
     message("No pathways to plot.")
     return(invisible(NULL))
   }
 
   if (is.null(states)) {
-    states <- sort(unique(unlist(lapply(pw_list, function(pw) {
-      c(pw$source, pw$target)
-    }))))
+    states <- sort(unique(unlist(lapply(pw_list, .pw_members))))
   }
 
   # Expand repeated nodes: states appearing multiple times in a pathway
@@ -326,6 +393,11 @@ plot_simplicial <- function(x = NULL,
                            length(pw_list))
   ring_border <- .darken_colors(ring_color, 0.15)
 
+  # Belt and braces: a caller that collapsed the two-tone by hand also has
+  # no order to draw.
+  if (identical(target_color, node_color)) direction <- FALSE
+  legend <- isTRUE(legend %||% direction)
+
   if (dismantled) {
     # Scale down for grid panels
     grid_node_size <- node_size * 0.6
@@ -344,7 +416,10 @@ plot_simplicial <- function(x = NULL,
         label_halo_width = label_halo_width,
         label_halo_alpha = label_halo_alpha,
         panel_pad = 1.5,
-        show_title = FALSE
+        show_title = FALSE,
+        direction = direction,
+        direction_cues = direction_cues,
+        node_radius = node_radius
       )
       p + ggplot2::theme(plot.margin = ggplot2::margin(0, 0, 0, 0))
     })
@@ -354,6 +429,18 @@ plot_simplicial <- function(x = NULL,
                           c(plots, list(ncol = nc,
                                         padding = grid::unit(0, "line"),
                                         respect = TRUE)))
+      if (legend) {
+        # Explicit heights: a ggplotGrob handed to `bottom =` claims a
+        # null-unit share and would swallow the grid.
+        combined <- gridExtra::arrangeGrob(
+          combined,
+          .simplicial_legend_grob(node_color, target_color, ring_color,
+                                  ring_border, direction = direction,
+                                  ordered = ordered),
+          ncol = 1L,
+          heights = grid::unit.c(grid::unit(1, "null"), grid::unit(10, "mm"))
+        )
+      }
       grid::grid.newpage()
       grid::grid.draw(combined)
       return(invisible(combined))
@@ -383,14 +470,18 @@ plot_simplicial <- function(x = NULL,
 # =========================================================================
 
 #' @noRd
-.parse_pathways <- function(pathways, states) {
+.parse_pathways <- function(pathways, states, ordered = TRUE) {
   if (is.character(pathways)) {
-    lapply(pathways, .parse_pathway_string, states = states)
+    lapply(pathways, .parse_pathway_string, states = states,
+           ordered = ordered)
   } else if (is.list(pathways)) {
     lapply(pathways, function(pw) {
       pw <- as.character(pw)
       stopifnot(length(pw) >= 2L)
-      list(source = pw[-length(pw)], target = pw[length(pw)])
+      if (!isTRUE(ordered)) {
+        return(list(source = unique(pw), target = NULL, ordered = FALSE))
+      }
+      list(source = pw[-length(pw)], target = pw[length(pw)], ordered = TRUE)
     })
   } else {
     stop("pathways must be a character vector or a list of character vectors.")
@@ -398,9 +489,21 @@ plot_simplicial <- function(x = NULL,
 }
 
 #' @noRd
-.parse_pathway_string <- function(s, states = NULL) {
+.parse_pathway_string <- function(s, states = NULL, ordered = TRUE) {
   s <- trimws(s)
   arrow_pat <- c("->", "\u2192")
+  if (!isTRUE(ordered)) {
+    # A set: flatten any arrow the caller's encoding happens to carry and
+    # keep every member co-equal. Promoting the last token to a target would
+    # make {A, B, C} depend on the order it was typed in.
+    flat <- s
+    for (ap in arrow_pat) flat <- gsub(ap, " ", flat, fixed = TRUE)
+    tokens <- unique(.split_state_tokens(flat, states))
+    if (length(tokens) < 2L) {
+      stop(sprintf("Cannot parse itemset (need at least 2 states): '%s'", s))
+    }
+    return(list(source = tokens, target = NULL, ordered = FALSE))
+  }
   for (ap in arrow_pat) {
     if (grepl(ap, s, fixed = TRUE)) {
       parts <- trimws(strsplit(s, ap, fixed = TRUE)[[1]])
@@ -408,14 +511,15 @@ plot_simplicial <- function(x = NULL,
         paste(parts[-length(parts)], collapse = " "), states
       )
       tgt <- .split_state_tokens(parts[length(parts)], states)
-      return(list(source = src, target = tgt[length(tgt)]))
+      return(list(source = src, target = tgt[length(tgt)], ordered = TRUE))
     }
   }
   tokens <- .split_state_tokens(s, states)
   if (length(tokens) < 2L) {
     stop(sprintf("Cannot parse pathway (need at least 2 states): '%s'", s))
   }
-  list(source = tokens[-length(tokens)], target = tokens[length(tokens)])
+  list(source = tokens[-length(tokens)], target = tokens[length(tokens)],
+       ordered = TRUE)
 }
 
 #' @noRd
@@ -457,14 +561,28 @@ plot_simplicial <- function(x = NULL,
                                   label_halo_width = 0.035,
                                   label_halo_alpha = 0.6,
                                   panel_pad = 3.5,
-                                  show_title = TRUE) {
+                                  show_title = TRUE,
+                                  direction = FALSE,
+                                  direction_cues = c("shade", "ring", "arrows"),
+                                  node_radius = NULL) {
   name_to_idx <- setNames(seq_along(states), states)
-  all_st <- unique(c(pw$source, pw$target))
+  # `.expand_repeated_nodes()` has already given each visit its own state id,
+  # so this stays in path order: source states first, target last.
+  all_st <- unique(.pw_members(pw))
   ndf <- pos[unname(name_to_idx[all_st]), , drop = FALSE]
-  is_target <- ndf$state == pw$target
+  # A set has no target, so no node is singled out.
+  is_target <- if (.pw_is_ordered(pw)) {
+    ndf$state == pw$target
+  } else {
+    rep(FALSE, nrow(ndf))
+  }
   blob <- .smooth_blob(ndf$x, ndf$y)
 
-  cx <- mean(ndf$x); cy <- mean(ndf$y)
+  # Range midpoint, not the mean: the mean is pulled toward clustered nodes,
+  # so an outlying node can sit farther than `half` from it and get clipped
+  # at the panel edge (a 3-node clique with two nodes close together did).
+  cx <- (min(ndf$x) + max(ndf$x)) / 2
+  cy <- (min(ndf$y) + max(ndf$y)) / 2
   half <- max(max(ndf$x) - min(ndf$x), max(ndf$y) - min(ndf$y)) / 2 + panel_pad
 
   p <- .blob_base_plot(c(cx - half, cx + half), c(cy - half, cy + half))
@@ -474,6 +592,33 @@ plot_simplicial <- function(x = NULL,
                          fill = blob_color, color = border_col,
                          linetype = blob_lty, linewidth = blob_linewidth,
                          alpha = blob_alpha)
+  if (isTRUE(direction) && .pw_is_ordered(pw)) {
+    # Data units, not device millimetres — see R/blob-direction.R. The
+    # default tracks the panel extent so the nodes keep the size the
+    # geom_point() rendering gives them today.
+    # 0.1174 was MEASURED off a rendered panel, not derived: the ring in the
+    # geom_point() rendering came out 37.3 px against 44.4 px per data unit,
+    # i.e. 0.1491 * half, and the core is that over 1.27. Deriving it from
+    # `size` in millimetres gets it wrong in both directions, because
+    # `respect = TRUE` squares the panel inside its grid cell. The engine's
+    # own proportion is tighter at 18/205 = 0.088 * half; pass
+    # `node_radius = 0.088 * half` for figures that must match it.
+    node_r <- node_radius %||% (0.1174 * half)
+    p <- .add_directed_pathway_nodes(
+      p, ndf, node_color, target_color, ring_color, ring_border,
+      node_radius = node_r, ring_radius = node_r * 1.27,
+      label_size = label_size,
+      label_color = label_color,
+      target_label_color = target_label_color,
+      label_halo = label_halo,
+      label_halo_color = label_halo_color,
+      label_halo_width = label_halo_width,
+      label_halo_alpha = label_halo_alpha,
+      arrows = "arrows" %in% direction_cues,
+      step_shade = "shade" %in% direction_cues,
+      ring_gradient = "ring" %in% direction_cues
+    )
+  } else {
   p <- .add_pathway_nodes(p, ndf, is_target, node_color, target_color,
                            ring_color, ring_border, node_size, label_size,
                            label_color = label_color,
@@ -482,12 +627,18 @@ plot_simplicial <- function(x = NULL,
                            label_halo_color = label_halo_color,
                            label_halo_width = label_halo_width,
                            label_halo_alpha = label_halo_alpha)
+  }
   if (show_title) {
-    src_lab <- vapply(pw$source, function(s) label_map[s], character(1),
-                       USE.NAMES = FALSE)
-    title_str <- sprintf("%s  \u2192  %s",
-                          paste(src_lab, collapse = " | "),
-                          label_map[pw$target])
+    lab <- vapply(.pw_members(pw), function(s) label_map[s], character(1),
+                   USE.NAMES = FALSE)
+    title_str <- if (.pw_is_ordered(pw)) {
+      sprintf("%s  \u2192  %s",
+              paste(utils::head(lab, -1L), collapse = " | "),
+              lab[length(lab)])
+    } else {
+      # No arrow: an itemset is a membership statement, not a transition.
+      paste(lab, collapse = ", ")
+    }
     p <- p + labs(title = title_str)
   }
   p
@@ -511,13 +662,12 @@ plot_simplicial <- function(x = NULL,
   p <- .blob_base_plot()
 
   n_nodes <- vapply(pw_list, function(pw) {
-    length(unique(c(pw$source, pw$target)))
+    length(unique(.pw_members(pw)))
   }, integer(1))
 
   for (k in order(n_nodes, decreasing = TRUE)) {
     pw <- pw_list[[k]]
-    ndf <- pos[unname(name_to_idx[unique(c(pw$source, pw$target))]), ,
-               drop = FALSE]
+    ndf <- pos[unname(name_to_idx[unique(.pw_members(pw))]), , drop = FALSE]
     blob <- .smooth_blob(ndf$x, ndf$y)
     if (shadow) p <- .add_shadow(p, blob)
     border_col <- adjustcolor(blob_borders[k], alpha.f = blob_line_alpha)
@@ -527,7 +677,9 @@ plot_simplicial <- function(x = NULL,
                            linewidth = blob_linewidth, alpha = blob_alpha)
   }
 
-  all_targets <- unique(vapply(pw_list, `[[`, character(1), "target"))
+  # An unordered pathway contributes no target, so `all_targets` is empty
+  # and every node keeps `node_color`.
+  all_targets <- unique(unlist(lapply(pw_list, .pw_target)))
   is_target <- pos$state %in% all_targets
   p <- .add_pathway_nodes(p, pos, is_target, node_color, target_color,
                            ring_color, ring_border, node_size, label_size,
@@ -540,7 +692,8 @@ plot_simplicial <- function(x = NULL,
 
   # Suppress the source/target legend when the caller has collapsed the
   # two-tone (e.g., net_association_rules, which has no source/target).
-  two_tone <- !identical(target_color, node_color)
+  any_ordered <- any(vapply(pw_list, .pw_is_ordered, logical(1)))
+  two_tone <- !identical(target_color, node_color) && any_ordered
   p + labs(
     title = title %||% "Higher-Order Pathways (Simplicial Complex)",
     subtitle = if (two_tone) "Blue = source  |  Red = target" else NULL

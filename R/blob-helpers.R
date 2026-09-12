@@ -16,11 +16,34 @@
 #' @return List with \code{states} (expanded), \code{pw_list} (updated),
 #'   and \code{display_labels} (original names for all states).
 #' @noRd
+# =========================================================================
+# Pathway accessors
+# =========================================================================
+#
+# A higher-order structure is not always a path. A HON/HYPA/MOGen pathway is
+# ORDERED and its last state is the target; an association-rule itemset or a
+# clique of a simplicial complex is a SET, where every member is co-equal and
+# there is no target at all. Both travel through this pipeline, so the three
+# accessors below are the only places that need to know which is which —
+# `pw$target` is absent, not merely recoloured, when the pathway is unordered.
+
+#' Every state in a pathway, in path order when there is one
+#' @noRd
+.pw_members <- function(pw) c(pw$source, pw$target)
+
+#' Is this pathway ordered? Unflagged pathways are ordered (the old contract).
+#' @noRd
+.pw_is_ordered <- function(pw) !isFALSE(pw$ordered)
+
+#' The target state, or NULL when the pathway is a set
+#' @noRd
+.pw_target <- function(pw) if (.pw_is_ordered(pw)) pw$target else NULL
+
 .expand_repeated_nodes <- function(pw_list, states) {
   new_states <- states
 
   pw_list <- lapply(pw_list, function(pw) {
-    full_seq <- c(pw$source, pw$target)
+    full_seq <- .pw_members(pw)
     n <- length(full_seq)
     new_ids <- character(n)
     seen <- integer(0)
@@ -41,8 +64,13 @@
       }
     }
 
+    if (!.pw_is_ordered(pw)) {
+      # A set has no last state to promote to a target.
+      return(list(source = new_ids, target = NULL, ordered = FALSE))
+    }
     n_src <- length(pw$source)
-    list(source = new_ids[seq_len(n_src)], target = new_ids[n])
+    list(source = new_ids[seq_len(n_src)], target = new_ids[n],
+         ordered = TRUE)
   })
 
   display_labels <- vapply(new_states, function(s) {
@@ -561,4 +589,30 @@
   } else {
     stop("method must be 'hon', 'hypa', or 'rules'.", call. = FALSE)
   }
+}
+
+#' Extract itemsets from a Nestimate simplicial complex
+#'
+#' A \code{simplicial_complex} stores each simplex as a SORTED vertex
+#' tuple, so it is unordered by construction — there is no target to
+#' recover and none is invented. Returns a list of character vectors
+#' (member sets) for simplices of dimension >= 1, largest first, which
+#' \code{.parse_pathways(ordered = FALSE)} consumes directly.
+#' @noRd
+.extract_simplicial_pathways <- function(x, max_pathways = 10L) {
+  stopifnot(
+    "`x` must carry `$simplices` and `$nodes`" =
+      !is.null(x$simplices) && !is.null(x$nodes)
+  )
+  nodes <- as.character(x$nodes)
+  sizes <- lengths(x$simplices)
+  keep <- which(sizes >= 2L)
+  if (length(keep) == 0L) return(list())
+  keep <- keep[order(sizes[keep], decreasing = TRUE)]
+  if (!is.null(max_pathways) && length(keep) > max_pathways) {
+    keep <- keep[seq_len(max_pathways)]
+  }
+  lapply(x$simplices[keep], function(sx) {
+    if (is.numeric(sx)) nodes[sx] else as.character(sx)
+  })
 }

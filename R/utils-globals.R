@@ -10,5 +10,7 @@ NULL
 utils::globalVariables(c(
   "x", "y", "id", "group", "color", "fill", "label",
   "xmin", "xmax", "ymin", "ymax", "value", "total",
-  "line_color", "flow_color", "lw"
+  "line_color", "flow_color", "lw",
+  # blob-direction.R: ring gradient wedges, arrowhead triangles, legend text
+  "sector", "step", "label_text"
 ))

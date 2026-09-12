@@ -33,13 +33,19 @@ plot_simplicial(
   title = NULL,
   dismantled = FALSE,
   ncol = NULL,
+  ordered = NULL,
+  direction = NULL,
+  direction_cues = c("shade", "ring", "arrows"),
+  node_radius = NULL,
+  legend = NULL,
   ...
 )
 }
 \arguments{
 \item{x}{A network object: \code{tna}, \code{netobject}, matrix,
-\code{igraph}, \code{cograph_network}, \code{net_hon}, or
-\code{net_hypa}. When \code{x} is a \code{tna} or
+\code{igraph}, \code{cograph_network}, \code{net_hon},
+\code{net_hypa}, or \code{simplicial_complex} (an unordered
+complex — see \code{ordered}). When \code{x} is a \code{tna} or
 \code{netobject} with sequence data and \code{pathways} is
 \code{NULL}, higher-order pathways are built automatically
 using the \code{method} parameter.}
@@ -146,6 +152,40 @@ in a grid layout.}
 
 \item{ncol}{Number of columns in the grid when \code{dismantled = TRUE}.
 Default \code{NULL} auto-selects based on the number of pathways.}
+
+\item{ordered}{Is each higher-order structure a PATH or a SET?
+\code{TRUE} treats the last state of every pathway as its target
+(HON / HYPA / MOGen). \code{FALSE} treats every member as co-equal:
+there is no target, so no node is painted with \code{target_color},
+no direction cue is drawn, and the panel title is a member list
+rather than an arrow. \code{NULL} (default) reads it off the input
+— \code{net_association_rules} and \code{simplicial_complex} are
+sets, everything else is a path.}
+
+\item{direction}{Draw the traversal inside each per-pathway panel:
+a light-to-dark core ramp along the path, a ring whose gold peaks
+on the side facing the next state, and an arrowhead just outside
+each node aimed at its successor. \code{NULL} (default) enables
+them exactly when \code{dismantled = TRUE}. A simplex is a set of
+vertices, so the combined overlay — where blobs overlap and a state
+can sit in several pathways at once — cannot express direction;
+\code{direction = TRUE} with \code{dismantled = FALSE} is an
+error rather than a silent no-op. Also forced off when the caller
+has collapsed the source/target two-tone (undirected input such as
+\code{net_association_rules}).}
+
+\item{direction_cues}{Which cues to draw, any of \code{"shade"},
+\code{"ring"}, \code{"arrows"}. Default all three.}
+
+\item{node_radius}{Node core radius in data units, used only on the
+directed path (rings and cores become polygons there so the ring
+gradient and the arrow offset are expressible; \code{geom_point()}
+sizes are device millimetres and cannot answer either).
+\code{NULL} (default) scales it to the panel extent so the nodes
+keep the size they have today.}
+
+\item{legend}{Draw the in-figure legend strip beneath a dismantled
+grid. Default \code{TRUE} when \code{direction} is on.}
 
 \item{...}{Additional arguments passed to
 \code{Nestimate::build_hon()} or \code{Nestimate::build_hypa()}

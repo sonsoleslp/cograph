@@ -67,8 +67,10 @@ com_le(
 
 - ...:
 
-  Additional arguments passed to
-  [`to_igraph`](https://sonsoles.me/cograph/reference/to_igraph.md)
+  Passed to
+  [`to_igraph`](https://sonsoles.me/cograph/reference/to_igraph.md),
+  whose only other argument is `directed`; anything else raises an
+  "unused argument" error.
 
 ## Value
 
@@ -95,13 +97,13 @@ membership(comm)
 net <- as_cograph(matrix(runif(25), 5, 5))
 com_le(net)
 #> Community structure (leading_eigenvector)
-#>   Nodes: 5  | Communities: 2  | Modularity: 0.0413 
-#>   Sizes: 2, 3 
+#>   Nodes: 5  | Communities: 2  | Modularity: 0.034 
+#>   Sizes: 3, 2 
 #> 
 #>  node community
 #>     1         1
-#>     2         2
+#>     2         1
 #>     3         2
-#>     4         2
-#>     5         1
+#>     4         1
+#>     5         2
 ```

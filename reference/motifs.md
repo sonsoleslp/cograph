@@ -1,6 +1,6 @@
 # Network Motif Analysis
 
-Two modes of motif analysis for networks:
+Two modes of directed MAN triad analysis for networks:
 
 - **Census** (`named_nodes = FALSE`, default): Counts MAN type
   frequencies with significance testing. Nodes are exchangeable.
@@ -24,6 +24,7 @@ motifs(
   exclude = NULL,
   significance = TRUE,
   n_perm = 1000L,
+  cores = 1L,
   min_count = if (named_nodes) 5L else NULL,
   edge_method = c("any", "expected", "percent"),
   edge_threshold = 1.5,
@@ -115,7 +116,7 @@ plot(
 - include:
 
   Character vector of MAN types to include exclusively. Overrides
-  `pattern`.
+  `pattern` and `exclude`.
 
 - exclude:
 
@@ -131,6 +132,23 @@ plot(
   Number of permutations for significance. When `significance = TRUE`,
   must be a whole number of at least 2. Default 1000.
 
+- cores:
+
+  Number of worker processes for the permutation null. Default `1` runs
+  serially and is the only setting that reproduces results from earlier
+  versions: it consumes a single RNG stream in replicate-then-unit
+  order, so a given `seed` gives the historical numbers. `cores > 1`
+  gives each replicate its own L'Ecuyer-CMRG stream, which makes a
+  result depend on `seed` alone and not on the worker count or on how
+  replicates were chunked – but those are a *different* set of draws, so
+  the p-values will not match a `cores = 1` run of the same seed. They
+  remain a valid permutation null, and repeated parallel runs of one
+  seed agree exactly with each other at any `cores`. Forking is used
+  where available; Windows uses a PSOCK cluster. Only the
+  individual-level census null is parallelized. Values above
+  [`parallel::detectCores()`](https://rdrr.io/r/parallel/detectCores.html)
+  are capped with a `cograph_cores_capped` warning.
+
 - min_count:
 
   Inclusive minimum count to keep a row — rows with `count >= min_count`
@@ -144,12 +162,16 @@ plot(
 
 - edge_method:
 
-  Method for determining edge presence: "any" (default), "expected", or
-  "percent".
+  Method for determining edge presence: `"any"` (default; any positive
+  edge), `"expected"` (observed/expected ratio), or `"percent"` (edge
+  weight divided by the six-edge triad total).
 
 - edge_threshold:
 
-  Threshold for "expected" or "percent" methods. Default 1.5.
+  Threshold for `"expected"` or `"percent"` methods. For `"expected"`,
+  1.5 means 50 percent above expected. For `"percent"`, values at or
+  below 1 are proportions and values above 1 are percentages. Default
+  1.5.
 
 - min_transitions:
 
@@ -174,10 +196,13 @@ plot(
   `"triads"`
 
   :   Network diagrams of specific node triples (instance mode) or falls
-      back to patterns (census mode). Each panel title reads
-      `"<MAN code>: <description>"` (e.g. `"030T: Feed-forward"`) and,
-      in census mode, appends the z-score and a significance star (`*`
-      p\<.05, `**` p\<.01, `***` p\<.001). Arranged in a grid.
+      back to patterns (census mode). Instance panels use a canonical
+      representative of the MAN class: concrete labels identify
+      participants, not their observed node-role orientation. Each panel
+      title reads `"<MAN code>: <description>"` (e.g.
+      `"030T: Feed-forward"`) and, in census mode, appends the z-score
+      and a significance star (`*` p\<.05, `**` p\<.01, `***` p\<.001).
+      Arranged in a grid.
 
   `"types"`
 
@@ -279,11 +304,14 @@ A `cograph_motif_result` object (a list) with:
 - results:
 
   Data frame of results. Census mode (`named_nodes = FALSE`): one row
-  per MAN type with columns `type`, `count`, and when
+  per retained, observed MAN type with columns `type`, `count`, and when
   `significance = TRUE` also `expected`, `z`, `p`, `sig`. Instance mode
-  (`named_nodes = TRUE`): one row per concrete node triple with columns
-  `triad`, `node1`, `node2`, `node3`, `type`, `observed`, and when
-  `significance = TRUE` also `expected`, `z`, `p`, `sig`.
+  (`named_nodes = TRUE`): one row per concrete node-triple and MAN type
+  with columns `triad`, `node1`, `node2`, `node3`, `type`, `observed`,
+  and when `significance = TRUE` also `expected`, `z`, `p`, `sig`. At
+  individual level, `observed` is the number of sessions/units in which
+  that triple has that MAN type; one triple may therefore occupy
+  multiple rows when its type differs across units.
 
 - type_summary:
 
@@ -327,7 +355,11 @@ underlying `ggplot` for `"types"` and `"significance"`.
 Detects input type and analysis level automatically. For inputs with
 individual/group data (tna objects, cograph networks from edge lists
 with metadata), performs per-group analysis. For aggregate inputs
-(matrices, igraph), analyzes the single network.
+(matrices, igraph), analyzes the single network. The unified `motifs()`
+and [`subgraphs()`](https://sonsoles.me/cograph/reference/subgraphs.md)
+APIs classify the supplied adjacency as directed dyads in the 16-class
+MAN system. For the separate four-class undirected census, use
+`motif_census(..., directed = FALSE)`.
 
 For aggregate inputs, significance delegates to
 [`motif_census()`](https://sonsoles.me/cograph/reference/motif_census.md)
@@ -338,6 +370,25 @@ each unit's integerized in/out margins, and the resulting multigraph
 (which may contain loops or parallel edges) is evaluated through its
 simple loopless triad projection. Observed self-loops are excluded
 before both counting and null construction.
+
+With `edge_method = "percent"`, edge presence is computed within each
+node triple: an edge's weight is divided by the sum of the six possible
+directed edge weights for that triple. A threshold above 1 is
+interpreted as a percentage (for example, 1.5 means 1.5 percent); a
+threshold at or below 1 is interpreted as a proportion.
+
+Non-`"any"` significance has three important boundaries. For aggregate
+census input, observed counts use the selected threshold but the
+delegated null tests the unthresholded network; the function emits a
+warning. For individual census input, the threshold is reapplied to each
+integerized stub-null replicate. For individual named-instance input,
+the optimized null classifies raw stub presence and therefore does not
+reapply `edge_method`/`edge_threshold`. In all weighted individual
+paths, positive fractional weights retain at least one stub, which
+preserves support but can change the mass scale used by
+`"percent"`/`"expected"`. These limitations do not affect descriptive
+results with `significance = FALSE` or the default
+`edge_method = "any"`.
 
 ## See also
 
@@ -388,7 +439,6 @@ motifs(mat, n_perm = 10L, seed = 1)
 #>  type count expected    z         p   sig
 #>  030C     2      0.8 1.16 0.4545455 FALSE
 #>  030T     2      0.8 1.16 0.4545455 FALSE
-
 # \donttest{
 Mod <- tna::tna(tna::group_regulation)
 motifs(Mod, n_perm = 10L, seed = 1)

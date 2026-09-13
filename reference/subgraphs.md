@@ -1,8 +1,10 @@
 # Extract Specific Motif Instances (Subgraphs)
 
 Convenience wrapper for `motifs(x, named_nodes = TRUE, ...)`. Returns
-one row per concrete node-triple instantiating each MAN pattern, so the
-same MAN type can appear in many rows with its own `z` / `p` per triple.
+one row per concrete node-triple and MAN type. At individual level,
+`observed` counts sessions/units exhibiting that combination, so one
+triple can occupy multiple rows when its type differs across units. The
+same MAN type can also appear in many rows, each with its own `z` / `p`.
 For per-triple significance use `plot(., type = "significance")` or
 `plot(., type = "triads")`; the per-type plots (`"types"`, `"patterns"`)
 deliberately drop the significance decoration here, because aggregating
@@ -22,18 +24,28 @@ subgraphs(...)
   Arguments forwarded to
   [`motifs()`](https://sonsoles.me/cograph/reference/motifs.md). See
   [`?motifs`](https://sonsoles.me/cograph/reference/motifs.md) for the
-  full parameter list (`x`, `actor`, `window`, `pattern`, `include`,
-  `exclude`, `significance`, `n_perm`, `min_count`, `edge_method`,
-  `edge_threshold`, `min_transitions`, `top`, `seed`).
+  full parameter list (`x`, `actor`, `window`, `window_type`, `pattern`,
+  `include`, `exclude`, `significance`, `n_perm`, `cores`, `min_count`,
+  `edge_method`, `edge_threshold`, `min_transitions`, `top`, `seed`).
+  `named_nodes` is fixed to `TRUE` and must not be supplied.
 
 ## Value
 
 A `cograph_motif_result` object with `named_nodes = TRUE`. Contains
 `$results` (data frame with columns `triad`, `node1`, `node2`, `node3`,
 `observed`, `type`, and when `significance = TRUE` also `expected`, `z`,
-`p`, `sig`), `$type_summary`, `$level`, `$n_units`, and `$params`. In
+`p`, `sig`), `$type_summary`, `$level`, `$n_units`, and `$params`. At
+individual level, each result row is a node-triple and MAN-type
+combination, and `observed` counts sessions/units exhibiting it. In
 instance mode, `$type_summary` is built via `table(results$type)` so it
 counts how many node-triples fall under each MAN type.
+
+## Details
+
+The `"triads"` diagram uses a canonical representative of the row's MAN
+isomorphism class. Concrete labels identify the participating nodes;
+their positions in that representative diagram do not encode the nodes'
+observed source/sink roles.
 
 ## See also
 

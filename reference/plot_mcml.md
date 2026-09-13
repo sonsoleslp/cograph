@@ -17,6 +17,7 @@ node, making the hierarchical mapping explicit.
 plot_mcml(
   x,
   cluster_list = NULL,
+  expand = NULL,
   mode = c("weights", "tna"),
   theme = c("classic", "rich", "light"),
   layer_spacing = NULL,
@@ -118,6 +119,22 @@ plot_mcml(
     `group`, etc.) in node metadata.
 
   Ignored when `x` is a `cluster_summary`.
+
+- expand:
+
+  Names of clusters whose member states are drawn as separate nodes in
+  the top (macro) layer; `"all"` or `TRUE` expands every cluster. The
+  bottom layer always shows the partition, so an expanded state appears
+  as its own summary node while staying inside its cluster's shell
+  below, linked by the dashed line. Default `NULL` draws one summary
+  node per cluster.
+
+  The expanded macro is re-counted from `x` with a refined partition (an
+  expanded cluster contributes one group per member state), because a k
+  x k aggregate cannot be disaggregated after the fact. That needs the
+  source, so passing a pre-built `cluster_summary` or `mcml` instead of
+  the data falls back to `Nestimate::macro_network()` and raises a
+  `cograph_expand_unavailable` error when that is not available.
 
 - mode:
 
@@ -619,7 +636,7 @@ on an oval above the bottom layer whose proportions are controlled by
 
 ## Input Formats
 
-`x` accepts four types:
+`x` accepts the following types:
 
 - **matrix**:
 
@@ -644,6 +661,12 @@ on an oval above the bottom layer whose proportions are controlled by
   type is passed, the `cluster_list`, `aggregation`, and `nodes`
   parameters are ignored because the summary already contains everything
   needed.
+
+- **mcml / mcml_pc**:
+
+  A Nestimate multi-cluster multi-layer object; handled exactly like a
+  `cluster_summary`, with `mcml_pc` rendered undirected via its
+  `meta$directed` flag.
 
 ## Edge Types
 

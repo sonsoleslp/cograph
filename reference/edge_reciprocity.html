@@ -9,7 +9,7 @@ reciprocity information for directed networks."><meta property="og:image" conten
 
     <a class="navbar-brand me-2" href="../index.html">cograph</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.4.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.6.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,7 @@ reciprocity information for directed networks."><meta property="og:image" conten
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">Introduction to cograph</a></li>
     <li><a class="dropdown-item" href="../articles/centrality-catalogue.html">Centrality catalogue</a></li>
+    <li><a class="dropdown-item" href="../articles/centrality-zoo-lookup.html">Centrality Zoo lookup</a></li>
     <li><a class="dropdown-item" href="../articles/why-cograph.html">Why cograph?</a></li>
     <li><a class="dropdown-item" href="../articles/plotting-tna-models.html">TNA Plotting Gallery and Visual Smoke Test</a></li>
     <li><a class="dropdown-item" href="../articles/mcml-examples.html">Advanced examples</a></li>
@@ -83,8 +84,19 @@ object.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with columns: <code>from</code>, <code>to</code>, <code>weight</code>,
-<code>reciprocated</code>, <code>reverse_weight</code>, <code>weight_ratio</code>.</p>
+    <p>A data frame with one row per directed edge and columns
+<code>from</code>, <code>to</code>, <code>weight</code>, <code>reciprocated</code> (logical),
+<code>reverse_weight</code> (NA when not reciprocated) and <code>weight_ratio</code>
+(<code>weight / reverse_weight</code>; NA when not reciprocated). Rows are
+ordered with reciprocated edges first, then by <code>|weight_ratio|</code>
+descending.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="errors">Errors<a class="anchor" aria-label="anchor" href="#errors"></a></h2>
+
+
+<p>Raises an error when the resolved network is undirected: reciprocity is
+only defined for directed edges.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

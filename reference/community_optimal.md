@@ -23,8 +23,10 @@ com_op(x, weights = NULL, ...)
 
 - ...:
 
-  Additional arguments passed to
-  [`to_igraph`](https://sonsoles.me/cograph/reference/to_igraph.md)
+  Passed to
+  [`to_igraph`](https://sonsoles.me/cograph/reference/to_igraph.md),
+  whose only other argument is `directed`; anything else raises an
+  "unused argument" error.
 
 ## Value
 
@@ -54,13 +56,13 @@ membership(comm)
 net <- as_cograph(matrix(runif(25), 5, 5))
 com_op(net)
 #> Community structure (optimal)
-#>   Nodes: 5  | Communities: 2  | Modularity: 0.2432 
-#>   Sizes: 4, 1 
+#>   Nodes: 5  | Communities: 3  | Modularity: 0.272 
+#>   Sizes: 2, 1, 2 
 #> 
 #>  node community
 #>     1         1
 #>     2         2
-#>     3         1
+#>     3         3
 #>     4         1
-#>     5         1
+#>     5         3
 ```

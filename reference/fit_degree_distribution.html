@@ -11,7 +11,7 @@ using Kolmogorov-Smirnov tests. Returns a comparison table sorted by AIC."><meta
 
     <a class="navbar-brand me-2" href="../index.html">cograph</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.4.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.6.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,6 +24,7 @@ using Kolmogorov-Smirnov tests. Returns a comparison table sorted by AIC."><meta
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">Introduction to cograph</a></li>
     <li><a class="dropdown-item" href="../articles/centrality-catalogue.html">Centrality catalogue</a></li>
+    <li><a class="dropdown-item" href="../articles/centrality-zoo-lookup.html">Centrality Zoo lookup</a></li>
     <li><a class="dropdown-item" href="../articles/why-cograph.html">Why cograph?</a></li>
     <li><a class="dropdown-item" href="../articles/plotting-tna-models.html">TNA Plotting Gallery and Visual Smoke Test</a></li>
     <li><a class="dropdown-item" href="../articles/mcml-examples.html">Advanced examples</a></li>
@@ -134,6 +135,14 @@ et al. (2009) method. Otherwise, computes the simple MLE:
 for a discrete distribution; p-values are approximate.</p>
 <p><strong>Geometric</strong>: \(P(k) \sim (1-p)^k p\). MLE:
 \(p = 1 / (1 + \bar{k})\).</p>
+<p><code>ks_stat</code> is always reported. <code>ks_p</code> comes from
+<code><a href="https://rdrr.io/r/stats/ks.test.html" class="external-link">stats::ks.test()</a></code> for the exponential and Poisson fits and from
+<code><a href="https://r.igraph.org/reference/fit_power_law.html" class="external-link">igraph::fit_power_law()</a></code> for the automatic power-law fit; it is
+<code>NA</code> for the geometric fit and for the manual (non-igraph or explicit
+<code>xmin</code>) power-law fit, whose KS statistics are computed directly
+against the theoretical CDF without a reference distribution. AIC and BIC
+count one free parameter per distribution, so the power-law <code>xmin</code> is
+not penalized.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

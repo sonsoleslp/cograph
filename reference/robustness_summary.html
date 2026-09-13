@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cograph</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.4.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.6.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,6 +20,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">Introduction to cograph</a></li>
     <li><a class="dropdown-item" href="../articles/centrality-catalogue.html">Centrality catalogue</a></li>
+    <li><a class="dropdown-item" href="../articles/centrality-zoo-lookup.html">Centrality Zoo lookup</a></li>
     <li><a class="dropdown-item" href="../articles/why-cograph.html">Why cograph?</a></li>
     <li><a class="dropdown-item" href="../articles/plotting-tna-models.html">TNA Plotting Gallery and Visual Smoke Test</a></li>
     <li><a class="dropdown-item" href="../articles/mcml-examples.html">Advanced examples</a></li>
@@ -75,7 +76,12 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Data frame with AUC and critical points for each measure.</p>
+    <p>A data frame with one row per supplied (or computed) robustness
+result and columns <code>measure</code>, <code>auc</code> (area under the robustness
+curve), <code>critical_50</code> (fraction removed when the largest component
+first falls below 50\<!-- % of its original size) and \code{critical_10} (the -->
+same at 10\<!-- %). The critical columns are 1 when the threshold is never -->
+crossed. All numeric columns are rounded to 4 decimal places.</p>
     </div>
 
     <div class="section level2">

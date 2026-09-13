@@ -15,31 +15,38 @@ cqual(x, clusters, weighted = TRUE, directed = TRUE)
 
 - x:
 
-  Adjacency matrix
+  Adjacency matrix (numeric)
 
 - clusters:
 
-  Cluster specification (list or membership vector)
+  Cluster specification (named list, data frame, or membership vector;
+  see [`csum`](https://sonsoles.me/cograph/reference/csum.md))
 
 - weighted:
 
-  Logical; if TRUE, use edge weights; if FALSE, binarize
+  Logical; if TRUE (default), use edge weights; if FALSE, binarize the
+  matrix first
 
 - directed:
 
-  Logical; if TRUE, treat as directed network
+  Logical; if TRUE (default), treat as directed network
 
 ## Value
 
-A `cluster_quality` object with:
+A `cluster_quality` object (a list) with:
 
 - per_cluster:
 
-  Data frame with per-cluster metrics
+  Data frame, one row per cluster, with columns `cluster` (index),
+  `cluster_name`, `n_nodes`, `internal_edges` (within-cluster weight),
+  `cut_edges` (boundary-crossing weight), `internal_density`,
+  `avg_internal_degree`, `expansion`, `cut_ratio` and `conductance`.
 
 - global:
 
-  List of global metrics (modularity, coverage)
+  List with `modularity` (Newman-Girvan, computed on the weighted or
+  binarized matrix), `coverage` (share of total weight that is internal
+  to some cluster) and `n_clusters`.
 
 See `cluster_quality`.
 
@@ -53,19 +60,19 @@ clusters <- c(1,1,1,2,2,2,3,3,3,3)
 q <- cluster_quality(mat, clusters)
 q$per_cluster   # Per-cluster metrics
 #>   cluster cluster_name n_nodes internal_edges cut_edges internal_density
-#> 1       1            1       3       3.206718  22.79075        0.5344529
-#> 2       2            2       3       2.908608  23.51103        0.4847681
-#> 3       3            3       4       6.730487  27.18351        0.5608740
+#> 1       1            1       3       3.786687  21.06550        0.6311144
+#> 2       2            2       3       2.859344  21.89879        0.4765574
+#> 3       3            3       4       6.569519  24.70585        0.5474599
 #>   avg_internal_degree expansion cut_ratio conductance
-#> 1            2.137812  7.596917  1.085274   0.7803933
-#> 2            1.939072  7.837010  1.119573   0.8016514
-#> 3            3.365244  6.795878  1.132646   0.6688118
+#> 1            2.524458  7.021834  1.003119   0.7355562
+#> 2            1.906229  7.299596  1.042799   0.7929323
+#> 3            3.284760  6.176463  1.029411   0.6528187
 q$global        # Modularity, coverage
 #> $modularity
-#> [1] -0.08264454
+#> [1] -0.05841018
 #> 
 #> $coverage
-#> [1] 0.2590484
+#> [1] 0.2808794
 #> 
 #> $n_clusters
 #> [1] 3
@@ -77,17 +84,17 @@ cqual(mat, c(1,1,1,2,2,2,3,3,3,3))
 #> =======================
 #> 
 #> Global metrics:
-#>   Modularity: -0.085 
-#>   Coverage:   0.2525 
+#>   Modularity: -0.1139 
+#>   Coverage:   0.2214 
 #>   Clusters:   3 
 #> 
 #> Per-cluster metrics:
 #>  cluster cluster_name n_nodes internal_edges cut_edges internal_density
-#>        1            1       3       2.872407  22.87844        0.4787344
-#>        2            2       3       2.863043  24.22716        0.4771738
-#>        3            3       4       6.405012  24.76275        0.5337510
+#>        1            1       3       2.609745  23.94103        0.4349575
+#>        2            2       3       3.044833  24.35574        0.5074722
+#>        3            3       4       5.093286  27.31874        0.4244405
 #>  avg_internal_degree expansion cut_ratio conductance
-#>             1.914938  7.626147  1.089450   0.7992956
-#>             1.908695  8.075719  1.153674   0.8088325
-#>             3.202506  6.190687  1.031781   0.6590610
+#>             1.739830  7.980343  1.140049   0.8210083
+#>             2.029889  8.118581  1.159797   0.7999808
+#>             2.546643  6.829684  1.138281   0.7283965
 ```

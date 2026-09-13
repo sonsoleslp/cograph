@@ -7,7 +7,7 @@ line runs through zero.
 Produces a ggplot2 forest plot where each row is one network edge, the
 square marks the bootstrap mean estimate, and the horizontal bar spans the
 selected interval. A dashed reference line runs through zero. Significant
-edges are highlighted in colour; non-significant ones appear in grey (only
+edges are highlighted in color; non-significant ones appear in grey (only
 shown when show_nonsig = TRUE)."><meta property="og:description" content="A ggplot2-based forest plot for net_bootstrap,
 net_bootstrap_group, tna_bootstrap, and boot_glasso
 objects. Each row is one network edge; horizontal bars span the confidence
@@ -16,7 +16,7 @@ line runs through zero.
 Produces a ggplot2 forest plot where each row is one network edge, the
 square marks the bootstrap mean estimate, and the horizontal bar spans the
 selected interval. A dashed reference line runs through zero. Significant
-edges are highlighted in colour; non-significant ones appear in grey (only
+edges are highlighted in color; non-significant ones appear in grey (only
 shown when show_nonsig = TRUE)."><meta property="og:image" content="https://sonsoles.me/cograph/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -25,7 +25,7 @@ shown when show_nonsig = TRUE)."><meta property="og:image" content="https://sons
 
     <a class="navbar-brand me-2" href="../index.html">cograph</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.4.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.6.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,6 +38,7 @@ shown when show_nonsig = TRUE)."><meta property="og:image" content="https://sons
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">Introduction to cograph</a></li>
     <li><a class="dropdown-item" href="../articles/centrality-catalogue.html">Centrality catalogue</a></li>
+    <li><a class="dropdown-item" href="../articles/centrality-zoo-lookup.html">Centrality Zoo lookup</a></li>
     <li><a class="dropdown-item" href="../articles/why-cograph.html">Why cograph?</a></li>
     <li><a class="dropdown-item" href="../articles/plotting-tna-models.html">TNA Plotting Gallery and Visual Smoke Test</a></li>
     <li><a class="dropdown-item" href="../articles/mcml-examples.html">Advanced examples</a></li>
@@ -71,7 +72,7 @@ line runs through zero.</p>
 <p>Produces a ggplot2 forest plot where each row is one network edge, the
 square marks the bootstrap mean estimate, and the horizontal bar spans the
 selected interval. A dashed reference line runs through zero. Significant
-edges are highlighted in colour; non-significant ones appear in grey (only
+edges are highlighted in color; non-significant ones appear in grey (only
 shown when <code>show_nonsig = TRUE</code>).</p>
     </div>
 
@@ -200,8 +201,10 @@ shown when <code>show_nonsig = TRUE</code>).</p>
 
 
 <dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
-<dd><p>Significance threshold. Default: inherits from the object
-(<code>$ci_level</code> or <code>$alpha</code>), falling back to <code>0.05</code>.</p></dd>
+<dd><p>Significance threshold. Default <code>NULL</code>, which inherits
+from the object: <code>$ci_level</code> for <code>net_bootstrap</code>,
+<code>$level</code> for <code>tna_bootstrap</code>, <code>$alpha</code> for
+<code>boot_glasso</code>, each falling back to <code>0.05</code>.</p></dd>
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
@@ -235,28 +238,28 @@ absolute estimate. Applied after significance filtering. Default <code>NULL</cod
 
 
 <dt id="arg-node-colors">node_colors<a class="anchor" aria-label="anchor" href="#arg-node-colors"></a></dt>
-<dd><p>Optional node-colour vector for grouped radial layouts.</p></dd>
+<dd><p>Optional node-color vector for grouped radial layouts.</p></dd>
 
 
 <dt id="arg-sig-color">sig_color<a class="anchor" aria-label="anchor" href="#arg-sig-color"></a></dt>
-<dd><p>Colour for significant CI bars and points. Default <code>"#2C6E8A"</code> (teal-blue).</p></dd>
+<dd><p>Color for significant CI bars and points. Default <code>"#2C6E8A"</code> (teal-blue).</p></dd>
 
 
 <dt id="arg-cr-color">cr_color<a class="anchor" aria-label="anchor" href="#arg-cr-color"></a></dt>
-<dd><p>Colour for the consistency range bar (<code>interval = "cr"</code> or <code>"both"</code>).
+<dd><p>Color for the consistency range bar (<code>interval = "cr"</code> or <code>"both"</code>).
 Default <code>"#D4829A"</code>.</p></dd>
 
 
 <dt id="arg-nonsig-color">nonsig_color<a class="anchor" aria-label="anchor" href="#arg-nonsig-color"></a></dt>
-<dd><p>Colour for non-significant edges. Default <code>"#CCCCCC"</code>.</p></dd>
+<dd><p>Color for non-significant edges. Default <code>"#CCCCCC"</code>.</p></dd>
 
 
 <dt id="arg-ring-color">ring_color<a class="anchor" aria-label="anchor" href="#arg-ring-color"></a></dt>
-<dd><p>Colour for the reference rings (radial layout only). Default <code>"#C8C8C8"</code>.</p></dd>
+<dd><p>Color for the reference rings (radial layout only). Default <code>"#C8C8C8"</code>.</p></dd>
 
 
 <dt id="arg-median-color">median_color<a class="anchor" aria-label="anchor" href="#arg-median-color"></a></dt>
-<dd><p>Colour for the dashed median ring (radial layout only). Default <code>"#AAAAAA"</code>.</p></dd>
+<dd><p>Color for the dashed median ring (radial layout only). Default <code>"#AAAAAA"</code>.</p></dd>
 
 
 <dt id="arg-label-size">label_size<a class="anchor" aria-label="anchor" href="#arg-label-size"></a></dt>
@@ -266,8 +269,8 @@ Default <code>NULL</code> for automatic sizing in the main methods, or
 
 
 <dt id="arg-label-color">label_color<a class="anchor" aria-label="anchor" href="#arg-label-color"></a></dt>
-<dd><p>Fixed colour for edge labels (radial layout only). <code>NULL</code> (default)
-inherits the edge colour (teal for significant, grey for non-significant).</p></dd>
+<dd><p>Fixed color for edge labels (radial layout only). <code>NULL</code> (default)
+inherits the edge color (teal for significant, grey for non-significant).</p></dd>
 
 
 <dt id="arg-point-size">point_size<a class="anchor" aria-label="anchor" href="#arg-point-size"></a></dt>

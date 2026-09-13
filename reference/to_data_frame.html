@@ -9,7 +9,7 @@ target, and weight."><meta property="og:image" content="https://sonsoles.me/cogr
 
     <a class="navbar-brand me-2" href="../index.html">cograph</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.4.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.6.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,6 +22,7 @@ target, and weight."><meta property="og:image" content="https://sonsoles.me/cogr
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/introduction.html">Introduction to cograph</a></li>
     <li><a class="dropdown-item" href="../articles/centrality-catalogue.html">Centrality catalogue</a></li>
+    <li><a class="dropdown-item" href="../articles/centrality-zoo-lookup.html">Centrality Zoo lookup</a></li>
     <li><a class="dropdown-item" href="../articles/why-cograph.html">Why cograph?</a></li>
     <li><a class="dropdown-item" href="../articles/plotting-tna-models.html">TNA Plotting Gallery and Visual Smoke Test</a></li>
     <li><a class="dropdown-item" href="../articles/mcml-examples.html">Advanced examples</a></li>
@@ -73,10 +74,15 @@ symmetry. Set TRUE to force directed, FALSE to force undirected.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with columns:</p><ul><li><p><code>from</code>: Source node name/label</p></li>
+    <p>A base <code>data.frame</code> with one row per edge and exactly three
+columns:</p><ul><li><p><code>from</code>: Source node name/label</p></li>
 <li><p><code>to</code>: Target node name/label</p></li>
 <li><p><code>weight</code>: Edge weight</p></li>
-</ul></div>
+</ul><p>Any further edge columns the network carries (for example <code>session</code>
+or <code>time</code> from temporal edge lists) are <em>not</em> included; use
+<code><a href="get_edges.html">get_edges</a></code>, which returns the edge table whole. An
+undirected network contributes one row per unordered pair, not two.</p>
+    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code>to_df</code>, <code><a href="to_igraph.html">to_igraph</a></code>, <code><a href="as_cograph.html">as_cograph</a></code></p></div>

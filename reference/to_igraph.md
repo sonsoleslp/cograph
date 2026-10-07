@@ -46,9 +46,9 @@ An igraph object.
 
 ``` r
 to_igraph(regulation_net)
-#> IGRAPH b9d0ace DNW- 10 30 -- 
+#> IGRAPH db41775 DNW- 10 30 -- 
 #> + attr: name (v/c), weight (e/n)
-#> + edges from b9d0ace (vertex names):
+#> + edges from db41775 (vertex names):
 #>  [1] Explore   ->Reflect    Explore   ->Share      Plan      ->Monitor   
 #>  [4] Plan      ->Discuss    Plan      ->Evaluate   Plan      ->Create    
 #>  [7] Plan      ->Share      Monitor   ->Adapt      Monitor   ->Create    
